@@ -65,7 +65,7 @@ export default function Hero({ ready }) {
       <motion.div className="hero__meta container" initial={{ opacity: 0 }} animate={ready ? { opacity: 1 } : {}} transition={{ delay: d + 1, duration: 1 }}>
         <div>
           <small>Öne çıkan</small>
-          <strong>Ranger Chrono</strong>
+          <strong>Zümrüt Yüzük</strong>
         </div>
         <div className="scroll-hint">
           <span />

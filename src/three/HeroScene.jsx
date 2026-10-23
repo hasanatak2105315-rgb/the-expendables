@@ -3,7 +3,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Float, Sparkles, MeshReflectorMaterial } from '@react-three/drei'
 import { EffectComposer, Bloom, Noise, Vignette } from '@react-three/postprocessing'
 import { Vector3 } from 'three'
-import { Watch, DogTags, Compass } from './Models'
+import { Ring, Pendant, Vase } from './Models'
 import { Studio } from './Studio'
 
 const mouse = { x: 0, y: 0 }
@@ -38,15 +38,15 @@ function Hero3D() {
     <group position={[mobile ? 0.35 : 1.9, mobile ? -1.55 : 0.05, mobile ? -0.5 : 0]} scale={mobile ? 0.5 : 1}>
       <Float speed={1.6} rotationIntensity={0.25} floatIntensity={0.6}>
         <group ref={hero}>
-          <Watch scale={0.92} rotation-z={-0.18} />
+          <Ring scale={0.78} position-y={-0.3} rotation-x={0.25} />
         </group>
       </Float>
       <group ref={orbit}>
         <Float speed={2.2} floatIntensity={1.2}>
-          <DogTags scale={0.42} position={[-2.1, 0.9, -1.2]} rotation={[0.2, 0.6, 0.2]} />
+          <Pendant scale={0.45} position={[-2.1, 0.7, -1.2]} rotation={[0.1, 0.5, 0.15]} />
         </Float>
         <Float speed={1.8} floatIntensity={1}>
-          <Compass scale={0.4} position={[2.1, -0.6, -1]} rotation={[0.3, -0.7, 0]} />
+          <Vase scale={0.38} position={[2.1, -0.6, -1]} rotation={[0.2, 0, 0.15]} />
         </Float>
       </group>
     </group>
