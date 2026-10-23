@@ -1,0 +1,97 @@
+import { useEffect, useRef } from 'react'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { Float, Sparkles, MeshReflectorMaterial } from '@react-three/drei'
+import { EffectComposer, Bloom, Noise, Vignette } from '@react-three/postprocessing'
+import { Vector3 } from 'three'
+import { Watch, DogTags, Compass } from './Models'
+import { Studio } from './Studio'
+
+const mouse = { x: 0, y: 0 }
+
+// Fare ve kaydırmaya göre kamerayı yumuşakça hareket ettirir
+function Rig() {
+  const target = useRef(new Vector3())
+  useFrame((state, dt) => {
+    const scroll = Math.min(window.scrollY / window.innerHeight, 1.2)
+    target.current.set(mouse.x * 0.7, 0.35 + mouse.y * 0.35 - scroll * 0.6, 6.2 + scroll * 3)
+    state.camera.position.lerp(target.current, 1 - Math.exp(-3 * dt))
+    state.camera.lookAt(0, -0.1 - scroll * 0.4, 0)
+  })
+  return null
+}
+
+function Hero3D() {
+  const { viewport } = useThree()
+  const mobile = viewport.width < 6
+  const hero = useRef()
+  const orbit = useRef()
+
+  useFrame((state, dt) => {
+    const t = state.clock.elapsedTime
+    const scroll = Math.min(window.scrollY / window.innerHeight, 1.2)
+    hero.current.rotation.y = -0.45 + Math.sin(t * 0.35) * 0.55 + scroll * 1.2
+    hero.current.rotation.x = 0.05 + scroll * 0.4
+    orbit.current.rotation.y -= dt * 0.12
+  })
+
+  return (
+    <group position={[mobile ? 0.35 : 1.9, mobile ? -1.55 : 0.05, mobile ? -0.5 : 0]} scale={mobile ? 0.5 : 1}>
+      <Float speed={1.6} rotationIntensity={0.25} floatIntensity={0.6}>
+        <group ref={hero}>
+          <Watch scale={0.92} rotation-z={-0.18} />
+        </group>
+      </Float>
+      <group ref={orbit}>
+        <Float speed={2.2} floatIntensity={1.2}>
+          <DogTags scale={0.42} position={[-2.1, 0.9, -1.2]} rotation={[0.2, 0.6, 0.2]} />
+        </Float>
+        <Float speed={1.8} floatIntensity={1}>
+          <Compass scale={0.4} position={[2.1, -0.6, -1]} rotation={[0.3, -0.7, 0]} />
+        </Float>
+      </group>
+    </group>
+  )
+}
+
+export default function HeroScene() {
+  useEffect(() => {
+    const onMove = (e) => {
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1
+      mouse.y = -((e.clientY / window.innerHeight) * 2 - 1)
+    }
+    window.addEventListener('pointermove', onMove)
+    return () => window.removeEventListener('pointermove', onMove)
+  }, [])
+
+  return (
+    <Canvas dpr={[1, 1.75]} camera={{ position: [0, 0.4, 6.2], fov: 35 }} gl={{ antialias: false }}>
+      <color attach="background" args={['#030805']} />
+      <fog attach="fog" args={['#030805', 7, 17]} />
+      <Studio />
+      <spotLight position={[0, 6, 2]} angle={0.35} penumbra={1} intensity={90} color="#d9ffe9" />
+      <Rig />
+      <Hero3D />
+      <Sparkles count={140} scale={[14, 7, 8]} size={2.2} speed={0.25} opacity={0.6} color="#6ee7b7" />
+      <mesh rotation-x={-Math.PI / 2} position-y={-1.9}>
+        <planeGeometry args={[60, 60]} />
+        <MeshReflectorMaterial
+          blur={[300, 80]}
+          resolution={768}
+          mixBlur={1}
+          mixStrength={25}
+          roughness={1}
+          depthScale={1.1}
+          minDepthThreshold={0.4}
+          maxDepthThreshold={1.4}
+          color="#040b07"
+          metalness={0.6}
+        />
+      </mesh>
+      <EffectComposer multisampling={0}>
+        <Bloom mipmapBlur luminanceThreshold={1} intensity={1.1} />
+        <Noise opacity={0.04} />
+        <Vignette offset={0.2} darkness={0.85} />
+      </EffectComposer>
+    </Canvas>
+  )
+}
