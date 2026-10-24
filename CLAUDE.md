@@ -44,12 +44,12 @@ Takı ve 3D baskı ürünleri satan, sinematik 3D bir e-ticaret sitesi. Şimdili
   - Formlar: ödeme ve bülten formlarında alan alan hata mesajları, kart numarası/tarih otomatik biçimleniyor
   - Sipariş sonrası `/tesekkurler` sayfası (sipariş numarası sessionStorage'dan okunur, Google'a kapalı)
   - Google Analytics 4 + çerez bandı hazır ama `analyticsId` boş olduğu için kapalı. Kimlik girilince bant çıkar, GA yalnızca "Kabul et" sonrası yüklenir
+- Performans: 3D kodu ayrı parçalara bölündü. İlk açılışta ~445 KB (gzip ~140 KB) iner, önceden 1,42 MB idi. 3D dosyaları (`three`, `r3f`, `postfx`) `React.lazy` ile sonradan yüklenir; alt sayfalarda hiç inmez. Bölme ayarı `vite.config.js` içindeki `manualChunks`. Vite yardımcıları ve React `react` parçasında kalmalı, yoksa 3D dosyası baştan iner. Derlenmiş hâli denemek için `.claude/launch.json` içinde `preview` (port 4173) var
 
 ## Sıradaki işler
 
 1. Kullanıcıdan alınacak bilgiler: şirket unvanı, vergi bilgisi, telefon, Instagram adresi, gerçek alan adı, (istenirse) Google Analytics kimliği
-2. Performans: ana JS dosyası ~1,4 MB (three.js). 3D kodu ayrı parçalara bölünerek ilk açılış hızlandırılabilir
-3. Yayına alma (Vercel veya Netlify)
+2. Yayına alma (Vercel veya Netlify)
 
 ## Notlar
 

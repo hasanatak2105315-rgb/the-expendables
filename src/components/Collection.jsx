@@ -1,8 +1,9 @@
-import { useRef, useState } from 'react'
+import { lazy, Suspense, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { CATEGORIES, PRODUCTS, formatPrice } from '../data/products'
-import { CardView } from '../three/ProductViews'
 import { useCart } from '../store/cart'
+
+const CardView = lazy(() => import('../three/ProductViews').then((m) => ({ default: m.CardView })))
 
 function ProductCard({ product, index, onOpen }) {
   const { add } = useCart()
@@ -42,7 +43,9 @@ function ProductCard({ product, index, onOpen }) {
       <button className="card__stage" onClick={() => onOpen(product)} aria-label={`${product.name} detay`}>
         <span className="card__index">{String(index + 1).padStart(2, '0')}</span>
         {product.tag && <span className="card__tag">{product.tag}</span>}
-        <CardView className="card__view" model={product.model} hovered={hovered} />
+        <Suspense fallback={<div className="stage-loader" aria-hidden="true" />}>
+          <CardView className="card__view" model={product.model} hovered={hovered} />
+        </Suspense>
         <span className="card__look">İncele</span>
       </button>
       <div className="card__body">

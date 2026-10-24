@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import { AnimatePresence } from 'motion/react'
 import Loader from './components/Loader'
 import Navbar from './components/Navbar'
@@ -10,9 +10,11 @@ import { About, Contact, Faq, Returns, Kvkk, Privacy, Terms, DistanceSales, Than
 import { MobileCta, CookieBanner } from './components/Extras'
 import { usePath } from './router'
 import { applyMeta } from './meta'
-import { ViewsCanvas } from './three/ProductViews'
 import { CartProvider } from './store/cart'
 import { startSmoothScroll, lockScroll } from './scroll'
+
+// 3D kodu ana dosyadan ayrı, sonradan yüklenir
+const ViewsCanvas = lazy(() => import('./three/ProductViews').then((m) => ({ default: m.ViewsCanvas })))
 
 const PAGES = {
   '/hakkimizda': About,
@@ -63,7 +65,11 @@ export default function App() {
         )}
       </main>
       <Footer />
-      <ViewsCanvas />
+      {!Page && (
+        <Suspense fallback={null}>
+          <ViewsCanvas />
+        </Suspense>
+      )}
       <MobileCta />
       <CartDrawer />
       <ProductModal product={selected} onClose={closeModal} />

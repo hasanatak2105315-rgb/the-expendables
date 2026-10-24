@@ -30,5 +30,21 @@ function seoFiles() {
 export default defineConfig({
   plugins: [react(), seoFiles()],
   base: '/',
-  build: { chunkSizeWarningLimit: 2000 }
+  build: {
+    chunkSizeWarningLimit: 2000,
+    rollupOptions: {
+      output: {
+        // Büyük 3D kütüphanelerini ayrı dosyalara böl: site metni önce açılır, 3D arkadan gelir
+        manualChunks(id) {
+          // Vite'ın küçük yardımcıları her zaman yüklenen dosyada kalsın, yoksa 3D dosyası baştan iner
+          if (id.includes('preload-helper') || id.includes('commonjsHelpers')) return 'react'
+          if (!id.includes('node_modules')) return
+          if (/node_modules\/(react|react-dom|scheduler|use-sync-external-store)\//.test(id)) return 'react'
+          if (/node_modules\/(postprocessing|@react-three\/postprocessing)\//.test(id)) return 'postfx'
+          if (/node_modules\/three\//.test(id)) return 'three'
+          if (/node_modules\/(@react-three|three-stdlib|maath|camera-controls|troika|@monogrid|detect-gpu|stats|suspend-react|its-fine|zustand|react-reconciler)/.test(id)) return 'r3f'
+        }
+      }
+    }
+  }
 })

@@ -1,10 +1,11 @@
-import { Suspense, useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useCart, FREE_SHIPPING } from '../store/cart'
 import { formatPrice } from '../data/products'
 import { lockScroll } from '../scroll'
-import { ProductStage } from '../three/ProductViews'
 import { navigate } from '../router'
+
+const ProductStage = lazy(() => import('../three/ProductViews').then((m) => ({ default: m.ProductStage })))
 
 const ease = [0.22, 1, 0.36, 1]
 
