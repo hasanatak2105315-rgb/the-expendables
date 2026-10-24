@@ -56,6 +56,6 @@ Takı ve 3D baskı ürünleri satan, sinematik 3D bir e-ticaret sitesi. Şimdili
 
 - Ödeme formu demodur, gerçek ödeme almaz. Gerçek ödeme için iyzico / PayTR gibi bir sağlayıcı ve sunucu gerekir.
 - KVKK, iade, mesafeli satış, kullanım koşulları ve gizlilik metinleri genel taslaktır. Yayından önce bir hukukçuya kontrol ettirilmeli.
-- Paylaşım görseli (`public/og-image.png`) kodla üretildi; görseldeki alan adı `theexpendables.com.tr` ve başlık yazısı Impact. Alan adı değişirse ya da yeni yazı tipine uydurulmak istenirse yeniden üretilmeli.
+- Paylaşım görseli (`public/og-image.png`, 1200×630) SVG'den `@resvg/resvg-js` ile üretildi (proje dışında, geçici klasörde). Sitedeki yazı tipleri kullanıldı: başlık Cormorant Garamond 600 + italik, metin Manrope (Google Fonts'tan TTF). İçerik: logo, "Işıltı bir detay değil, *bir imza.*", alt yazı, "Koleksiyonu Keşfet" butonu, `theexpendables.com.tr`, sağda zümrüt taşlı altın yüzük. Alan adı değişirse yeniden üretilmeli.
 - Kullanıcının önceliği yayına almak değil, siteyi geliştirmek.
 - "The Expendables" bilinen bir film serisinin adı. Kullanıcıya marka tescilini kontrol ettirmesi önerildi.
