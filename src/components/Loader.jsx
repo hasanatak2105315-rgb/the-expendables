@@ -43,7 +43,7 @@ export default function Loader({ onDone }) {
         <span style={{ transform: `scaleX(${n / 100})` }} />
       </div>
       <div className="loader__meta">
-        <span>OPERASYON YÜKLENİYOR</span>
+        <span>KOLEKSİYON YÜKLENİYOR</span>
         <span className="loader__count">{String(n).padStart(3, '0')}</span>
       </div>
     </motion.div>

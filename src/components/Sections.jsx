@@ -6,7 +6,7 @@ import { scrollToId } from '../scroll'
 const ease = [0.22, 1, 0.36, 1]
 
 export function Marquee() {
-  const items = ['Ücretsiz kargo 1.500 ₺ üzeri', 'Sahada test edildi', '2 yıl garanti', '30 gün koşulsuz iade', 'Sınırlı üretim']
+  const items = ['Ücretsiz kargo 1.500 ₺ üzeri', 'El yapımı', 'Kişiye özel tasarım', 'Hediye paketinde', '30 gün koşulsuz iade', 'Sınırlı üretim']
   const row = [...items, ...items]
   return (
     <div className="marquee" aria-hidden="true">
@@ -40,7 +40,7 @@ export function Story() {
   const ref = useRef()
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.8', 'end 0.55'] })
   const text =
-    'Biz trendleri takip etmeyiz. Zor koşullarda çalışan, yıllarca dayanan ve sana hiçbir zaman ihanet etmeyen ekipmanlar üretiriz. Her dikiş, her vida ve her kadran tek bir görev için var: Sen görevini tamamlarken yanında olmak.'
+    'Biz seri üretimin peşinde değiliz. Her takıyı elde şekillendirir, her tasarımı katman katman basar ve hiçbir parçayı özenle bakmadan paketlemeyiz. Taktığın bir kolye ya da masana koyduğun bir vazo tek bir şey için var: Senin hikâyeni anlatmak.'
   const words = text.split(' ')
   return (
     <section className="section story" id="hikaye">
@@ -57,10 +57,10 @@ export function Story() {
         </p>
         <div className="stats">
           {[
-            ['MIL-STD', '810H dayanıklılık testi'],
-            ['45K+', 'Birlik üyesi'],
+            ['925', 'Ayar gümüş takılar'],
+            ['0.1 MM', 'Baskı hassasiyeti'],
             ['4.9/5', 'Müşteri puanı'],
-            ['24 SA', 'İçinde kargoda']
+            ['1–3 GÜN', 'İçinde kargoda']
           ].map(([a, b], i) => (
             <motion.div
               key={a}
@@ -83,13 +83,13 @@ export function Story() {
 const FEATURES = [
   {
     title: 'Hızlı Teslimat',
-    text: '24 saat içinde kargoda. 1.500 ₺ üzeri siparişlerde kargo bizden.',
+    text: 'Stoktaki ürünler 1–3 iş gününde kargoda, hepsi hediye kutusunda. 1.500 ₺ üzeri kargo bizden.',
     icon: <path d="M3 7h11v9H3zM14 10h4l3 3v3h-7M7 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM17 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
   },
   {
-    title: '2 Yıl Garanti',
-    text: 'Tüm ürünlerde üretici garantisi. Sorun olursa yenisiyle değiştiriyoruz.',
-    icon: <path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3ZM9 12l2 2 4-4" />
+    title: 'Kişiye Özel',
+    text: 'İsim, tarih ya da kendi çizimin. Takını ve 3D baskını sana özel hazırlıyoruz.',
+    icon: <path d="M4 20h4L19 9l-4-4L4 16v4ZM13 7l4 4" />
   },
   {
     title: 'Güvenli Ödeme',
@@ -132,7 +132,7 @@ export function BigBanner() {
   return (
     <section ref={ref} className="banner" aria-hidden="true">
       <motion.div style={{ x }} className="banner__text">
-        GÖREV KABUL EDİLDİ — GÖREV KABUL EDİLDİ —
+        SANA ÖZEL ÜRETİLDİ — SANA ÖZEL ÜRETİLDİ —
       </motion.div>
     </section>
   )
@@ -151,14 +151,14 @@ export function Newsletter() {
           transition={{ duration: 1, ease }}
         >
           <p className="eyebrow">
-            <span className="dot" /> Birliğe Katıl
+            <span className="dot" /> Bültene Katıl
           </p>
           <h2 className="display">
             İlk siparişte <em>%10</em> indirim
           </h2>
-          <p className="muted">Yeni seriler, sınırlı üretimler ve özel kampanyalar önce birlik üyelerine.</p>
+          <p className="muted">Yeni seriler, sınırlı üretimler ve özel kampanyalar önce bülten üyelerine.</p>
           {sent ? (
-            <p className="newsletter__ok">✓ Kaydın alındı. Hoş geldin, asker.</p>
+            <p className="newsletter__ok">✓ Kaydın alındı. Aramıza hoş geldin.</p>
           ) : (
             <form
               onSubmit={(e) => {
@@ -185,7 +185,7 @@ export function Footer() {
         <div className="footer__top">
           <div>
             <Logo />
-            <p className="muted">Dayanıklılık için tasarlandı. İstanbul, Türkiye.</p>
+            <p className="muted">El işçiliği ve 3D baskıyla tasarlandı. İstanbul, Türkiye.</p>
           </div>
           <div className="footer__cols">
             <div>

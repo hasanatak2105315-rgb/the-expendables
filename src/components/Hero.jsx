@@ -29,14 +29,14 @@ export default function Hero({ ready }) {
 
       <div className="container hero__content">
         <motion.p className="eyebrow" initial={{ opacity: 0 }} animate={ready ? { opacity: 1 } : {}} transition={{ delay: d, duration: 1 }}>
-          <span className="dot" /> Sezon 01 — Operasyon Serisi
+          <span className="dot" /> Sezon 01 — El Yapımı Koleksiyon
         </motion.p>
         <h1 className="hero__title">
-          <Line ready={ready} delay={d + 0.1}>Dayanıklılık</Line>
+          <Line ready={ready} delay={d + 0.1}>Işıltı</Line>
           <Line ready={ready} delay={d + 0.22}>
-            <em>bir seçenek</em> değil,
+            <em>bir detay</em> değil,
           </Line>
-          <Line ready={ready} delay={d + 0.34}>bir standart.</Line>
+          <Line ready={ready} delay={d + 0.34}>bir imza.</Line>
         </h1>
         <motion.p
           className="hero__lead"
@@ -44,7 +44,7 @@ export default function Hero({ ready }) {
           animate={ready ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: d + 0.6, duration: 1, ease }}
         >
-          Zorlu koşullar için tasarlanmış taktik saatler, ekipmanlar ve aksesuarlar. Her parça sahada test edildi.
+          El işçiliğiyle hazırlanan takılar ve katman katman basılan 3D tasarımlar. Her parça sana özel, özenle üretiliyor.
         </motion.p>
         <motion.div
           className="hero__cta"
@@ -72,7 +72,7 @@ export default function Hero({ ready }) {
           Kaydır
         </div>
         <div className="hero__coords">
-          <small>Koordinat</small>
+          <small>Atölye</small>
           <strong>41.0082° N, 28.9784° E</strong>
         </div>
       </motion.div>

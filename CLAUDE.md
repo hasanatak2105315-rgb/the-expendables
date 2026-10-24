@@ -28,12 +28,12 @@ Takı ve 3D baskı ürünleri satan, sinematik 3D bir e-ticaret sitesi. Şimdili
 
 - Site kuruldu, yuvarlak özel fare imleci kaldırıldı
 - Ürünler taktik ekipmandan takı ve 3D baskıya çevrildi
+- Sitedeki tüm metinler (giriş, şerit, manifesto, istatistikler, bant, avantajlar, bülten, alt bilgi, yükleme ekranı, sepet, sayfa başlığı) takı ve 3D baskı temasına çevrildi. İstatistiklerdeki sayılar (4.9/5 puan, 0.1 mm vb.) örnek değerlerdir, kullanıcı gerçekleriyle değiştirebilir.
 
 ## Sıradaki işler
 
-1. Metinleri takı ve 3D baskıya uygun hâle getir. Giriş başlığı, alt yazı, "Sezon 01 — Operasyon Serisi", kayan şerit, manifesto, istatistikler (MIL-STD vb.), "Görev kabul edildi" bandı, avantajlar, bülten ve alt bilgi hâlâ eski taktik temada.
-2. Hakkımızda, İletişim, SSS, iade ve KVKK sayfaları
-3. Yayına alma (Vercel veya Netlify)
+1. Hakkımızda, İletişim, SSS, iade ve KVKK sayfaları
+2. Yayına alma (Vercel veya Netlify)
 
 ## Notlar
 

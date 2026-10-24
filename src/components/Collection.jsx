@@ -77,7 +77,7 @@ export default function Collection({ onOpen }) {
               <span className="dot" /> Koleksiyon
             </p>
             <h2 className="display">
-              Sahaya hazır <em>ekipman</em>
+              Sana özel <em>tasarımlar</em>
             </h2>
           </div>
           <div className="filters">

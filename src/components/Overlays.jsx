@@ -126,7 +126,7 @@ export function CartDrawer() {
             {step === 'done' ? (
               <div className="drawer__done">
                 <div className="done-mark">✓</div>
-                <h3 className="display">Görev tamamlandı</h3>
+                <h3 className="display">Teşekkürler!</h3>
                 <p className="muted">
                   Siparişin alındı. Sipariş numaran: <strong>{orderNo}</strong>
                 </p>
@@ -139,7 +139,7 @@ export function CartDrawer() {
                 className="checkout"
                 onSubmit={(e) => {
                   e.preventDefault()
-                  setOrderNo('TX-' + Math.floor(100000 + Math.random() * 900000))
+                  setOrderNo('EX-' + Math.floor(100000 + Math.random() * 900000))
                   clear()
                   setStep('done')
                 }}
@@ -176,7 +176,7 @@ export function CartDrawer() {
                   {lines.length === 0 ? (
                     <div className="empty">
                       <p className="display">Sepetin boş</p>
-                      <p className="muted">Koleksiyona göz at ve ekipmanını seç.</p>
+                      <p className="muted">Koleksiyona göz at ve sana uygun parçayı seç.</p>
                     </div>
                   ) : (
                     <AnimatePresence initial={false}>
