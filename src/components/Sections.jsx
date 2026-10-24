@@ -59,9 +59,9 @@ export function Story() {
         <div className="stats">
           {[
             ['925', 'Ayar gümüş takılar'],
-            ['0.1 MM', 'Baskı hassasiyeti'],
+            ['0,1 mm', 'Baskı hassasiyeti'],
             ['4.9/5', 'Müşteri puanı'],
-            ['1–3 GÜN', 'İçinde kargoda']
+            ['1–3 gün', 'İçinde kargoda']
           ].map(([a, b], i) => (
             <motion.div
               key={a}
@@ -133,7 +133,7 @@ export function BigBanner() {
   return (
     <section ref={ref} className="banner" aria-hidden="true">
       <motion.div style={{ x }} className="banner__text">
-        SANA ÖZEL ÜRETİLDİ — SANA ÖZEL ÜRETİLDİ —
+        Sana özel üretildi — Sana özel üretildi —
       </motion.div>
     </section>
   )
