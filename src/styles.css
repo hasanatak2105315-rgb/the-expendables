@@ -17,8 +17,8 @@
   --deep: #065f46;
   --radius: 22px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
-  /* Başlıklar: zarif serif (takı) · Metinler: modern geometrik (3D baskı) */
-  --font-display: 'Cormorant Garamond', 'Times New Roman', serif;
+  /* Başlıklar: klasik lüks serif (takı) · Metinler: modern geometrik (3D baskı) */
+  --font-display: 'Playfair Display', Georgia, serif;
   --font-body: 'Manrope', system-ui, sans-serif;
 }
 
@@ -167,7 +167,7 @@ main, .footer { position: relative; z-index: 1; }
 .banner__text { font-family: var(--font-display); font-style: italic; font-weight: 500; font-size: clamp(4.5rem, 14vw, 14rem); line-height: 1.1; white-space: nowrap; color: transparent; -webkit-text-stroke: 1px var(--line-strong); }
 
 /* Manifesto */
-.story__text { font-family: var(--font-display); font-weight: 500; font-size: clamp(2.2rem, 4.8vw, 4.5rem); line-height: 1.12; letter-spacing: -0.01em; max-width: 1150px; }
+.story__text { font-family: var(--font-display); font-weight: 500; font-size: clamp(2rem, 4.2vw, 3.9rem); line-height: 1.15; letter-spacing: -0.01em; max-width: 1150px; }
 .word { display: inline; }
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; margin-top: 80px; }
 .stat { background: var(--bg); padding: 34px 28px; }
@@ -367,6 +367,7 @@ main, .footer { position: relative; z-index: 1; }
   .hero__title { font-size: clamp(2.9rem, 13.5vw, 4.4rem); }
   .hero__cta .btn { padding: 14px 22px; }
   .hero__lead { font-size: 1rem; margin: 18px 0 24px; }
+  .story__text { font-size: 1.75rem; }
   .hero__coords { display: none; }
   .hero__meta { bottom: 22px; }
   .section { padding-top: 90px; }

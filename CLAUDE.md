@@ -14,7 +14,7 @@ Takı ve 3D baskı ürünleri satan, sinematik 3D bir e-ticaret sitesi. Şimdili
 - Vite + React 19, Three.js (`@react-three/fiber`, `@react-three/drei`, `@react-three/postprocessing`), `motion`, `lenis`
 - Komutlar: `npm install`, `npm run dev`, `npm run build`
 - Renk paleti: koyu yeşil zemin, nane / zümrüt / limon yeşili vurgular (`src/styles.css` içindeki `:root`)
-- Yazı tipleri (Google Fonts, `index.html`): başlıklarda **Cormorant Garamond** (zarif serif, takı hissi; vurgulu kelimeler `<em>` ile italik ve nane yeşili), metin ve butonlarda **Manrope** (modern, 3D baskı hissi). Büyük başlıklar büyük harfe çevrilmez; küçük etiketler (eyebrow, buton) büyük harf kalır. `--font-display` ve `--font-body` değişkenleri `:root` içinde
+- Yazı tipleri (Google Fonts, `index.html`): başlıklarda **Playfair Display** (klasik lüks serif, takı hissi; vurgulu kelimeler `<em>` ile italik ve nane yeşili), metin ve butonlarda **Manrope** (modern, 3D baskı hissi). Büyük başlıklar büyük harfe çevrilmez; küçük etiketler (eyebrow, buton) büyük harf kalır. `--font-display` ve `--font-body` değişkenleri `:root` içinde
 
 ## Dosyalar
 
@@ -58,4 +58,5 @@ Takı ve 3D baskı ürünleri satan, sinematik 3D bir e-ticaret sitesi. Şimdili
 - KVKK, iade, mesafeli satış, kullanım koşulları ve gizlilik metinleri genel taslaktır. Yayından önce bir hukukçuya kontrol ettirilmeli.
 - Paylaşım görseli (`public/og-image.png`, 1200×630) SVG'den `@resvg/resvg-js` ile üretildi (proje dışında, geçici klasörde). Sitedeki yazı tipleri kullanıldı: başlık Cormorant Garamond 600 + italik, metin Manrope (Google Fonts'tan TTF). İçerik: logo, "Işıltı bir detay değil, *bir imza.*", alt yazı, "Koleksiyonu Keşfet" butonu, `theexpendables.com.tr`, sağda zümrüt taşlı altın yüzük. Alan adı değişirse yeniden üretilmeli.
 - Kullanıcının önceliği yayına almak değil, siteyi geliştirmek.
+- Yazı tipi denemesi: Cormorant Garamond beğenilmedi, şu an Playfair Display deneniyor. Beğenilmezse sıradaki adaylar: Fraunces + Inter, Bodoni Moda + Jost, DM Serif Display + DM Sans. Paylaşım görseli hâlâ Cormorant ile; yazı tipi kesinleşince yeniden üretilecek.
 - "The Expendables" bilinen bir film serisinin adı. Kullanıcıya marka tescilini kontrol ettirmesi önerildi.
