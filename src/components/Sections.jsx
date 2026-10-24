@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react'
 import { motion, useScroll, useTransform } from 'motion/react'
 import { Logo } from './Navbar'
-import { scrollToId } from '../scroll'
+import { Link, goToSection } from '../router'
+import { SITE } from '../data/site'
 
 const ease = [0.22, 1, 0.36, 1]
 
@@ -141,7 +142,7 @@ export function BigBanner() {
 export function Newsletter() {
   const [sent, setSent] = useState(false)
   return (
-    <section className="section" id="iletisim">
+    <section className="section" id="bulten">
       <div className="container">
         <motion.div
           className="newsletter"
@@ -190,21 +191,20 @@ export function Footer() {
           <div className="footer__cols">
             <div>
               <h4>Mağaza</h4>
-              <button onClick={() => scrollToId('koleksiyon')}>Koleksiyon</button>
-              <button onClick={() => scrollToId('koleksiyon')}>Yeni gelenler</button>
-              <button onClick={() => scrollToId('koleksiyon')}>Çok satanlar</button>
+              <button onClick={() => goToSection('koleksiyon')}>Koleksiyon</button>
+              <Link to="/hakkimizda">Hakkımızda</Link>
             </div>
             <div>
               <h4>Yardım</h4>
-              <a href="#">Kargo ve teslimat</a>
-              <a href="#">İade ve değişim</a>
-              <a href="#">Sıkça sorulanlar</a>
+              <Link to="/sss">Sıkça sorulanlar</Link>
+              <Link to="/iade">İade ve değişim</Link>
+              <Link to="/kvkk">KVKK</Link>
             </div>
             <div>
               <h4>İletişim</h4>
-              <a href="mailto:destek@theexpendables.com.tr">destek@theexpendables.com.tr</a>
-              <a href="#">Instagram</a>
-              <a href="#">YouTube</a>
+              <Link to="/iletisim">İletişim formu</Link>
+              <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+              <a href={SITE.instagram}>Instagram</a>
             </div>
           </div>
         </div>
@@ -213,7 +213,9 @@ export function Footer() {
         </div>
         <div className="footer__bottom">
           <span>© {new Date().getFullYear()} The Expendables. Tüm hakları saklıdır.</span>
-          <span>KVKK · Mesafeli Satış Sözleşmesi · Çerez Politikası</span>
+          <span>
+            <Link to="/kvkk">KVKK Aydınlatma Metni</Link> · <Link to="/iade">İade Koşulları</Link>
+          </span>
         </div>
       </div>
     </footer>

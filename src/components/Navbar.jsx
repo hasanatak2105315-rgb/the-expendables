@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import { useCart } from '../store/cart'
-import { scrollToId } from '../scroll'
+import { goToSection, navigate } from '../router'
 
+// '#' ile başlayanlar ana sayfadaki bölümler, '/' ile başlayanlar ayrı sayfalar
 const LINKS = [
-  ['koleksiyon', 'Koleksiyon'],
-  ['hikaye', 'Hikâye'],
-  ['avantajlar', 'Avantajlar'],
-  ['iletisim', 'İletişim']
+  ['#koleksiyon', 'Koleksiyon'],
+  ['/hakkimizda', 'Hakkımızda'],
+  ['/sss', 'SSS'],
+  ['/iletisim', 'İletişim']
 ]
 
 export function Logo() {
@@ -34,9 +35,9 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const go = (id) => {
+  const go = (to) => {
     setMenu(false)
-    scrollToId(id)
+    to.startsWith('#') ? goToSection(to.slice(1)) : navigate(to)
   }
 
   return (
@@ -47,12 +48,12 @@ export default function Navbar() {
       transition={{ delay: 0.4, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className="container nav__inner">
-        <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>
+        <a href="/" aria-label="Ana sayfa" onClick={(e) => { e.preventDefault(); setMenu(false); navigate('/') }}>
           <Logo />
         </a>
         <nav className="nav__links">
-          {LINKS.map(([id, label]) => (
-            <button key={id} onClick={() => go(id)}>
+          {LINKS.map(([to, label]) => (
+            <button key={to} onClick={() => go(to)}>
               {label}
             </button>
           ))}
