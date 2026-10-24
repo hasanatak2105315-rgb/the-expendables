@@ -20,8 +20,8 @@ export default function Hero({ ready }) {
   const d = 0.2
   return (
     <section className="hero">
-      <div className="hero__canvas">
-        <Suspense fallback={null}>
+      <div className="hero__canvas" role="img" aria-label="Işık altında dönen, zümrüt taşlı altın yüzük">
+        <Suspense fallback={<div className="stage-loader" aria-hidden="true" />}>
           <HeroScene />
         </Suspense>
       </div>

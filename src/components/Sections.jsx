@@ -141,6 +141,8 @@ export function BigBanner() {
 
 export function Newsletter() {
   const [sent, setSent] = useState(false)
+  const [email, setEmail] = useState('')
+  const [error, setError] = useState('')
   return (
     <section className="section" id="bulten">
       <div className="container">
@@ -161,17 +163,37 @@ export function Newsletter() {
           {sent ? (
             <p className="newsletter__ok">✓ Kaydın alındı. Aramıza hoş geldin.</p>
           ) : (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                setSent(true)
-              }}
-            >
-              <input type="email" required placeholder="E-posta adresin" aria-label="E-posta" />
-              <button className="btn btn--primary" type="submit">
-                Katıl
-              </button>
-            </form>
+            <>
+              <form
+                noValidate
+                className={error ? 'newsletter__form--error' : ''}
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return setError('Geçerli bir e-posta adresi yaz.')
+                  setSent(true)
+                }}
+              >
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value)
+                    setError('')
+                  }}
+                  placeholder="E-posta adresin"
+                  aria-label="E-posta"
+                  aria-invalid={!!error}
+                  autoComplete="email"
+                />
+                <button className="btn btn--primary" type="submit">
+                  Katıl
+                </button>
+              </form>
+              {error && <p className="newsletter__err" role="alert">{error}</p>}
+              <p className="newsletter__legal">
+                Katılarak kampanya e-postaları almayı kabul edersin, istediğin an ayrılabilirsin. <Link to="/gizlilik">Gizlilik</Link>
+              </p>
+            </>
           )}
         </motion.div>
       </div>
@@ -214,7 +236,8 @@ export function Footer() {
         <div className="footer__bottom">
           <span>© {new Date().getFullYear()} The Expendables. Tüm hakları saklıdır.</span>
           <span>
-            <Link to="/kvkk">KVKK Aydınlatma Metni</Link> · <Link to="/iade">İade Koşulları</Link>
+            <Link to="/kvkk">KVKK</Link> · <Link to="/gizlilik">Gizlilik ve Çerezler</Link> · <Link to="/kullanim-kosullari">Kullanım Koşulları</Link> ·{' '}
+            <Link to="/mesafeli-satis">Mesafeli Satış Sözleşmesi</Link>
           </span>
         </div>
       </div>

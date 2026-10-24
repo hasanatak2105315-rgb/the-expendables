@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { motion } from 'motion/react'
 import { SITE, owner } from '../data/site'
 import { FREE_SHIPPING, SHIPPING_FEE } from '../store/cart'
@@ -20,10 +20,7 @@ const Reveal = ({ children, delay = 0, className }) => (
 )
 
 // Tüm alt sayfaların ortak başlığı
-function Page({ eyebrow, title, intro, docTitle, children }) {
-  useEffect(() => {
-    document.title = `${docTitle} — ${SITE.name}`
-  }, [docTitle])
+function Page({ eyebrow, title, intro, children }) {
   return (
     <section className="page">
       <div className="container">
@@ -58,7 +55,6 @@ const STEPS = [
 export function About() {
   return (
     <Page
-      docTitle="Hakkımızda"
       eyebrow="Hakkımızda"
       title={<>Küçük bir atölye, <em>büyük bir özen</em></>}
       intro="The Expendables, el yapımı takılar ile 3D baskı tasarımları aynı çatı altında buluşturan İstanbul merkezli bir atölye. Seri üretim yerine, her parçaya ayrı ayrı zaman ayırmayı seçiyoruz."
@@ -138,7 +134,6 @@ export function Contact() {
 
   return (
     <Page
-      docTitle="İletişim"
       eyebrow="İletişim"
       title={<>Bize <em>ulaş</em></>}
       intro="Siparişin, kişiye özel bir tasarım fikrin ya da aklına takılan bir soru mu var? Yaz, en geç bir iş günü içinde dönelim."
@@ -249,7 +244,6 @@ const FAQ = [
 export function Faq() {
   return (
     <Page
-      docTitle="Sıkça Sorulan Sorular"
       eyebrow="Yardım"
       title={<>Sıkça sorulan <em>sorular</em></>}
       intro="Aradığın cevabı bulamazsan bize yazman yeterli."
@@ -283,7 +277,6 @@ export function Faq() {
 export function Returns() {
   return (
     <Page
-      docTitle="İade ve Değişim"
       eyebrow="Yardım"
       title={<>İade ve <em>değişim</em></>}
       intro="Aldığın üründen memnun kalmazsan, teslim aldığın günden itibaren 30 gün içinde iade edebilirsin."
@@ -333,7 +326,6 @@ export function Returns() {
 export function Kvkk() {
   return (
     <Page
-      docTitle="KVKK Aydınlatma Metni"
       eyebrow="Yasal"
       title={<>KVKK <em>aydınlatma metni</em></>}
       intro="6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında kişisel verilerinin nasıl işlendiğini aşağıda açıklıyoruz."
@@ -393,10 +385,284 @@ export function Kvkk() {
 
         <h2 id="cerez">Çerezler</h2>
         <p>
-          Sitemiz, sepetinin hatırlanması gibi temel işlevler için tarayıcında küçük veriler saklar. Bu veriler zorunlu işlevler içindir ve tarayıcı ayarlarından
-          dilediğin zaman silinebilir.
+          Sitemiz, sepetinin hatırlanması gibi zorunlu işlevler için tarayıcında küçük veriler saklar. Analiz çerezleri yalnızca onay verirsen kullanılır.
+          Ayrıntılar <Link to="/gizlilik">Gizlilik ve Çerez Politikası</Link>’ndadır.
         </p>
       </div>
+    </Page>
+  )
+}
+
+/* ---------------- Satıcı bilgileri (sözleşmelerde ortak) ---------------- */
+
+function SellerInfo() {
+  return (
+    <ul>
+      <li><strong>Unvan:</strong> {owner()}</li>
+      <li><strong>Adres:</strong> {SITE.address}</li>
+      {SITE.phone && <li><strong>Telefon:</strong> {SITE.phone}</li>}
+      <li><strong>E-posta:</strong> <a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+      {SITE.taxInfo && <li><strong>Vergi dairesi / no:</strong> {SITE.taxInfo}</li>}
+    </ul>
+  )
+}
+
+/* ---------------- Mesafeli satış ---------------- */
+
+export function DistanceSales() {
+  return (
+    <Page
+      eyebrow="Yasal"
+      title={<>Mesafeli satış <em>sözleşmesi</em></>}
+      intro="6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği uyarınca hazırlanmıştır. Sipariş verirken bu metni onaylamış olursun."
+    >
+      <div className="prose">
+        <h2 id="on-bilgilendirme">Ön bilgilendirme formu</h2>
+        <h3>Satıcı</h3>
+        <SellerInfo />
+        <h3>Ürün, fiyat ve ödeme</h3>
+        <p>
+          Satın alınan ürünlerin adı, adedi, özellikleri ve vergiler dahil satış fiyatı, ödeme adımındaki sipariş özetinde gösterilir. Kargo ücreti{' '}
+          {formatPrice(SHIPPING_FEE)}’dir; {formatPrice(FREE_SHIPPING)} ve üzeri siparişlerde kargo ücretsizdir. Ödeme kredi veya banka kartı ile peşin alınır.
+        </p>
+        <h3>Teslimat</h3>
+        <p>
+          Stoktaki ürünler 1–3 iş günü, kişiye özel ürünler tasarım onayından itibaren 5–7 iş günü içinde kargoya verilir. Teslimat her durumda siparişten
+          itibaren yasal süre olan 30 günü geçmez.
+        </p>
+        <h3>Cayma hakkı</h3>
+        <p>
+          Ürünü teslim aldığın günden itibaren 14 gün içinde hiçbir gerekçe göstermeden ve cezai şart ödemeden sözleşmeden cayabilirsin. Mağazamız bu süreyi
+          gönüllü olarak <strong>30 güne</strong> uzatmıştır. Cayma bildirimini <a href={`mailto:${SITE.email}`}>{SITE.email}</a> adresine yazılı olarak
+          iletebilirsin. Ayrıntılar <Link to="/iade">İade ve Değişim</Link> sayfasındadır.
+        </p>
+        <h3>Cayma hakkının kullanılamayacağı durumlar</h3>
+        <ul>
+          <li>Alıcının istekleri veya kişisel ihtiyaçları doğrultusunda hazırlanan kişiye özel ürünler</li>
+          <li>Teslimden sonra ambalajı açılmış, sağlık ve hijyen açısından iadesi uygun olmayan ürünler (ör. küpeler)</li>
+        </ul>
+        <h3>Şikâyet ve itiraz</h3>
+        <p>
+          Şikâyetlerini yukarıdaki iletişim bilgileri üzerinden iletebilirsin. Uyuşmazlıklarda, Ticaret Bakanlığınca her yıl belirlenen parasal sınırlar dahilinde
+          yerleşim yerindeki veya işlemin yapıldığı yerdeki tüketici hakem heyetine ya da tüketici mahkemesine başvurabilirsin.
+        </p>
+
+        <h2>Mesafeli satış sözleşmesi</h2>
+        <h3>1. Taraflar</h3>
+        <p><strong>Satıcı:</strong></p>
+        <SellerInfo />
+        <p>
+          <strong>Alıcı:</strong> Sipariş sırasında ad, soyad, adres, telefon ve e-posta bilgilerini veren kişidir.
+        </p>
+        <h3>2. Konu</h3>
+        <p>
+          Bu sözleşme, alıcının satıcıya ait internet sitesi üzerinden elektronik ortamda sipariş ettiği ürünlerin satışı ve teslimiyle ilgili tarafların hak
+          ve yükümlülüklerini düzenler.
+        </p>
+        <h3>3. Ürün ve fiyat</h3>
+        <p>
+          Ürünlerin türü, adedi, satış fiyatı (vergiler dahil) ve kargo ücreti, siparişin onaylandığı andaki sipariş özetinde belirtildiği gibidir. Fiyatlar
+          sipariş onaylandıktan sonra değiştirilemez.
+        </p>
+        <h3>4. Teslimat</h3>
+        <p>
+          Ürünler alıcının bildirdiği adrese anlaşmalı kargo firmasıyla, ön bilgilendirme formunda belirtilen sürelerde ve en geç 30 gün içinde teslim edilir.
+          Teslimat yapılamazsa alıcı bilgilendirilir ve ödenen tutar 14 gün içinde iade edilir.
+        </p>
+        <h3>5. Cayma hakkı ve iade</h3>
+        <p>
+          Alıcı, ürünü teslim aldığı tarihten itibaren 30 gün içinde cayma hakkını kullanabilir. Satıcı, cayma bildiriminin kendisine ulaşmasından itibaren 14 gün
+          içinde ürün bedelini alıcının ödeme yaptığı yönteme iade eder. Alıcı, ürünü cayma bildiriminden itibaren 10 gün içinde satıcıya geri gönderir.
+          Ön bilgilendirme formunda sayılan ürünlerde cayma hakkı kullanılamaz.
+        </p>
+        <h3>6. Ayıplı ürün</h3>
+        <p>Ürünün ayıplı çıkması hâlinde alıcı, 6502 sayılı Kanun’daki seçimlik haklarını (ücret iadesi, değişim, onarım, indirim) kullanabilir.</p>
+        <h3>7. Uyuşmazlıklar</h3>
+        <p>
+          Bu sözleşmeden doğan uyuşmazlıklarda, parasal sınırlar dahilinde tüketici hakem heyetleri, bu sınırları aşan durumlarda tüketici mahkemeleri yetkilidir.
+        </p>
+        <h3>8. Yürürlük</h3>
+        <p>Alıcı, siparişi onaylamadan önce bu sözleşmeyi ve ön bilgilendirme formunu okuyup onayladığını kabul eder. Sözleşme, sipariş onayıyla yürürlüğe girer.</p>
+      </div>
+    </Page>
+  )
+}
+
+/* ---------------- Kullanım koşulları ---------------- */
+
+export function Terms() {
+  return (
+    <Page eyebrow="Yasal" title={<>Kullanım <em>koşulları</em></>} intro="Bu siteyi kullanarak aşağıdaki koşulları kabul etmiş olursun.">
+      <div className="prose">
+        <h2>Genel</h2>
+        <p>
+          Bu internet sitesi {owner()} tarafından işletilmektedir. Site üzerinden yapılan satışlar ayrıca{' '}
+          <Link to="/mesafeli-satis">Mesafeli Satış Sözleşmesi</Link>’ne tabidir.
+        </p>
+        <h2>Fikrî mülkiyet</h2>
+        <p>
+          Sitedeki tasarımlar, 3D modeller, metinler, logo ve görseller {owner()}’a aittir. İzin alınmadan kopyalanamaz, çoğaltılamaz ve ticari amaçla
+          kullanılamaz.
+        </p>
+        <h2>Ürün bilgileri ve fiyatlar</h2>
+        <p>
+          Ürün bilgilerinin ve fiyatların doğru olması için özen gösteriyoruz. El yapımı ürünlerde renk, ölçü ve dokuda küçük farklar olabilir. Açık bir fiyat
+          hatası olması durumunda siparişi iptal edip ödemenin tamamını iade etme hakkımız saklıdır.
+        </p>
+        <h2>Kişiye özel siparişler</h2>
+        <p>
+          Kişiye özel siparişler için gönderdiğin yazı, logo, fotoğraf ve çizimlerin kullanım hakkının sende olduğunu kabul edersin. Başkasının marka veya telif
+          hakkını ihlal eden, yasa dışı ya da hakaret içeren tasarımları üretmeme hakkımız vardır.
+        </p>
+        <h2>Kullanıcı yükümlülükleri</h2>
+        <ul>
+          <li>Sipariş ve iletişim formlarında doğru bilgi vermek</li>
+          <li>Siteyi yasalara aykırı amaçlarla kullanmamak</li>
+          <li>Sitenin işleyişini bozacak girişimlerde bulunmamak</li>
+        </ul>
+        <h2>Sorumluluk</h2>
+        <p>
+          Sitenin kesintisiz ve hatasız çalışması için çalışıyoruz; ancak teknik arızalar ve bakım çalışmaları nedeniyle oluşabilecek kesintilerden sorumlu
+          tutulamayız. Siteden bağlantı verilen başka sitelerin içeriğinden sorumlu değiliz.
+        </p>
+        <h2>Değişiklikler ve uygulanacak hukuk</h2>
+        <p>
+          Bu koşulları gerektiğinde güncelleyebiliriz; güncel hâli her zaman bu sayfadadır. Koşullara Türkiye Cumhuriyeti kanunları uygulanır. Tüketici
+          uyuşmazlıklarında tüketici hakem heyetleri ve tüketici mahkemeleri yetkilidir.
+        </p>
+      </div>
+    </Page>
+  )
+}
+
+/* ---------------- Gizlilik ve çerezler ---------------- */
+
+export function Privacy() {
+  return (
+    <Page
+      eyebrow="Yasal"
+      title={<>Gizlilik ve <em>çerezler</em></>}
+      intro="Hangi bilgileri topladığımızı, neden topladığımızı ve nasıl koruduğumuzu sade bir dille anlatıyoruz."
+    >
+      <div className="prose">
+        <h2>Topladığımız bilgiler</h2>
+        <ul>
+          <li><strong>Sipariş verirken:</strong> ad, soyad, e-posta, telefon ve teslimat adresi</li>
+          <li><strong>Bize yazarken:</strong> ad, e-posta ve mesajın</li>
+          <li><strong>Bültene katılırken:</strong> e-posta adresin</li>
+          <li><strong>Siteyi gezerken:</strong> sepetin ve çerez tercihlerin (tarayıcında saklanır)</li>
+        </ul>
+        <p>Kart bilgilerini hiçbir zaman saklamıyoruz.</p>
+
+        <h2>Bilgileri ne için kullanıyoruz?</h2>
+        <p>
+          Siparişini hazırlamak ve teslim etmek, sorularını yanıtlamak, yasal yükümlülüklerimizi yerine getirmek ve yalnızca izin verirsen kampanyalardan haberdar
+          etmek için. Bilgilerini satmıyor, reklam amacıyla başkalarıyla paylaşmıyoruz.
+        </p>
+
+        <h2 id="cerezler">Çerezler</h2>
+        {SITE.analyticsId ? (
+          <>
+            <p>Sitemizde iki tür çerez kullanılır:</p>
+            <ul>
+              <li>
+                <strong>Zorunlu çerezler:</strong> Sepetinin ve çerez tercihinin hatırlanması için gereklidir. Bunlar olmadan site düzgün çalışmaz, bu yüzden
+                onay gerektirmez.
+              </li>
+              <li>
+                <strong>Analiz çerezleri (Google Analytics):</strong> Sitenin nasıl kullanıldığını anonim olarak ölçmemize yardımcı olur. Yalnızca çerez
+                bandında <strong>“Kabul et”</strong> dersen çalışır.
+              </li>
+            </ul>
+            <p>
+              Tercihini istediğin zaman{' '}
+              <button className="prose__btn" onClick={() => window.dispatchEvent(new Event('cookie-settings'))}>
+                çerez ayarlarından
+              </button>{' '}
+              değiştirebilirsin.
+            </p>
+          </>
+        ) : (
+          <p>
+            Sitemiz yalnızca <strong>zorunlu çerezler</strong> kullanır: sepetinin hatırlanması gibi, site çalışsın diye gereken bilgiler tarayıcında saklanır.
+            Reklam ya da takip çerezi kullanılmaz. Bu bilgileri tarayıcı ayarlarından dilediğin zaman silebilirsin.
+          </p>
+        )}
+
+        <h2>Güvenlik ve saklama süresi</h2>
+        <p>
+          Site ile aranızdaki tüm bağlantılar SSL ile şifrelenir. Bilgilerini, yasal saklama süreleri boyunca ve işleme amacı devam ettiği sürece saklar, sonra
+          siler veya anonim hâle getiririz.
+        </p>
+
+        <h2>Haklarınız</h2>
+        <p>
+          Bilgilerine erişme, düzeltme ve silinmesini isteme hakların hakkında ayrıntılı bilgi <Link to="/kvkk">KVKK Aydınlatma Metni</Link>’nde yer alır. Her
+          türlü soru için <a href={`mailto:${SITE.email}`}>{SITE.email}</a> adresine yazabilirsin.
+        </p>
+      </div>
+    </Page>
+  )
+}
+
+/* ---------------- Teşekkürler ---------------- */
+
+const readOrder = () => {
+  try {
+    return JSON.parse(sessionStorage.getItem('last-order'))
+  } catch {
+    return null
+  }
+}
+
+export function ThankYou() {
+  const [order] = useState(readOrder)
+  return (
+    <Page
+      eyebrow="Sipariş alındı"
+      title={<>Teşekkürler, <em>siparişin yolda</em></>}
+      intro={order ? `Sipariş özetini ${order.email} adresine göndereceğiz.` : 'Siparişin için teşekkür ederiz.'}
+    >
+      {order && (
+        <Reveal className="order">
+          <div>
+            <small>Sipariş numarası</small>
+            <strong>{order.no}</strong>
+          </div>
+          <div>
+            <small>Toplam</small>
+            <strong>{formatPrice(order.total)}</strong>
+          </div>
+        </Reveal>
+      )}
+      <Reveal className="page__block">
+        <h2 className="display page__h2">Şimdi ne olacak?</h2>
+        <ol className="steps">
+          <li>
+            <strong>Onay</strong>
+            <span className="muted">Sipariş özetin e-postana gelir.</span>
+          </li>
+          <li>
+            <strong>Hazırlık</strong>
+            <span className="muted">Ürünün atölyede özenle hazırlanır.</span>
+          </li>
+          <li>
+            <strong>Kargo</strong>
+            <span className="muted">1–3 iş günü içinde takip numaran gelir.</span>
+          </li>
+          <li>
+            <strong>Teslimat</strong>
+            <span className="muted">Hediye kutusunda kapına ulaşır.</span>
+          </li>
+        </ol>
+      </Reveal>
+      <Reveal className="page__cta">
+        <p className="muted">Sorun mu var? Sipariş numaranla bize yaz.</p>
+        <div className="hero__cta">
+          <Link className="btn btn--primary" to="/">Alışverişe Devam Et</Link>
+          <Link className="btn btn--ghost" to="/iletisim">Bize Yaz</Link>
+        </div>
+      </Reveal>
     </Page>
   )
 }
@@ -405,7 +671,7 @@ export function Kvkk() {
 
 export function NotFound() {
   return (
-    <Page docTitle="Sayfa bulunamadı" eyebrow="404" title={<>Bu sayfa <em>kayıp</em></>} intro="Aradığın sayfa taşınmış ya da hiç var olmamış olabilir.">
+    <Page eyebrow="404" title={<>Bu sayfa <em>kayıp</em></>} intro="Aradığın sayfa taşınmış ya da hiç var olmamış olabilir.">
       <div className="hero__cta">
         <Link className="btn btn--primary" to="/">Ana Sayfaya Dön</Link>
         <Link className="btn btn--ghost" to="/iletisim">Bize Yaz</Link>

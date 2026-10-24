@@ -6,13 +6,25 @@ import Hero from './components/Hero'
 import Collection from './components/Collection'
 import { Marquee, Story, Features, BigBanner, Newsletter, Footer } from './components/Sections'
 import { ProductModal, CartDrawer, Toast } from './components/Overlays'
-import { About, Contact, Faq, Returns, Kvkk, NotFound } from './components/Pages'
+import { About, Contact, Faq, Returns, Kvkk, Privacy, Terms, DistanceSales, ThankYou, NotFound } from './components/Pages'
+import { MobileCta, CookieBanner } from './components/Extras'
 import { usePath } from './router'
+import { applyMeta } from './meta'
 import { ViewsCanvas } from './three/ProductViews'
 import { CartProvider } from './store/cart'
 import { startSmoothScroll, lockScroll } from './scroll'
 
-const PAGES = { '/hakkimizda': About, '/iletisim': Contact, '/sss': Faq, '/iade': Returns, '/kvkk': Kvkk }
+const PAGES = {
+  '/hakkimizda': About,
+  '/iletisim': Contact,
+  '/sss': Faq,
+  '/iade': Returns,
+  '/kvkk': Kvkk,
+  '/gizlilik': Privacy,
+  '/kullanim-kosullari': Terms,
+  '/mesafeli-satis': DistanceSales,
+  '/tesekkurler': ThankYou
+}
 
 export default function App() {
   const path = usePath()
@@ -25,13 +37,10 @@ export default function App() {
     lockScroll(loading)
     if (loading) window.scrollTo(0, 0)
   }, [loading])
+  useEffect(() => applyMeta(path), [path])
 
   const done = useCallback(() => setLoading(false), [])
   const closeModal = useCallback(() => setSelected(null), [])
-
-  useEffect(() => {
-    if (path === '/') document.title = 'The Expendables — Takı ve 3D Baskı'
-  }, [path])
 
   return (
     <CartProvider>
@@ -55,9 +64,11 @@ export default function App() {
       </main>
       <Footer />
       <ViewsCanvas />
+      <MobileCta />
       <CartDrawer />
       <ProductModal product={selected} onClose={closeModal} />
       <Toast />
+      <CookieBanner />
     </CartProvider>
   )
 }

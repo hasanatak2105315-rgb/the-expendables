@@ -18,31 +18,42 @@ Takı ve 3D baskı ürünleri satan, sinematik 3D bir e-ticaret sitesi. Şimdili
 ## Dosyalar
 
 - `src/data/products.js`: ürünler ve kategoriler (Takı, 3D Baskı, Kişiye Özel)
+- `src/data/site.js`: şirket ve iletişim bilgileri, site adresi (`url`), Google Analytics kimliği (`analyticsId`) ve her sayfanın Google başlığı/açıklaması (`ROUTES`). Boş alanlar sitede gösterilmez
 - `src/three/Models.jsx`: ürünlerin kodla çizilmiş 3D modelleri (yüzük, kolye, küpe, bileklik, vazo, lamba, saksı, heykel, anahtarlık)
 - `src/three/HeroScene.jsx`: giriş sahnesi (zümrüt yüzük, yansıyan zemin, bloom)
 - `src/three/ProductViews.jsx`: ürün kartlarındaki 3D görünümler (tek ortak Canvas + drei `View`) ve ürün detayındaki 3D sahne
-- `src/components/`: menü, giriş, koleksiyon, bölümler, sepet ve ürün detayı
-- `src/components/Pages.jsx`: alt sayfalar (Hakkımızda, İletişim, SSS, İade, KVKK) ve 404
-- `src/router.jsx`: küçük yönlendirici. Gerçek adresler kullanır (`/hakkimizda`, `/iletisim`, `/sss`, `/iade`, `/kvkk`). Sayfa listesi `src/App.jsx` içindeki `PAGES`
-- `src/data/site.js`: şirket ve iletişim bilgileri (e-posta, telefon, adres, şirket unvanı). Boş alanlar sitede gösterilmez
-- `public/_redirects` (Netlify) ve `vercel.json`: doğrudan açılan alt sayfa adresleri için yönlendirme
+- `src/components/`: menü, giriş, koleksiyon, bölümler, sepet, ödeme formu ve ürün detayı
+- `src/components/Pages.jsx`: alt sayfalar (Hakkımızda, İletişim, SSS, İade, KVKK, Gizlilik, Kullanım Koşulları, Mesafeli Satış, Teşekkürler) ve 404
+- `src/components/Extras.jsx`: sabit mobil buton, çerez bandı ve Google Analytics yükleyici
+- `src/router.jsx`: küçük yönlendirici, gerçek adresler kullanır. Sayfa listesi `src/App.jsx` içindeki `PAGES`. Yeni sayfa eklenince `site.js` içindeki `ROUTES`'a da eklenmeli (sitemap oradan üretilir)
+- `src/meta.js`: sayfa değişince başlık, açıklama, canonical ve paylaşım bilgilerini günceller
+- `vite.config.js`: derlemede `sitemap.xml` ve `robots.txt` üretir, `index.html` içindeki site adresini `site.js`'teki `url` ile değiştirir
+- `public/`: favicon, `apple-touch-icon.png`, `icon-512.png`, `og-image.png` (1200×630 paylaşım görseli), `_redirects` (Netlify). Kökte `vercel.json`
 - `src/store/cart.jsx`: sepet (localStorage), kargo ücreti ve ücretsiz kargo sınırı
 
 ## Yapılanlar
 
 - Site kuruldu, yuvarlak özel fare imleci kaldırıldı
 - Ürünler taktik ekipmandan takı ve 3D baskıya çevrildi
-- Sitedeki tüm metinler (giriş, şerit, manifesto, istatistikler, bant, avantajlar, bülten, alt bilgi, yükleme ekranı, sepet, sayfa başlığı) takı ve 3D baskı temasına çevrildi. İstatistiklerdeki sayılar (4.9/5 puan, 0.1 mm vb.) örnek değerlerdir, kullanıcı gerçekleriyle değiştirebilir.
-- Hakkımızda, İletişim, SSS, İade ve KVKK sayfaları ile 404 sayfası eklendi. Menü ve alt bilgi bu sayfalara bağlandı. İletişim formunda hata mesajları var; sunucu olmadığı için form, ziyaretçinin e-posta uygulamasını hazır mesajla açar.
+- Sitedeki tüm metinler takı ve 3D baskı temasına çevrildi. İstatistiklerdeki sayılar (4.9/5 puan, 0.1 mm vb.) örnek değerlerdir.
+- Hakkımızda, İletişim, SSS, İade, KVKK ve 404 sayfaları eklendi. İletişim formu, sunucu olmadığı için ziyaretçinin e-posta uygulamasını hazır mesajla açar.
+- Kontrol listesi tamamlandı:
+  - Yasal: Mesafeli Satış Sözleşmesi + Ön Bilgilendirme Formu, Kullanım Koşulları, Gizlilik ve Çerez Politikası. Ödeme formunda sözleşme onay kutusu zorunlu
+  - SEO: her sayfaya ayrı başlık/açıklama, canonical, robots.txt, sitemap.xml, Open Graph görseli, iPhone ikonu, 3D alanlara ekran okuyucu açıklaması
+  - Mobil: sabit alt buton (sepette ürün varsa sepeti açar), yükleme göstergeleri
+  - Formlar: ödeme ve bülten formlarında alan alan hata mesajları, kart numarası/tarih otomatik biçimleniyor
+  - Sipariş sonrası `/tesekkurler` sayfası (sipariş numarası sessionStorage'dan okunur, Google'a kapalı)
+  - Google Analytics 4 + çerez bandı hazır ama `analyticsId` boş olduğu için kapalı. Kimlik girilince bant çıkar, GA yalnızca "Kabul et" sonrası yüklenir
 
 ## Sıradaki işler
 
-1. Kullanıcının istediği kontrol listesi: meta title/description, ilk ekran CTA, favicon, robots.txt, sitemap.xml, Open Graph görseli, alt metinler, mobil uyum, sabit mobil CTA, yükleme durumları, form hataları, teşekkürler sayfası, gizlilik sayfası, kullanım koşulları, çerez bannerı, analytics, iletişim bilgileri, görsel optimizasyonu
-2. Mesafeli Satış Sözleşmesi ve Ön Bilgilendirme Formu (Türkiye'de e-ticaret için zorunlu)
+1. Kullanıcıdan alınacak bilgiler: şirket unvanı, vergi bilgisi, telefon, Instagram adresi, gerçek alan adı, (istenirse) Google Analytics kimliği
+2. Performans: ana JS dosyası ~1,4 MB (three.js). 3D kodu ayrı parçalara bölünerek ilk açılış hızlandırılabilir
 3. Yayına alma (Vercel veya Netlify)
 
 ## Notlar
 
-- Ödeme formu demodur, gerçek ödeme almaz.
-- KVKK ve iade metinleri genel taslaktır. Yayından önce şirket unvanı, vergi bilgisi ve telefon `src/data/site.js` içine girilmeli, metinler bir hukukçuya kontrol ettirilmeli.
+- Ödeme formu demodur, gerçek ödeme almaz. Gerçek ödeme için iyzico / PayTR gibi bir sağlayıcı ve sunucu gerekir.
+- KVKK, iade, mesafeli satış, kullanım koşulları ve gizlilik metinleri genel taslaktır. Yayından önce bir hukukçuya kontrol ettirilmeli.
+- Paylaşım görseli (`public/og-image.png`) kodla üretildi; görseldeki alan adı `theexpendables.com.tr`. Alan adı değişirse görsel yeniden üretilmeli.
 - "The Expendables" bilinen bir film serisinin adı. Kullanıcıya marka tescilini kontrol ettirmesi önerildi.

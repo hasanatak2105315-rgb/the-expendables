@@ -4,6 +4,7 @@ import { useCart, FREE_SHIPPING } from '../store/cart'
 import { formatPrice } from '../data/products'
 import { lockScroll } from '../scroll'
 import { ProductStage } from '../three/ProductViews'
+import { navigate } from '../router'
 
 const ease = [0.22, 1, 0.36, 1]
 
@@ -44,8 +45,8 @@ export function ProductModal({ product, onClose }) {
             <button className="icon-btn modal__close" onClick={onClose} aria-label="Kapat">
               ✕
             </button>
-            <div className="modal__stage">
-              <Suspense fallback={null}>
+            <div className="modal__stage" role="img" aria-label={`${product.name} — sürükleyerek döndürülebilen 3D görünüm`}>
+              <Suspense fallback={<div className="stage-loader" aria-hidden="true" />}>
                 <ProductStage model={product.model} />
               </Suspense>
               <span className="modal__hint">Döndürmek için sürükle</span>
@@ -91,14 +92,123 @@ export function ProductModal({ product, onClose }) {
   )
 }
 
+/* ---------------- Ödeme formu ---------------- */
+
+const digits = (v) => v.replace(/\D/g, '')
+
+function checkoutErrors(f) {
+  const e = {}
+  if (f.name.trim().length < 2) e.name = 'Adını yaz.'
+  if (f.surname.trim().length < 2) e.surname = 'Soyadını yaz.'
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim())) e.email = 'Geçerli bir e-posta adresi yaz.'
+  if (!/^(90)?0?5\d{9}$/.test(digits(f.phone))) e.phone = 'Telefonunu 05xx xxx xx xx şeklinde yaz.'
+  if (f.address.trim().length < 15) e.address = 'Mahalle, sokak, no, ilçe ve il ile tam adresini yaz.'
+  if (digits(f.card).length !== 16) e.card = 'Kart numarası 16 haneli olmalı.'
+  const [mm, yy] = f.exp.split('/').map(Number)
+  const now = new Date()
+  const expired = 2000 + yy < now.getFullYear() || (2000 + yy === now.getFullYear() && mm < now.getMonth() + 1)
+  if (!/^\d{2}\/\d{2}$/.test(f.exp) || mm < 1 || mm > 12) e.exp = 'AA/YY şeklinde yaz.'
+  else if (expired) e.exp = 'Kartının süresi dolmuş.'
+  if (!/^\d{3,4}$/.test(f.cvc)) e.cvc = '3 ya da 4 haneli olmalı.'
+  if (!f.agree) e.agree = 'Devam etmek için sözleşmeleri onaylamalısın.'
+  return e
+}
+
+function Checkout({ total, onBack, onDone }) {
+  const [f, setF] = useState({ name: '', surname: '', email: '', phone: '', address: '', card: '', exp: '', cvc: '', agree: false })
+  const [errors, setErrors] = useState({})
+  const [busy, setBusy] = useState(false)
+
+  const format = {
+    card: (v) => digits(v).slice(0, 16).replace(/(\d{4})(?=\d)/g, '$1 '),
+    exp: (v) => digits(v).slice(0, 4).replace(/^(\d{2})(\d)/, '$1/$2'),
+    cvc: (v) => digits(v).slice(0, 4)
+  }
+  const set = (k) => (e) => {
+    const v = k === 'agree' ? e.target.checked : format[k] ? format[k](e.target.value) : e.target.value
+    setF((x) => ({ ...x, [k]: v }))
+    if (errors[k]) setErrors((x) => ({ ...x, [k]: undefined }))
+  }
+  const err = (k) => errors[k] && <small role="alert">{errors[k]}</small>
+  const cls = (k) => `field ${errors[k] ? 'field--error' : ''}`
+  const input = (k, label, props = {}) => (
+    <label className={cls(k)}>
+      <span>{label}</span>
+      <input value={f[k]} onChange={set(k)} aria-invalid={!!errors[k]} {...props} />
+      {err(k)}
+    </label>
+  )
+
+  const submit = (e) => {
+    e.preventDefault()
+    const found = checkoutErrors(f)
+    setErrors(found)
+    if (Object.keys(found).length) {
+      e.currentTarget.querySelector(`[name="${Object.keys(found)[0]}"]`)?.focus()
+      return
+    }
+    setBusy(true)
+    // Demo: gerçek ödeme yerine kısa bir bekleme
+    setTimeout(() => {
+      const order = { no: 'EX-' + Math.floor(100000 + Math.random() * 900000), total, email: f.email.trim() }
+      try {
+        sessionStorage.setItem('last-order', JSON.stringify(order))
+      } catch {}
+      onDone()
+      navigate('/tesekkurler')
+    }, 1200)
+  }
+
+  return (
+    <form className="checkout" onSubmit={submit} noValidate>
+      <div className="row">
+        {input('name', 'Ad', { name: 'name', autoComplete: 'given-name' })}
+        {input('surname', 'Soyad', { name: 'surname', autoComplete: 'family-name' })}
+      </div>
+      {input('email', 'E-posta', { name: 'email', type: 'email', autoComplete: 'email' })}
+      {input('phone', 'Telefon', { name: 'phone', type: 'tel', autoComplete: 'tel', placeholder: '05xx xxx xx xx' })}
+      <label className={cls('address')}>
+        <span>Teslimat adresi</span>
+        <textarea name="address" rows={2} value={f.address} onChange={set('address')} autoComplete="street-address" aria-invalid={!!errors.address} />
+        {err('address')}
+      </label>
+      {input('card', 'Kart numarası', { name: 'card', inputMode: 'numeric', autoComplete: 'cc-number', placeholder: '0000 0000 0000 0000' })}
+      <div className="row">
+        {input('exp', 'Son kullanma', { name: 'exp', inputMode: 'numeric', autoComplete: 'cc-exp', placeholder: 'AA/YY' })}
+        {input('cvc', 'CVC', { name: 'cvc', inputMode: 'numeric', autoComplete: 'cc-csc', placeholder: '123' })}
+      </div>
+      <label className={`check ${errors.agree ? 'field--error' : ''}`}>
+        <input type="checkbox" name="agree" checked={f.agree} onChange={set('agree')} />
+        <span>
+          <a href="/mesafeli-satis#on-bilgilendirme" target="_blank" rel="noopener">Ön Bilgilendirme Formu</a>’nu ve{' '}
+          <a href="/mesafeli-satis" target="_blank" rel="noopener">Mesafeli Satış Sözleşmesi</a>’ni okudum, onaylıyorum.
+        </span>
+      </label>
+      {err('agree')}
+      <p className="note">Bu bir demo ödeme formudur, gerçek ödeme alınmaz.</p>
+      <div className="totals">
+        <div className="grand">
+          <span>Toplam</span>
+          <span>{formatPrice(total)}</span>
+        </div>
+      </div>
+      <button className="btn btn--primary btn--block" type="submit" disabled={busy} aria-busy={busy}>
+        {busy ? <><span className="spinner" aria-hidden="true" /> Ödeme işleniyor…</> : 'Siparişi Onayla'}
+      </button>
+      <button type="button" className="btn btn--ghost btn--block" onClick={onBack} disabled={busy}>
+        Sepete dön
+      </button>
+    </form>
+  )
+}
+
 export function CartDrawer() {
   const { open, setOpen, lines, subtotal, shipping, total, setQty, clear } = useCart()
   const [step, setStep] = useState('cart')
-  const [orderNo, setOrderNo] = useState('')
   const close = () => setOpen(false)
   useEscape(open, close)
   useEffect(() => {
-    if (open && step === 'done') setStep('cart')
+    if (!open) setStep('cart')
   }, [open])
 
   const left = FREE_SHIPPING - subtotal
@@ -123,53 +233,8 @@ export function CartDrawer() {
               </button>
             </div>
 
-            {step === 'done' ? (
-              <div className="drawer__done">
-                <div className="done-mark">✓</div>
-                <h3 className="display">Teşekkürler!</h3>
-                <p className="muted">
-                  Siparişin alındı. Sipariş numaran: <strong>{orderNo}</strong>
-                </p>
-                <button className="btn btn--primary" onClick={close}>
-                  Alışverişe devam et
-                </button>
-              </div>
-            ) : step === 'checkout' ? (
-              <form
-                className="checkout"
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  setOrderNo('EX-' + Math.floor(100000 + Math.random() * 900000))
-                  clear()
-                  setStep('done')
-                }}
-              >
-                <div className="row">
-                  <input required placeholder="Ad" />
-                  <input required placeholder="Soyad" />
-                </div>
-                <input required type="email" placeholder="E-posta" />
-                <input required type="tel" placeholder="Telefon" />
-                <textarea required rows={2} placeholder="Teslimat adresi" />
-                <input required placeholder="Kart numarası" inputMode="numeric" maxLength={19} />
-                <div className="row">
-                  <input required placeholder="AA/YY" maxLength={5} />
-                  <input required placeholder="CVC" maxLength={4} inputMode="numeric" />
-                </div>
-                <p className="note">Bu bir demo ödeme formudur, gerçek ödeme alınmaz.</p>
-                <div className="totals">
-                  <div className="grand">
-                    <span>Toplam</span>
-                    <span>{formatPrice(total)}</span>
-                  </div>
-                </div>
-                <button className="btn btn--primary btn--block" type="submit">
-                  Siparişi Onayla
-                </button>
-                <button type="button" className="btn btn--ghost btn--block" onClick={() => setStep('cart')}>
-                  Sepete dön
-                </button>
-              </form>
+            {step === 'checkout' ? (
+              <Checkout total={total} onBack={() => setStep('cart')} onDone={() => { clear(); close() }} />
             ) : (
               <>
                 <div className="drawer__body">
