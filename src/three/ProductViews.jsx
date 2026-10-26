@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { Suspense, useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { View, PerspectiveCamera, Float, ContactShadows, OrbitControls, Sparkles } from '@react-three/drei'
 import { Model } from './Models'
@@ -39,9 +39,11 @@ export function MannequinView({ className }) {
       <PerspectiveCamera makeDefault position={[0, 0.55, 6.6]} fov={30} />
       <Studio intensity={0.8} />
       <spotLight position={[0.5, 3.5, 2]} angle={0.5} penumbra={1} intensity={30} color="#eafff3" />
-      <Mannequin />
+      <Suspense fallback={null}>
+        <Mannequin />
+      </Suspense>
       <Sparkles count={40} scale={[2.4, 3, 1.6]} position-y={0.4} size={1.6} speed={0.25} opacity={0.5} color="#6ee7b7" />
-      <ContactShadows position={[0, -1.42, 0]} opacity={0.6} scale={3} blur={2.5} far={1.5} color="#000" />
+      <ContactShadows position={[0, -1.44, 0]} opacity={0.6} scale={3} blur={2.5} far={1.5} color="#000" />
     </View>
   )
 }

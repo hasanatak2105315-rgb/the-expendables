@@ -23,7 +23,7 @@ Takı ve 3D baskı ürünleri satan, sinematik 3D bir e-ticaret sitesi. Şimdili
 - `src/three/Models.jsx`: ürünlerin kodla çizilmiş 3D modelleri (yüzük, kolye, küpe, bileklik, vazo, lamba, saksı, heykel, anahtarlık)
 - `src/three/HeroScene.jsx`: giriş sahnesi (zümrüt yüzük, yansıyan zemin, bloom)
 - `src/three/ProductViews.jsx`: ürün kartlarındaki 3D görünümler (tek ortak Canvas + drei `View`), sanal prova mankeninin sahnesi ve ürün detayındaki 3D sahne
-- `src/three/Mannequin.jsx`: kodla çizilmiş vitrin mankeni ve üstüne takılan takılar. Kamera her ürün tipinde ilgili bölgeye yaklaşır (`FOCUS`)
+- `src/three/Mannequin.jsx`: sanal prova mankeni. Model `public/models/mannequin.glb` (three.js örneklerindeki "Xbot", Adobe Mixamo karakteri; yalnızca `idle` animasyonu bırakılıp meshopt ile sıkıştırıldı, 806 KB). Takılar kemiklere bağlı (`ANCHORS`), sağ kol `POSE` ile öne kaldırılır, kamera her ürün tipinde ilgili bölgeye yaklaşır (`FOCUS`). Yükleyici kemik adlarındaki `:` işaretini siler (`mixamorigHead`)
 - `src/store/tryon.js`: mankende gösterilen ürün (kartın üzerine gelince değişir)
 - `src/components/`: menü, giriş, koleksiyon, bölümler, sepet, ödeme formu ve ürün detayı
 - `src/components/Pages.jsx`: alt sayfalar (Hakkımızda, İletişim, SSS, İade, KVKK, Gizlilik, Kullanım Koşulları, Mesafeli Satış, Teşekkürler) ve 404
@@ -49,7 +49,7 @@ Takı ve 3D baskı ürünleri satan, sinematik 3D bir e-ticaret sitesi. Şimdili
   - Google Analytics 4 + çerez bandı hazır ama `analyticsId` boş olduğu için kapalı. Kimlik girilince bant çıkar, GA yalnızca "Kabul et" sonrası yüklenir
 - Performans: 3D kodu ayrı parçalara bölündü. İlk açılışta ~445 KB (gzip ~140 KB) iner, önceden 1,42 MB idi. 3D dosyaları (`three`, `r3f`, `postfx`) `React.lazy` ile sonradan yüklenir; alt sayfalarda hiç inmez. Bölme ayarı `vite.config.js` içindeki `manualChunks`. Vite yardımcıları ve React `react` parçasında kalmalı, yoksa 3D dosyası baştan iner. Derlenmiş hâli denemek için `.claude/launch.json` içinde `preview` (port 4173) var
 
-- Sanal prova: Koleksiyonda ürünlerin solunda ekranla birlikte kayan bir manken var. Kartın üzerine gelince ürün mankende belirir: küpe kulakta, kolye boyunda, yüzük parmakta, bileklik bilekte, 3D baskı ürünleri avuçta süzülür. Fare ayrılınca son ürün kalır. Yalnızca fareli ve 1025 px'ten geniş ekranlarda görünür (dokunmatikte gizli)
+- Sanal prova: Koleksiyonda ürünlerin solunda ekranla birlikte kayan bir manken var. Kartın üzerine gelince ürün mankende belirir: küpe kulakta, kolye boyunda, yüzük parmakta, bileklik bilekte, 3D baskı ürünleri avuçta süzülür. Fare ayrılınca son ürün kalır. Önce kodla çizilmiş basit bir manken vardı, sonra gerçek insan oranlarındaki hazır modele geçildi. Model yalnızca manken gösterilince iner. Yalnızca fareli ve 1025 px'ten geniş ekranlarda görünür (dokunmatikte gizli)
 
 ## Sıradaki işler
 
@@ -63,4 +63,5 @@ Takı ve 3D baskı ürünleri satan, sinematik 3D bir e-ticaret sitesi. Şimdili
 - Paylaşım görseli (`public/og-image.png`, 1200×630) SVG'den `@resvg/resvg-js` ile üretildi (proje dışında, geçici klasörde). Sitedeki yazı tipleri kullanıldı: başlık Playfair Display 500 + italik, logo Playfair 600, metin Manrope (Google Fonts'tan TTF). İçerik: logo, "Işıltı bir detay değil, *bir imza.*", alt yazı, "Koleksiyonu Keşfet" butonu, `theexpendables.com.tr`, sağda zümrüt taşlı altın yüzük. Alan adı değişirse yeniden üretilmeli.
 - Kullanıcının önceliği yayına almak değil, siteyi geliştirmek.
 - Yazı tipi kesinleşti: Playfair Display + Manrope (kullanıcı onayladı). Önce Cormorant Garamond denendi, beğenilmedi.
+- Manken modeli Adobe Mixamo karakteri: projelerde ticari kullanım ücretsiz, ama model tek başına satılamaz/dağıtılamaz. Daha gerçekçi ya da markaya özel bir model istenirse aynı kemik adlarına (Mixamo iskeleti) sahip bir .glb ile değiştirmek en kolayı
 - "The Expendables" bilinen bir film serisinin adı. Kullanıcıya marka tescilini kontrol ettirmesi önerildi.
