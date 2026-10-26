@@ -1,9 +1,60 @@
-import { lazy, Suspense, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { CATEGORIES, PRODUCTS, formatPrice } from '../data/products'
 import { useCart } from '../store/cart'
+import { setTryOn, useTryOn } from '../store/tryon'
 
 const CardView = lazy(() => import('../three/ProductViews').then((m) => ({ default: m.CardView })))
+const MannequinView = lazy(() => import('../three/ProductViews').then((m) => ({ default: m.MannequinView })))
+
+// Manken yalnızca fareli, geniş ekranlarda gösterilir (dokunmatikte "üzerine gelme" yok)
+const WIDE = '(min-width: 1025px) and (hover: hover)'
+function useWide() {
+  const [wide, setWide] = useState(() => window.matchMedia(WIDE).matches)
+  useEffect(() => {
+    const mq = window.matchMedia(WIDE)
+    const onChange = () => setWide(mq.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+  return wide
+}
+
+// Ürünlerin yanında ekranla birlikte kayan sanal prova alanı
+function TryOn() {
+  const product = useTryOn()
+  return (
+    <aside className="tryon" role="img" aria-label={product ? `Mankenin üzerinde ${product.name}` : 'Vitrin mankeni'}>
+      <Suspense fallback={<div className="stage-loader" aria-hidden="true" />}>
+        <MannequinView className="tryon__view" />
+      </Suspense>
+      <p className="eyebrow tryon__label">
+        <span className="dot" /> Sanal prova
+      </p>
+      <div className="tryon__info">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={product?.id ?? 'empty'}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.35 }}
+          >
+            {product ? (
+              <>
+                <small>{product.category}</small>
+                <strong>{product.name}</strong>
+                <span className="price">{formatPrice(product.price)}</span>
+              </>
+            ) : (
+              <span className="tryon__hint">Bir ürünün üzerine gel, mankende gör</span>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </aside>
+  )
+}
 
 function ProductCard({ product, index, onOpen }) {
   const { add } = useCart()
@@ -36,7 +87,11 @@ function ProductCard({ product, index, onOpen }) {
       exit={{ opacity: 0, scale: 0.95 }}
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.9, delay: (index % 3) * 0.1, ease: [0.22, 1, 0.36, 1] }}
-      onMouseEnter={() => setHovered(true)}
+      onMouseEnter={() => {
+        setHovered(true)
+        setTryOn(product)
+      }}
+      onFocus={() => setTryOn(product)}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
     >
@@ -70,6 +125,7 @@ function ProductCard({ product, index, onOpen }) {
 export default function Collection({ onOpen }) {
   const [cat, setCat] = useState('Tümü')
   const list = cat === 'Tümü' ? PRODUCTS : PRODUCTS.filter((p) => p.category === cat)
+  const wide = useWide()
 
   return (
     <section className="section" id="koleksiyon">
@@ -93,13 +149,16 @@ export default function Collection({ onOpen }) {
           </div>
         </div>
 
-        <motion.div layout className="grid">
-          <AnimatePresence mode="popLayout">
-            {list.map((p, i) => (
-              <ProductCard key={p.id} product={p} index={i} onOpen={onOpen} />
-            ))}
-          </AnimatePresence>
-        </motion.div>
+        <div className={wide ? 'collection collection--tryon' : 'collection'}>
+          {wide && <TryOn />}
+          <motion.div layout className="grid">
+            <AnimatePresence mode="popLayout">
+              {list.map((p, i) => (
+                <ProductCard key={p.id} product={p} index={i} onOpen={onOpen} />
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        </div>
       </div>
     </section>
   )

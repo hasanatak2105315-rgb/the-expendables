@@ -22,7 +22,9 @@ Takı ve 3D baskı ürünleri satan, sinematik 3D bir e-ticaret sitesi. Şimdili
 - `src/data/site.js`: şirket ve iletişim bilgileri, site adresi (`url`), Google Analytics kimliği (`analyticsId`) ve her sayfanın Google başlığı/açıklaması (`ROUTES`). Boş alanlar sitede gösterilmez
 - `src/three/Models.jsx`: ürünlerin kodla çizilmiş 3D modelleri (yüzük, kolye, küpe, bileklik, vazo, lamba, saksı, heykel, anahtarlık)
 - `src/three/HeroScene.jsx`: giriş sahnesi (zümrüt yüzük, yansıyan zemin, bloom)
-- `src/three/ProductViews.jsx`: ürün kartlarındaki 3D görünümler (tek ortak Canvas + drei `View`) ve ürün detayındaki 3D sahne
+- `src/three/ProductViews.jsx`: ürün kartlarındaki 3D görünümler (tek ortak Canvas + drei `View`), sanal prova mankeninin sahnesi ve ürün detayındaki 3D sahne
+- `src/three/Mannequin.jsx`: kodla çizilmiş vitrin mankeni ve üstüne takılan takılar. Kamera her ürün tipinde ilgili bölgeye yaklaşır (`FOCUS`)
+- `src/store/tryon.js`: mankende gösterilen ürün (kartın üzerine gelince değişir)
 - `src/components/`: menü, giriş, koleksiyon, bölümler, sepet, ödeme formu ve ürün detayı
 - `src/components/Pages.jsx`: alt sayfalar (Hakkımızda, İletişim, SSS, İade, KVKK, Gizlilik, Kullanım Koşulları, Mesafeli Satış, Teşekkürler) ve 404
 - `src/components/Extras.jsx`: sabit mobil buton, çerez bandı ve Google Analytics yükleyici
@@ -46,6 +48,8 @@ Takı ve 3D baskı ürünleri satan, sinematik 3D bir e-ticaret sitesi. Şimdili
   - Sipariş sonrası `/tesekkurler` sayfası (sipariş numarası sessionStorage'dan okunur, Google'a kapalı)
   - Google Analytics 4 + çerez bandı hazır ama `analyticsId` boş olduğu için kapalı. Kimlik girilince bant çıkar, GA yalnızca "Kabul et" sonrası yüklenir
 - Performans: 3D kodu ayrı parçalara bölündü. İlk açılışta ~445 KB (gzip ~140 KB) iner, önceden 1,42 MB idi. 3D dosyaları (`three`, `r3f`, `postfx`) `React.lazy` ile sonradan yüklenir; alt sayfalarda hiç inmez. Bölme ayarı `vite.config.js` içindeki `manualChunks`. Vite yardımcıları ve React `react` parçasında kalmalı, yoksa 3D dosyası baştan iner. Derlenmiş hâli denemek için `.claude/launch.json` içinde `preview` (port 4173) var
+
+- Sanal prova: Koleksiyonda ürünlerin solunda ekranla birlikte kayan bir manken var. Kartın üzerine gelince ürün mankende belirir: küpe kulakta, kolye boyunda, yüzük parmakta, bileklik bilekte, 3D baskı ürünleri avuçta süzülür. Fare ayrılınca son ürün kalır. Yalnızca fareli ve 1025 px'ten geniş ekranlarda görünür (dokunmatikte gizli)
 
 ## Sıradaki işler
 

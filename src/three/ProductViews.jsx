@@ -1,8 +1,9 @@
 import { useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { View, PerspectiveCamera, Float, ContactShadows, OrbitControls } from '@react-three/drei'
+import { View, PerspectiveCamera, Float, ContactShadows, OrbitControls, Sparkles } from '@react-three/drei'
 import { Model } from './Models'
 import { Studio } from './Studio'
+import { Mannequin } from './Mannequin'
 
 // Ürün kartlarındaki küçük 3D sahne. Hepsi tek bir ortak Canvas üzerinde çizilir (performans için).
 function Spinner({ hovered, children }) {
@@ -27,6 +28,20 @@ export function CardView({ model, hovered, className }) {
         </Spinner>
       </Float>
       <ContactShadows position={[0, -1.25, 0]} opacity={0.6} scale={5} blur={2.5} far={2} color="#000" />
+    </View>
+  )
+}
+
+// Koleksiyonun yanındaki sanal prova sahnesi (manken)
+export function MannequinView({ className }) {
+  return (
+    <View className={className}>
+      <PerspectiveCamera makeDefault position={[0, 0.55, 6.6]} fov={30} />
+      <Studio intensity={0.8} />
+      <spotLight position={[0.5, 3.5, 2]} angle={0.5} penumbra={1} intensity={30} color="#eafff3" />
+      <Mannequin />
+      <Sparkles count={40} scale={[2.4, 3, 1.6]} position-y={0.4} size={1.6} speed={0.25} opacity={0.5} color="#6ee7b7" />
+      <ContactShadows position={[0, -1.42, 0]} opacity={0.6} scale={3} blur={2.5} far={1.5} color="#000" />
     </View>
   )
 }

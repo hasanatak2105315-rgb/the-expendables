@@ -309,4 +309,4 @@ export function Model({ type, ...props }) {
   )
 }
 
-export { Ring, Pendant, Vase }
+export { Ring, Pendant, Vase, Gold, Gem }
