@@ -101,12 +101,14 @@ function validate(f) {
   const e = {}
   if (f.name.trim().length < 2) e.name = 'Lütfen adını yaz.'
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim())) e.email = 'Geçerli bir e-posta adresi yaz.'
+  // Telefon isteğe bağlı; yazıldıysa 05xx xxx xx xx biçiminde olmalı
+  if (f.phone.trim() && !/^(90)?0?5\d{9}$/.test(f.phone.replace(/\D/g, ''))) e.phone = 'Telefonunu 05xx xxx xx xx şeklinde yaz.'
   if (f.message.trim().length < 10) e.message = 'Mesajın en az 10 karakter olmalı.'
   return e
 }
 
 export function Contact() {
-  const [form, setForm] = useState({ name: '', email: '', topic: TOPICS[0], message: '' })
+  const [form, setForm] = useState({ name: '', email: '', phone: '', topic: TOPICS[0], message: '' })
   const [errors, setErrors] = useState({})
   const [sent, setSent] = useState(false)
   const set = (k) => (e) => {
@@ -120,7 +122,7 @@ export function Contact() {
     setErrors(found)
     if (Object.keys(found).length) return
     // Sunucu olmadığı için mesaj, ziyaretçinin e-posta uygulamasında hazır açılır
-    const body = `${form.message}\n\n${form.name} — ${form.email}`
+    const body = `${form.message}\n\n${form.name} — ${form.email}${form.phone.trim() ? ` — ${form.phone.trim()}` : ''}`
     window.location.href = `mailto:${SITE.email}?subject=${encodeURIComponent(`${form.topic} — ${form.name}`)}&body=${encodeURIComponent(body)}`
     setSent(true)
   }
@@ -193,6 +195,11 @@ export function Contact() {
             <form className="checkout" onSubmit={submit} noValidate>
               {field('name', 'Ad soyad', <input value={form.name} onChange={set('name')} autoComplete="name" aria-invalid={!!errors.name} />)}
               {field('email', 'E-posta', <input type="email" value={form.email} onChange={set('email')} autoComplete="email" aria-invalid={!!errors.email} />)}
+              {field(
+                'phone',
+                'Telefon (isteğe bağlı)',
+                <input type="tel" value={form.phone} onChange={set('phone')} autoComplete="tel" placeholder="05xx xxx xx xx" aria-invalid={!!errors.phone} />
+              )}
               {field(
                 'topic',
                 'Konu',

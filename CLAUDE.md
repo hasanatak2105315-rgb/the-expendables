@@ -40,7 +40,7 @@ Baskılı giyim (tişört, sweatshirt, eşofman) ve 3D baskı ürünleri satan, 
 - Site kuruldu, yuvarlak özel fare imleci kaldırıldı
 - Ürünler taktik ekipmandan takı ve 3D baskıya çevrildi
 - Sitedeki tüm metinler takı ve 3D baskı temasına çevrildi. İstatistiklerdeki sayılar (4.9/5 puan, 0.1 mm vb.) örnek değerlerdir.
-- Hakkımızda, İletişim, SSS, İade, KVKK ve 404 sayfaları eklendi. İletişim formu, sunucu olmadığı için ziyaretçinin e-posta uygulamasını hazır mesajla açar.
+- Hakkımızda, İletişim, SSS, İade, KVKK ve 404 sayfaları eklendi. İletişim formunda Ad soyad, E-posta, Telefon (isteğe bağlı, yazılırsa biçimi kontrol edilir), Konu ve Mesaj var. İletişim formu, sunucu olmadığı için ziyaretçinin e-posta uygulamasını hazır mesajla açar.
 - Kontrol listesi tamamlandı:
   - Yasal: Mesafeli Satış Sözleşmesi + Ön Bilgilendirme Formu, Kullanım Koşulları, Gizlilik ve Çerez Politikası. Ödeme formunda sözleşme onay kutusu zorunlu
   - SEO: her sayfaya ayrı başlık/açıklama, canonical, robots.txt, sitemap.xml, Open Graph görseli, iPhone ikonu, 3D alanlara ekran okuyucu açıklaması
