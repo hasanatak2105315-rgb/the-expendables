@@ -38,11 +38,11 @@ export function MannequinView({ className }) {
     <View className={className}>
       <PerspectiveCamera makeDefault position={[0, 0.55, 6.6]} fov={30} />
       <Studio intensity={0.8} />
-      <spotLight position={[0.5, 3.5, 2]} angle={0.5} penumbra={1} intensity={30} color="#eafff3" />
+      <spotLight position={[0.5, 3.5, 2]} angle={0.5} penumbra={1} intensity={30} color="#ecfdff" />
       <Suspense fallback={null}>
         <Mannequin />
       </Suspense>
-      <Sparkles count={40} scale={[2.4, 3, 1.6]} position-y={0.4} size={1.6} speed={0.25} opacity={0.5} color="#6ee7b7" />
+      <Sparkles count={40} scale={[2.4, 3, 1.6]} position-y={0.4} size={1.6} speed={0.25} opacity={0.5} color="#7de8f2" />
       <ContactShadows position={[0, -1.44, 0]} opacity={0.6} scale={3} blur={2.5} far={1.5} color="#000" />
     </View>
   )

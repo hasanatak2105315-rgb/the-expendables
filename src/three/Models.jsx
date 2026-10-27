@@ -14,12 +14,12 @@ const Silver = () => <meshStandardMaterial color="#dfe7e3" metalness={1} roughne
 const Gem = ({ color = '#10b981' }) => (
   <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.55} metalness={0.2} roughness={0.02} flatShading />
 )
-const Pla = ({ color = '#6ee7b7', side }) => (
+const Pla = ({ color = '#7de8f2', side }) => (
   <meshStandardMaterial color={color} metalness={0.05} roughness={0.55} flatShading side={side} />
 )
-const Silk = ({ color = '#34d399' }) => <meshStandardMaterial color={color} metalness={0.55} roughness={0.28} />
-const Dark = () => <meshStandardMaterial color="#0a110d" metalness={0.3} roughness={0.6} />
-const Glow = ({ intensity = 2.5, color = '#34d399' }) => (
+const Silk = ({ color = '#2fd8e6' }) => <meshStandardMaterial color={color} metalness={0.55} roughness={0.28} />
+const Dark = () => <meshStandardMaterial color="#08161a" metalness={0.3} roughness={0.6} />
+const Glow = ({ intensity = 2.5, color = '#2fd8e6' }) => (
   <meshStandardMaterial color={color} emissive={color} emissiveIntensity={intensity} toneMapped={false} />
 )
 
@@ -162,11 +162,11 @@ function Vase(props) {
   return (
     <group {...props}>
       <mesh geometry={geo}>
-        <Pla color="#6ee7b7" side={DoubleSide} />
+        <Pla color="#ffb86b" side={DoubleSide} />
       </mesh>
       <mesh position-y={-1.1} rotation-x={-PI / 2}>
         <circleGeometry args={[0.47, 10]} />
-        <Pla color="#6ee7b7" />
+        <Pla color="#ffb86b" />
       </mesh>
     </group>
   )
@@ -180,20 +180,20 @@ function Lamp(props) {
       <group ref={shell} position-y={0.2}>
         <mesh>
           <icosahedronGeometry args={[0.92, 1]} />
-          <meshStandardMaterial color="#d1fae5" roughness={0.5} flatShading transparent opacity={0.35} />
+          <meshStandardMaterial color="#cffafe" roughness={0.5} flatShading transparent opacity={0.35} />
         </mesh>
         <mesh>
           <icosahedronGeometry args={[0.93, 1]} />
-          <meshBasicMaterial color="#34d399" wireframe toneMapped={false} />
+          <meshBasicMaterial color="#2fd8e6" wireframe toneMapped={false} />
         </mesh>
       </group>
       <mesh position-y={0.2}>
         <sphereGeometry args={[0.38, 32, 16]} />
-        <Glow intensity={3} color="#bbf7d0" />
+        <Glow intensity={3} color="#ffe4c4" />
       </mesh>
       <mesh position-y={-0.85}>
         <cylinderGeometry args={[0.35, 0.5, 0.3, 6]} />
-        <Pla color="#14532d" />
+        <Pla color="#0e5a66" />
       </mesh>
     </group>
   )
@@ -205,7 +205,7 @@ function Planter(props) {
     <group {...props}>
       <mesh position-y={-0.4}>
         <cylinderGeometry args={[0.72, 0.5, 1, 6]} />
-        <Pla color="#f0fdf4" />
+        <Pla color="#fff7ed" />
       </mesh>
       <mesh position-y={0.095} rotation-x={-PI / 2}>
         <circleGeometry args={[0.66, 6]} />
@@ -252,7 +252,7 @@ function Keychain(props) {
   return (
     <group {...props}>
       <RoundedBox args={[1.3, 0.75, 0.14]} radius={0.12} smoothness={5}>
-        <Pla color="#a3e635" />
+        <Pla color="#ffb86b" />
       </RoundedBox>
       <mesh position={[-0.42, 0, 0.075]}>
         <circleGeometry args={[0.09, 24]} />
@@ -260,11 +260,11 @@ function Keychain(props) {
       </mesh>
       <mesh position={[0.18, 0.16, 0.08]}>
         <boxGeometry args={[0.6, 0.12, 0.04]} />
-        <Pla color="#14532d" />
+        <Pla color="#0e5a66" />
       </mesh>
       <mesh position={[0.18, -0.08, 0.08]}>
         <boxGeometry args={[0.13, 0.4, 0.04]} />
-        <Pla color="#14532d" />
+        <Pla color="#0e5a66" />
       </mesh>
       <mesh position={[-0.42, 0, 0]} rotation-y={PI / 2}>
         <torusGeometry args={[0.32, 0.03, 12, 48]} />

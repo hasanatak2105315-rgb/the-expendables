@@ -21,8 +21,8 @@ const POSE = {
   mixamorigRightHand: [-2.0, 0, 0]
 }
 
-const surface = new MeshPhysicalMaterial({ color: '#22362c', roughness: 0.38, metalness: 0.15, clearcoat: 1, clearcoatRoughness: 0.25 })
-const joints = new MeshPhysicalMaterial({ color: '#0c1611', roughness: 0.3, metalness: 0.6, clearcoat: 1, clearcoatRoughness: 0.2 })
+const surface = new MeshPhysicalMaterial({ color: '#1d3a42', roughness: 0.38, metalness: 0.15, clearcoat: 1, clearcoatRoughness: 0.25 })
+const joints = new MeshPhysicalMaterial({ color: '#0a1a1f', roughness: 0.3, metalness: 0.6, clearcoat: 1, clearcoatRoughness: 0.2 })
 
 // Kemiğe bağlı noktalar: [kemik, kemiğe göre kaydırma, dik dursun mu]
 // Kol ve el kemiklerinde -X parmak ucuna, -Y avuç içine bakar
@@ -270,9 +270,9 @@ export function Mannequin() {
         ))}
         <mesh ref={glow} position-y={0.03} rotation-x={-PI / 2}>
           <ringGeometry args={[0.07, 0.085, 48]} />
-          <meshBasicMaterial color="#6ee7b7" transparent opacity={0} toneMapped={false} />
+          <meshBasicMaterial color="#7de8f2" transparent opacity={0} toneMapped={false} />
         </mesh>
-        <pointLight ref={lamp} position={[-0.15, 0.4, 0.35]} intensity={0} distance={1.5} color="#eafff3" />
+        <pointLight ref={lamp} position={[-0.15, 0.4, 0.35]} intensity={0} distance={1.5} color="#ecfdff" />
       </group>
     </group>
   )

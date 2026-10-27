@@ -16,7 +16,7 @@ export function Logo() {
     <span className="logo">
       <svg viewBox="0 0 32 32" aria-hidden="true">
         <path d="M5 7h22v4.5H18.3V27h-4.6V11.5H5z" fill="currentColor" />
-        <path d="M5 29h22" stroke="var(--lime)" strokeWidth="2" />
+        <path d="M5 29h22" stroke="var(--accent-2)" strokeWidth="2" />
       </svg>
       THE EXPENDABLES
     </span>

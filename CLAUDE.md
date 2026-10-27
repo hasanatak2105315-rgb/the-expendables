@@ -13,7 +13,7 @@ Takı ve 3D baskı ürünleri satan, sinematik 3D bir e-ticaret sitesi. Şimdili
 
 - Vite + React 19, Three.js (`@react-three/fiber`, `@react-three/drei`, `@react-three/postprocessing`), `motion`, `lenis`
 - Komutlar: `npm install`, `npm run dev`, `npm run build`
-- Renk paleti: koyu yeşil zemin, nane / zümrüt / limon yeşili vurgular (`src/styles.css` içindeki `:root`)
+- Renk paleti "Okyanus ve kayısı": derin petrol zemin, turkuaz ana vurgu (`--accent`), kayısı ikinci vurgu (`--accent-2`), `src/styles.css` içindeki `:root`. 3D sahnelerdeki ışık ve model renkleri JSX dosyalarında ayrıca yazılı. Takılardaki taşlar ürün adlarına uygun olarak yeşil (zümrüt) kaldı. Önceki palet koyu yeşil + nane/limon yeşiliydi
 - Yazı tipleri (Google Fonts, `index.html`): başlıklarda **Playfair Display** (klasik lüks serif, takı hissi; vurgulu kelimeler `<em>` ile italik ve nane yeşili), metin ve butonlarda **Manrope** (modern, 3D baskı hissi). Büyük başlıklar büyük harfe çevrilmez; küçük etiketler (eyebrow, buton) büyük harf kalır. `--font-display` ve `--font-body` değişkenleri `:root` içinde
 
 ## Dosyalar
@@ -60,7 +60,7 @@ Takı ve 3D baskı ürünleri satan, sinematik 3D bir e-ticaret sitesi. Şimdili
 
 - Ödeme formu demodur, gerçek ödeme almaz. Gerçek ödeme için iyzico / PayTR gibi bir sağlayıcı ve sunucu gerekir.
 - KVKK, iade, mesafeli satış, kullanım koşulları ve gizlilik metinleri genel taslaktır. Yayından önce bir hukukçuya kontrol ettirilmeli.
-- Paylaşım görseli (`public/og-image.png`, 1200×630) SVG'den `@resvg/resvg-js` ile üretildi (proje dışında, geçici klasörde). Sitedeki yazı tipleri kullanıldı: başlık Playfair Display 500 + italik, logo Playfair 600, metin Manrope (Google Fonts'tan TTF). İçerik: logo, "Işıltı bir detay değil, *bir imza.*", alt yazı, "Koleksiyonu Keşfet" butonu, `theexpendables.com.tr`, sağda zümrüt taşlı altın yüzük. Alan adı değişirse yeniden üretilmeli.
+- Paylaşım görseli ve `apple-touch-icon.png` / `icon-512.png` hâlâ eski yeşil renklerde (favicon.svg güncel). Paylaşım görseli (`public/og-image.png`, 1200×630) SVG'den `@resvg/resvg-js` ile üretildi (proje dışında, geçici klasörde). Sitedeki yazı tipleri kullanıldı: başlık Playfair Display 500 + italik, logo Playfair 600, metin Manrope (Google Fonts'tan TTF). İçerik: logo, "Işıltı bir detay değil, *bir imza.*", alt yazı, "Koleksiyonu Keşfet" butonu, `theexpendables.com.tr`, sağda zümrüt taşlı altın yüzük. Alan adı değişirse yeniden üretilmeli.
 - Kullanıcının önceliği yayına almak değil, siteyi geliştirmek.
 - Yazı tipi kesinleşti: Playfair Display + Manrope (kullanıcı onayladı). Önce Cormorant Garamond denendi, beğenilmedi.
 - Manken modeli Adobe Mixamo karakteri: projelerde ticari kullanım ücretsiz, ama model tek başına satılamaz/dağıtılamaz. Daha gerçekçi ya da markaya özel bir model istenirse aynı kemik adlarına (Mixamo iskeleti) sahip bir .glb ile değiştirmek en kolayı

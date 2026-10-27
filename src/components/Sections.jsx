@@ -28,7 +28,7 @@ export function Marquee() {
 
 function Word({ children, progress, range }) {
   const opacity = useTransform(progress, range, [0.12, 1])
-  const color = useTransform(progress, range, ['#cfe9da', '#eafff3'])
+  const color = useTransform(progress, range, ['#c9e6ea', '#ecfdff'])
   return (
     <motion.span style={{ opacity, color }} className="word">
       {children}{' '}

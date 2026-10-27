@@ -65,13 +65,13 @@ export default function HeroScene() {
 
   return (
     <Canvas dpr={[1, 1.75]} camera={{ position: [0, 0.4, 6.2], fov: 35 }} gl={{ antialias: false }}>
-      <color attach="background" args={['#030805']} />
-      <fog attach="fog" args={['#030805', 7, 17]} />
+      <color attach="background" args={['#03171c']} />
+      <fog attach="fog" args={['#03171c', 7, 17]} />
       <Studio />
-      <spotLight position={[0, 6, 2]} angle={0.35} penumbra={1} intensity={90} color="#d9ffe9" />
+      <spotLight position={[0, 6, 2]} angle={0.35} penumbra={1} intensity={90} color="#dffbff" />
       <Rig />
       <Hero3D />
-      <Sparkles count={140} scale={[14, 7, 8]} size={2.2} speed={0.25} opacity={0.6} color="#6ee7b7" />
+      <Sparkles count={140} scale={[14, 7, 8]} size={2.2} speed={0.25} opacity={0.6} color="#7de8f2" />
       <mesh rotation-x={-Math.PI / 2} position-y={-1.9}>
         <planeGeometry args={[60, 60]} />
         <MeshReflectorMaterial
@@ -83,7 +83,7 @@ export default function HeroScene() {
           depthScale={1.1}
           minDepthThreshold={0.4}
           maxDepthThreshold={1.4}
-          color="#040b07"
+          color="#041b21"
           metalness={0.6}
         />
       </mesh>
