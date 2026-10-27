@@ -18,11 +18,12 @@ import {
 import { Model } from './Models'
 import { Print } from './Apparel'
 import { getTryOn } from '../store/tryon'
+import { FIELDS, getBody } from '../store/body'
 
 // Vitrin mankeni: gerçek insan oranlarında hazır model (public/models/mannequin.glb).
 // Kaynak: three.js örneklerindeki "Xbot" (Adobe Mixamo). Yalnızca duruş animasyonu bırakıldı, sıkıştırıldı.
 // Kartın üzerine gelinen ürün mankende belirir: giyim ürünleri mankenin üstüne giydirilir,
-// 3D baskı ürünleri avuçta süzülür.
+// 3D baskı ürünleri avuçta süzülür. Ziyaretçi ölçülerini girerse manken o ölçülere göre şekillenir.
 
 const URL = '/models/mannequin.glb'
 const PI = Math.PI
@@ -57,7 +58,13 @@ const FOCUS = {
   tracksuit: { anchor: 'hips', lift: [0, 0.3, 0], cam: [0.5, 0.3, 6.2] },
   object: { anchor: 'palm', lift: [0, 0.12, 0], cam: [-0.75, 0.6, 2.9] }
 }
-const OVERVIEW = { target: [0, 0.1, 0], cam: [0, 0.35, 6.8] }
+// Tam boy görünüm. Kamera 190 cm'ye kadar sabit durur ki kısa ve uzun boy farkı görünsün,
+// daha uzun boylarda geri çekilir (h: boy oranı)
+const overview = (h, look, cam) => {
+  const k = Math.max(h, 1.12)
+  look.set(0, FLOOR + 1.55 * k, 0)
+  cam.set(0, look.y + 0.25, 6.8 * (0.3 + 0.7 * k))
+}
 const OBJECTS = ['vase', 'lamp', 'planter', 'sculpture', 'keychain']
 const focusOf = (model) => (!model ? null : FOCUS[model] ?? FOCUS.object)
 
@@ -182,6 +189,41 @@ function buildGarment(mesh, region, material) {
 const fabric = () =>
   new MeshStandardMaterial({ roughness: 0.9, metalness: 0, side: DoubleSide, transparent: true, opacity: 0, depthWrite: false, visible: false })
 
+/* ---------------- Beden ölçüleri ---------------- */
+
+// Mankenin kendi ölçüleri (store/body.js içindeki varsayılanlar)
+const BASE = Object.fromEntries(FIELDS.map((f) => [f.key, f.base]))
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v))
+
+// Ölçülerden kemiklerin enine (x) ve derinliğine (z) ölçeği. Gövde ve bacak kemikleri
+// T duruşunda aynı doğrultuda olduğu için ölçek çocuk kemiklerde geri alınarak yalnızca o bölge şekillenir
+function shapeOf(b, out) {
+  const c = b.chest / BASE.chest
+  const w = b.waist / BASE.waist
+  const hp = b.hip / BASE.hip
+  const bmi = b.weight / (b.height / 100) ** 2
+  const g = clamp(Math.sqrt(bmi / (BASE.weight / (BASE.height / 100) ** 2)), 0.8, 1.35)
+  out.height = b.height / BASE.height
+  out.Hips = hp
+  out.Spine = w
+  out.Spine1 = (c + w) / 2
+  out.Spine2 = c
+  out.Neck = 0.6 + 0.4 * g
+  out.LeftUpLeg = out.RightUpLeg = clamp(0.5 * g + 0.5 * hp, 0.8, 1.4)
+  out.LeftLeg = out.RightLeg = 0.3 + 0.7 * g
+  return out
+}
+
+// Her kemiğin ölçeği = kendi ölçeği / ebeveyninin ölçeği (ebeveynden gelen genişleme geri alınır)
+function applyShape(list, shape) {
+  for (const [bone, name, parent] of list) {
+    const own = shape[name] ?? 1
+    const up = shape[parent] ?? 1
+    const k = own / up
+    bone.scale.set(k, 1, k)
+  }
+}
+
 /* ---------------- Parçalar ---------------- */
 
 // Seçilen ürüne göre büyüyüp küçülerek beliren parça (avuçtaki 3D baskı ürünleri)
@@ -252,11 +294,14 @@ export function Mannequin({ product }) {
   const glow = useRef()
   const lamp = useRef()
   const hood = useRef()
-  const target = useRef(new Vector3(...OVERVIEW.target))
+  const model = useRef()
+  const target = useRef(new Vector3(0, 0.1, 0))
+  const body = useRef({ ...getBody() })
+  const shape = useMemo(() => ({}), [])
   const camPos = useMemo(() => new Vector3(), [])
   const look = useMemo(() => new Vector3(), [])
 
-  const { mixer, bones, outfit } = useMemo(() => {
+  const { mixer, bones, boneList, outfit } = useMemo(() => {
     const skins = []
     scene.traverse((o) => {
       if (o.isSkinnedMesh && !o.userData.garment) {
@@ -280,8 +325,13 @@ export function Mannequin({ product }) {
     scene.userData.outfit = outfit
     const mixer = new AnimationMixer(scene)
     const bones = {}
-    scene.traverse((o) => o.isBone && (bones[o.name] = o))
-    return { mixer, bones, outfit }
+    const boneList = []
+    scene.traverse((o) => {
+      if (!o.isBone) return
+      bones[o.name] = o
+      boneList.push([o, bare(o.name), o.parent?.isBone ? bare(o.parent.name) : null])
+    })
+    return { mixer, bones, boneList, outfit }
   }, [scene])
 
   useEffect(() => {
@@ -296,6 +346,12 @@ export function Mannequin({ product }) {
       const bone = bones[name]
       if (bone) bone.quaternion.multiply(tmpQ.setFromEuler(tmpE.set(...POSE[name])))
     }
+    // ölçüler değişince manken yumuşakça yeni şekline geçer
+    const goal = getBody()
+    for (const { key } of FIELDS) body.current[key] = MathUtils.damp(body.current[key], goal[key], 6, dt)
+    shapeOf(body.current, shape)
+    applyShape(boneList, shape)
+    model.current.scale.setScalar(SCALE * shape.height)
     scene.updateMatrixWorld(true)
 
     for (const key in ANCHORS) {
@@ -307,6 +363,9 @@ export function Mannequin({ product }) {
       tmpV.set(...offset).applyQuaternion(group.quaternion)
       bone.getWorldPosition(group.position).add(tmpV)
       if (upright) group.quaternion.identity()
+      // baskı ve kapüşon, boy ve göğüs/boyun genişliğiyle birlikte büyür
+      const wide = key === 'chest' ? shape.Spine2 : key === 'neck' ? shape.Neck : 1
+      group.scale.set(shape.height * wide, shape.height, shape.height * wide)
     }
 
     // kıyafetler: seçili ürünün parçaları rengini alıp belirir, diğerleri kaybolur
@@ -328,13 +387,13 @@ export function Mannequin({ product }) {
 
     // kamera seçilen bölgeye yumuşakça yaklaşır, hafifçe salınır
     const t = state.clock.elapsedTime
-    const f = focusOf(p?.model)
+    // ölçü paneli açıkken manken tam boy gösterilir
+    const f = goal.open ? null : focusOf(p?.model)
     if (f) {
       look.copy(anchors.current[f.anchor].position).add(tmpV.set(...f.lift))
       camPos.copy(look).add(tmpV.set(...f.cam))
     } else {
-      look.set(...OVERVIEW.target)
-      camPos.set(...OVERVIEW.cam)
+      overview(shape.height, look, camPos)
     }
     camPos.x += Math.sin(t * 0.4) * 0.08
     camPos.y += Math.sin(t * 0.3) * 0.03
@@ -351,7 +410,7 @@ export function Mannequin({ product }) {
 
   return (
     <group>
-      <primitive object={scene} scale={SCALE} position-y={FLOOR} />
+      <primitive ref={model} object={scene} scale={SCALE} position-y={FLOOR} />
       <group ref={anchor('neck')}>
         {/* kapüşon ensede toplanmış durur */}
         <mesh ref={hood} position={[0, 0.06, -0.13]} scale={[0.2, 0.15, 0.12]} visible={false}>

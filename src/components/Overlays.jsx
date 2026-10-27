@@ -5,6 +5,7 @@ import { formatPrice } from '../data/products'
 import { lockScroll } from '../scroll'
 import { navigate } from '../router'
 import { whatsappLink } from '../data/site'
+import { useBody, recommendedSize } from '../store/body'
 
 const ProductStage = lazy(() => import('../three/ProductViews').then((m) => ({ default: m.ProductStage })))
 
@@ -23,14 +24,22 @@ function useEscape(active, fn) {
   }, [active, fn])
 }
 
-// Giyimde beden seçimi (seçilmeden sepete eklenmez)
-function SizePicker({ sizes, value, onChange, error }) {
+// Giyimde beden seçimi (seçilmeden sepete eklenmez). Ölçü girildiyse önerilen beden işaretlenir
+function SizePicker({ product, value, onChange, error }) {
+  const recommended = recommendedSize(product, useBody())
   return (
     <div className={`sizes ${error ? 'sizes--error' : ''}`} role="radiogroup" aria-label="Beden">
-      <span>Beden</span>
+      <span>Beden{recommended && <em> · ölçülerine göre önerilen: {recommended}</em>}</span>
       <div>
-        {sizes.map((s) => (
-          <button key={s} type="button" role="radio" aria-checked={value === s} className={value === s ? 'active' : ''} onClick={() => onChange(s)}>
+        {product.sizes.map((s) => (
+          <button
+            key={s}
+            type="button"
+            role="radio"
+            aria-checked={value === s}
+            className={[value === s && 'active', recommended === s && 'recommended'].filter(Boolean).join(' ')}
+            onClick={() => onChange(s)}
+          >
             {s}
           </button>
         ))}
@@ -94,7 +103,7 @@ export function ProductModal({ product, onClose, onCustom }) {
               </ul>
               {product.sizes && (
                 <SizePicker
-                  sizes={product.sizes}
+                  product={product}
                   value={size}
                   error={sizeError}
                   onChange={(s) => {
@@ -202,7 +211,7 @@ export function CustomPrintModal({ product, onClose }) {
             </p>
             {clothing && (
               <SizePicker
-                sizes={product.sizes}
+                product={product}
                 value={size}
                 error={errors.size}
                 onChange={(s) => {

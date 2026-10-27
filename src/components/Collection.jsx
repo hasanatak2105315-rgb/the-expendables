@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { CATEGORIES, PRODUCTS, formatPrice } from '../data/products'
 import { useCart } from '../store/cart'
 import { setTryOn, useTryOn } from '../store/tryon'
+import { FIELDS, useBody, setBody, resetBody, setBodyOpen, topSize, bottomSize, recommendedSize } from '../store/body'
 import { PenIcon } from './Overlays'
 
 const CardView = lazy(() => import('../three/ProductViews').then((m) => ({ default: m.CardView })))
@@ -21,38 +22,99 @@ function useWide() {
   return wide
 }
 
+const RulerIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M3 17 17 3l4 4L7 21l-4-4ZM7 13l2 2M10 10l2 2M13 7l2 2" />
+  </svg>
+)
+
+// Ziyaretçinin ölçüleri: kaydırdıkça manken canlı olarak şekillenir, beden önerilir
+function BodyForm({ body }) {
+  return (
+    <motion.div
+      className="tryon__form"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
+      transition={{ duration: 0.4 }}
+    >
+      {FIELDS.map((f) => (
+        <label key={f.key} className="measure">
+          <span>
+            {f.label}
+            <b>
+              {Math.round(body[f.key])} {f.unit}
+            </b>
+          </span>
+          <input
+            type="range"
+            min={f.min}
+            max={f.max}
+            step={1}
+            value={body[f.key]}
+            onChange={(e) => setBody({ [f.key]: Number(e.target.value) })}
+            aria-label={`${f.label} (${f.unit})`}
+          />
+        </label>
+      ))}
+      <p className="tryon__size">
+        Önerilen beden: üst <b>{topSize(body)}</b> · alt <b>{bottomSize(body)}</b>
+      </p>
+      <div className="tryon__actions">
+        <button className="btn btn--ghost" onClick={resetBody}>
+          Sıfırla
+        </button>
+        <button className="btn btn--primary" onClick={() => setBodyOpen(false)}>
+          Tamam
+        </button>
+      </div>
+    </motion.div>
+  )
+}
+
 // Ürünlerin yanında ekranla birlikte kayan sanal prova alanı
 function TryOn() {
   const product = useTryOn()
+  const body = useBody()
+  const size = recommendedSize(product, body)
   return (
-    <aside className="tryon" role="img" aria-label={product ? `Mankenin üzerinde ${product.name}` : 'Vitrin mankeni'}>
-      <Suspense fallback={<div className="stage-loader" aria-hidden="true" />}>
-        <MannequinView className="tryon__view" />
-      </Suspense>
+    <aside className={`tryon ${body.open ? 'tryon--edit' : ''}`} aria-label="Sanal prova">
+      <div className="tryon__stage" role="img" aria-label={product ? `Mankenin üzerinde ${product.name}` : 'Vitrin mankeni'}>
+        <Suspense fallback={<div className="stage-loader" aria-hidden="true" />}>
+          <MannequinView className="tryon__view" />
+        </Suspense>
+      </div>
       <p className="eyebrow tryon__label">
         <span className="dot" /> Sanal prova
       </p>
-      <div className="tryon__info">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={product?.id ?? 'empty'}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.35 }}
-          >
-            {product ? (
-              <>
-                <small>{product.category}</small>
-                <strong>{product.name}</strong>
-                <span className="price">{formatPrice(product.price)}</span>
-              </>
-            ) : (
-              <span className="tryon__hint">Bir ürünün üzerine gel, mankende gör</span>
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </div>
+      <button className="tryon__measure" onClick={() => setBodyOpen(!body.open)} aria-expanded={body.open}>
+        <RulerIcon /> {body.custom ? 'Ölçülerim' : 'Ölçülerini gir'}
+      </button>
+      <AnimatePresence>{body.open && <BodyForm body={body} />}</AnimatePresence>
+      {!body.open && (
+        <div className="tryon__info">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={product?.id ?? 'empty'}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.35 }}
+            >
+              {product ? (
+                <>
+                  <small>{product.category}</small>
+                  <strong>{product.name}</strong>
+                  <span className="price">{formatPrice(product.price)}</span>
+                  {size && <span className="tryon__fit">Ölçülerine göre önerilen beden: {size}</span>}
+                </>
+              ) : (
+                <span className="tryon__hint">Bir ürünün üzerine gel, mankende gör. Ölçülerini girersen manken sana benzesin.</span>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      )}
     </aside>
   )
 }
