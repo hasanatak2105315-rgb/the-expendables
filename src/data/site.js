@@ -4,7 +4,7 @@ export const SITE = {
   company: '', // Resmî şirket unvanı (ör. "Ad Soyad - The Expendables" veya "X Ltd. Şti.")
   taxInfo: '', // Vergi dairesi ve numarası
   email: 'hasanatak.2105315@gmail.com',
-  phone: '0532 565 42 88', // ör. '+90 5xx xxx xx xx'
+  phone: '', // ör. '+90 5xx xxx xx xx'
   whatsapp: '0532 565 42 88', // WhatsApp destek hattı, ör. '+90 5xx xxx xx xx'. Boşsa WhatsApp butonu gösterilmez
   address: 'Tokat Merkez, Türkiye',
   hours: 'Hafta içi 09:00 – 18:00',

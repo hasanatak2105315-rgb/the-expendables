@@ -145,18 +145,18 @@ export function Contact() {
             <small>E-posta</small>
             <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
           </div>
-          {SITE.phone && (
-            <div>
-              <small>Telefon</small>
-              <a href={`tel:${SITE.phone.replace(/\s/g, '')}`}>{SITE.phone}</a>
-            </div>
-          )}
           {whatsappLink() && (
             <div>
               <small>WhatsApp destek hattı</small>
               <a className="wa-inline" href={whatsappLink('Merhaba, destek almak istiyorum.')} target="_blank" rel="noopener">
                 <WhatsAppIcon /> {SITE.whatsapp}
               </a>
+            </div>
+          )}
+          {SITE.phone && (
+            <div>
+              <small>Telefon</small>
+              <a href={`tel:${SITE.phone.replace(/\s/g, '')}`}>{SITE.phone}</a>
             </div>
           )}
           <div>
