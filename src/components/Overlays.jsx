@@ -1,9 +1,10 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { useCart, FREE_SHIPPING } from '../store/cart'
+import { useCart, FREE_SHIPPING, CUSTOM_PRINT_FEE, unitPrice } from '../store/cart'
 import { formatPrice } from '../data/products'
 import { lockScroll } from '../scroll'
 import { navigate } from '../router'
+import { whatsappLink } from '../data/site'
 
 const ProductStage = lazy(() => import('../three/ProductViews').then((m) => ({ default: m.ProductStage })))
 
@@ -22,11 +23,34 @@ function useEscape(active, fn) {
   }, [active, fn])
 }
 
-export function ProductModal({ product, onClose }) {
+// Giyimde beden seçimi (seçilmeden sepete eklenmez)
+function SizePicker({ sizes, value, onChange, error }) {
+  return (
+    <div className={`sizes ${error ? 'sizes--error' : ''}`} role="radiogroup" aria-label="Beden">
+      <span>Beden</span>
+      <div>
+        {sizes.map((s) => (
+          <button key={s} type="button" role="radio" aria-checked={value === s} className={value === s ? 'active' : ''} onClick={() => onChange(s)}>
+            {s}
+          </button>
+        ))}
+      </div>
+      {error && <small role="alert">Önce bedenini seç.</small>}
+    </div>
+  )
+}
+
+export function ProductModal({ product, onClose, onCustom }) {
   const { add, setOpen } = useCart()
   const [qty, setQty] = useState(1)
+  const [size, setSize] = useState(null)
+  const [sizeError, setSizeError] = useState(false)
   useEscape(!!product, onClose)
-  useEffect(() => setQty(1), [product])
+  useEffect(() => {
+    setQty(1)
+    setSize(null)
+    setSizeError(false)
+  }, [product])
 
   return (
     <AnimatePresence>
@@ -48,7 +72,7 @@ export function ProductModal({ product, onClose }) {
             </button>
             <div className="modal__stage" role="img" aria-label={`${product.name} — sürükleyerek döndürülebilen 3D görünüm`}>
               <Suspense fallback={<div className="stage-loader" aria-hidden="true" />}>
-                <ProductStage model={product.model} />
+                <ProductStage product={product} />
               </Suspense>
               <span className="modal__hint">Döndürmek için sürükle</span>
             </div>
@@ -68,6 +92,17 @@ export function ProductModal({ product, onClose }) {
                   <li key={s}>{s}</li>
                 ))}
               </ul>
+              {product.sizes && (
+                <SizePicker
+                  sizes={product.sizes}
+                  value={size}
+                  error={sizeError}
+                  onChange={(s) => {
+                    setSize(s)
+                    setSizeError(false)
+                  }}
+                />
+              )}
               <div className="modal__buy">
                 <div className="qty">
                   <button onClick={() => setQty((q) => Math.max(1, q - 1))} aria-label="Azalt">−</button>
@@ -77,7 +112,8 @@ export function ProductModal({ product, onClose }) {
                 <button
                   className="btn btn--primary btn--grow"
                   onClick={() => {
-                    add(product.id, qty)
+                    if (product.sizes && !size) return setSizeError(true)
+                    add(product.id, qty, { size })
                     onClose()
                     setOpen(true)
                   }}
@@ -85,8 +121,139 @@ export function ProductModal({ product, onClose }) {
                   Sepete Ekle · {formatPrice(product.price * qty)}
                 </button>
               </div>
+              <button className="btn btn--ghost btn--block custom-cta" onClick={() => onCustom(product)}>
+                <PenIcon /> Kişiye Özel Baskı
+              </button>
             </div>
           </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
+
+/* ---------------- Kişiye özel baskı ---------------- */
+
+export const PenIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M4 20h4L19 9l-4-4L4 16v4ZM13 7l4 4" />
+  </svg>
+)
+
+const PLACES = ['Ön', 'Arka', 'Ön ve arka']
+
+// Kendi tasarımlarımıza ek olarak: ziyaretçinin yazısı ya da tasarım fikri ürüne basılır
+export function CustomPrintModal({ product, onClose }) {
+  const { add, setOpen } = useCart()
+  const [size, setSize] = useState(null)
+  const [place, setPlace] = useState(PLACES[0])
+  const [text, setText] = useState('')
+  const [errors, setErrors] = useState({})
+  useEscape(!!product, onClose)
+  useEffect(() => {
+    setSize(null)
+    setPlace(PLACES[0])
+    setText('')
+    setErrors({})
+  }, [product])
+
+  const clothing = !!product?.sizes
+  const wa = product && whatsappLink(`Merhaba, ${product.name} için kişiye özel baskı tasarımımı göndermek istiyorum.`)
+
+  const submit = (e) => {
+    e.preventDefault()
+    const found = {}
+    if (clothing && !size) found.size = true
+    if (text.trim().length < 2) found.text = 'Basılacak yazıyı ya da tasarım fikrini yaz.'
+    setErrors(found)
+    if (Object.keys(found).length) return
+    add(product.id, 1, { size: size ?? undefined, custom: { text: text.trim(), place: clothing ? place : undefined } })
+    onClose()
+    setOpen(true)
+  }
+
+  return (
+    <AnimatePresence>
+      {product && (
+        <motion.div className="modal" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
+          <motion.form
+            className="modal__box custom"
+            initial={{ y: 60, opacity: 0, scale: 0.97 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 40, opacity: 0 }}
+            transition={{ duration: 0.6, ease }}
+            onClick={(e) => e.stopPropagation()}
+            onSubmit={submit}
+            noValidate
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${product.name} kişiye özel baskı`}
+          >
+            <button type="button" className="icon-btn modal__close" onClick={onClose} aria-label="Kapat">
+              ✕
+            </button>
+            <small className="eyebrow">
+              <span className="dot" /> Kişiye özel baskı
+            </small>
+            <h2 className="display">{product.name}</h2>
+            <p className="muted">
+              Kendi tasarımlarımıza ek olarak, istediğin yazıyı, ismi, tarihi ya da çizimini bu ürüne basıyoruz. Üretime başlamadan önce sana bir önizleme
+              gönderip onayını alıyoruz.
+            </p>
+            {clothing && (
+              <SizePicker
+                sizes={product.sizes}
+                value={size}
+                error={errors.size}
+                onChange={(s) => {
+                  setSize(s)
+                  setErrors((x) => ({ ...x, size: undefined }))
+                }}
+              />
+            )}
+            {clothing && (
+              <div className="sizes" role="radiogroup" aria-label="Baskı yeri">
+                <span>Baskı yeri</span>
+                <div>
+                  {PLACES.map((p) => (
+                    <button key={p} type="button" role="radio" aria-checked={place === p} className={place === p ? 'active' : ''} onClick={() => setPlace(p)}>
+                      {p}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            <label className={`field ${errors.text ? 'field--error' : ''}`}>
+              <span>Basılacak yazı ya da tasarım fikrin</span>
+              <textarea
+                rows={3}
+                value={text}
+                maxLength={200}
+                placeholder="Ör. Ayşe 2026, takım logomuz, kendi çizimim"
+                onChange={(e) => {
+                  setText(e.target.value)
+                  if (errors.text) setErrors((x) => ({ ...x, text: undefined }))
+                }}
+                aria-invalid={!!errors.text}
+              />
+              {errors.text && <small role="alert">{errors.text}</small>}
+            </label>
+            <p className="note">
+              Görselin ya da logon varsa siparişten sonra{' '}
+              {wa ? (
+                <a href={wa} target="_blank" rel="noopener">
+                  WhatsApp
+                </a>
+              ) : (
+                'WhatsApp'
+              )}{' '}
+              ya da e-posta ile gönderebilirsin.
+              {CUSTOM_PRINT_FEE > 0 && ` Kişiye özel baskı için ürün başına ${formatPrice(CUSTOM_PRINT_FEE)} eklenir.`}
+            </p>
+            <button className="btn btn--primary btn--block" type="submit">
+              Sepete Ekle · {formatPrice(unitPrice(product, true))}
+            </button>
+          </motion.form>
         </motion.div>
       )}
     </AnimatePresence>
@@ -248,7 +415,7 @@ export function CartDrawer() {
                     <AnimatePresence initial={false}>
                       {lines.map((l) => (
                         <motion.div
-                          key={l.id}
+                          key={l.key}
                           className="line"
                           layout
                           initial={{ opacity: 0, x: 40 }}
@@ -260,14 +427,21 @@ export function CartDrawer() {
                           </div>
                           <div className="line__info">
                             <strong>{l.product.name}</strong>
-                            <span className="muted">{formatPrice(l.product.price)}</span>
+                            {(l.size || l.custom) && (
+                              <small className="line__opts">
+                                {[l.size && `Beden ${l.size}`, l.custom && `Kişiye özel${l.custom.place ? ` (${l.custom.place})` : ''}: “${l.custom.text}”`]
+                                  .filter(Boolean)
+                                  .join(' · ')}
+                              </small>
+                            )}
+                            <span className="muted">{formatPrice(unitPrice(l.product, l.custom))}</span>
                             <div className="qty qty--sm">
-                              <button onClick={() => setQty(l.id, l.qty - 1)} aria-label="Azalt">−</button>
+                              <button onClick={() => setQty(l.key, l.qty - 1)} aria-label="Azalt">−</button>
                               <span>{l.qty}</span>
-                              <button onClick={() => setQty(l.id, l.qty + 1)} aria-label="Artır">+</button>
+                              <button onClick={() => setQty(l.key, l.qty + 1)} aria-label="Artır">+</button>
                             </div>
                           </div>
-                          <button className="line__remove" onClick={() => setQty(l.id, 0)}>
+                          <button className="line__remove" onClick={() => setQty(l.key, 0)}>
                             Kaldır
                           </button>
                         </motion.div>

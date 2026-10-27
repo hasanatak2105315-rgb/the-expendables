@@ -3,9 +3,10 @@ export const SITE = {
   name: 'The Expendables',
   company: '', // Resmî şirket unvanı (ör. "Ad Soyad - The Expendables" veya "X Ltd. Şti.")
   taxInfo: '', // Vergi dairesi ve numarası
-  email: 'destek@theexpendables.com.tr',
+  email: 'hasanatak.2105315@gmail.com',
   phone: '', // ör. '+90 5xx xxx xx xx'
-  address: 'İstanbul, Türkiye',
+  whatsapp: '', // WhatsApp destek hattı, ör. '+90 5xx xxx xx xx'. Boşsa WhatsApp butonu gösterilmez
+  address: 'Tokat Merkez, Türkiye',
   hours: 'Hafta içi 09:00 – 18:00',
   instagram: '#',
   url: 'https://theexpendables.com.tr', // Sitenin yayındaki adresi (sitemap ve paylaşım görseli için)
@@ -14,10 +15,10 @@ export const SITE = {
 
 // Sayfa adresleri, başlıkları ve Google'da görünecek açıklamaları
 export const ROUTES = {
-  '/': ['The Expendables — El Yapımı Takı ve 3D Baskı', 'El yapımı gümüş takılar ve kişiye özel 3D baskı tasarımlar. Yüzük, kolye, küpe, vazo ve lamba. 1.500 ₺ üzeri ücretsiz kargo.'],
-  '/hakkimizda': ['Hakkımızda', 'El yapımı takılar ile 3D baskı tasarımlarını aynı atölyede buluşturan İstanbul merkezli bir marka. Hikâyemiz ve üretim sürecimiz.'],
-  '/iletisim': ['İletişim', 'Sipariş, kişiye özel tasarım ya da iade için bize ulaş. En geç bir iş günü içinde dönüyoruz.'],
-  '/sss': ['Sıkça Sorulan Sorular', 'Kargo süresi, ürün malzemeleri, kişiye özel sipariş, ödeme ve iade hakkında sık sorulan sorular.'],
+  '/': ['The Expendables — Baskılı Giyim ve 3D Baskı', 'Kendi tasarımlarımızla baskılı tişört, sweatshirt ve eşofmanlar, kişiye özel baskı ve 3D baskı tasarımlar. 1.500 ₺ üzeri ücretsiz kargo.'],
+  '/hakkimizda': ['Hakkımızda', 'Baskılı giyim ile 3D baskı tasarımlarını aynı atölyede buluşturan Tokat merkezli bir marka. Hikâyemiz ve üretim sürecimiz.'],
+  '/iletisim': ['İletişim', 'Sipariş, kişiye özel baskı ya da iade için bize ulaş. WhatsApp destek hattı ve e-posta ile en geç bir iş günü içinde dönüyoruz.'],
+  '/sss': ['Sıkça Sorulan Sorular', 'Kargo süresi, beden seçimi, kumaş ve yıkama, kişiye özel baskı, ödeme ve iade hakkında sık sorulan sorular.'],
   '/iade': ['İade ve Değişim', '30 gün içinde koşulsuz iade. İade adımları, iade edilemeyen ürünler ve değişim koşulları.'],
   '/kvkk': ['KVKK Aydınlatma Metni', '6698 sayılı KVKK kapsamında kişisel verilerinin nasıl işlendiğine dair aydınlatma metni.'],
   '/gizlilik': ['Gizlilik ve Çerez Politikası', 'Hangi bilgileri topladığımız, çerezleri nasıl kullandığımız ve verilerini nasıl koruduğumuz.'],
@@ -26,3 +27,12 @@ export const ROUTES = {
 }
 
 export const owner = () => SITE.company || SITE.name
+
+// WhatsApp sohbet bağlantısı (numara yoksa null). 05xx ile yazılan numaralar 90 ile başlayacak şekilde düzeltilir
+export function whatsappLink(text = '') {
+  let n = SITE.whatsapp.replace(/\D/g, '')
+  if (!n) return null
+  if (n.startsWith('0')) n = '9' + n
+  else if (n.length === 10) n = '90' + n
+  return `https://wa.me/${n}${text ? `?text=${encodeURIComponent(text)}` : ''}`
+}

@@ -5,9 +5,9 @@ import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Collection from './components/Collection'
 import { Marquee, Story, Features, BigBanner, Newsletter, Footer } from './components/Sections'
-import { ProductModal, CartDrawer, Toast } from './components/Overlays'
+import { ProductModal, CustomPrintModal, CartDrawer, Toast } from './components/Overlays'
 import { About, Contact, Faq, Returns, Kvkk, Privacy, Terms, DistanceSales, ThankYou, NotFound } from './components/Pages'
-import { MobileCta, CookieBanner } from './components/Extras'
+import { MobileCta, CookieBanner, WhatsAppButton } from './components/Extras'
 import { usePath } from './router'
 import { applyMeta } from './meta'
 import { CartProvider } from './store/cart'
@@ -33,6 +33,7 @@ export default function App() {
   const Page = path === '/' ? null : PAGES[path] ?? NotFound
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState(null)
+  const [customFor, setCustomFor] = useState(null)
 
   useEffect(() => startSmoothScroll(), [])
   useEffect(() => {
@@ -43,6 +44,11 @@ export default function App() {
 
   const done = useCallback(() => setLoading(false), [])
   const closeModal = useCallback(() => setSelected(null), [])
+  const closeCustom = useCallback(() => setCustomFor(null), [])
+  const openCustom = useCallback((product) => {
+    setSelected(null)
+    setCustomFor(product)
+  }, [])
 
   return (
     <CartProvider>
@@ -56,7 +62,7 @@ export default function App() {
           <>
             <Hero ready={!loading} />
             <Marquee />
-            <Collection onOpen={setSelected} />
+            <Collection onOpen={setSelected} onCustom={openCustom} />
             <BigBanner />
             <Story />
             <Features />
@@ -71,8 +77,10 @@ export default function App() {
         </Suspense>
       )}
       <MobileCta />
+      <WhatsAppButton />
       <CartDrawer />
-      <ProductModal product={selected} onClose={closeModal} />
+      <ProductModal product={selected} onClose={closeModal} onCustom={openCustom} />
+      <CustomPrintModal product={customFor} onClose={closeCustom} />
       <Toast />
       <CookieBanner />
     </CartProvider>

@@ -7,7 +7,7 @@ import { SITE } from '../data/site'
 const ease = [0.22, 1, 0.36, 1]
 
 export function Marquee() {
-  const items = ['Ücretsiz kargo 1.500 ₺ üzeri', 'El yapımı', 'Kişiye özel tasarım', 'Hediye paketinde', '30 gün koşulsuz iade', 'Sınırlı üretim']
+  const items = ['Ücretsiz kargo 1.500 ₺ üzeri', 'Kendi tasarımımız', 'Kişiye özel baskı', 'Hediye paketinde', '30 gün koşulsuz iade', 'Sınırlı üretim']
   const row = [...items, ...items]
   return (
     <div className="marquee" aria-hidden="true">
@@ -41,7 +41,7 @@ export function Story() {
   const ref = useRef()
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.8', 'end 0.55'] })
   const text =
-    'Biz seri üretimin peşinde değiliz. Her takıyı elde şekillendirir, her tasarımı katman katman basar ve hiçbir parçayı özenle bakmadan paketlemeyiz. Taktığın bir kolye ya da masana koyduğun bir vazo tek bir şey için var: Senin hikâyeni anlatmak.'
+    'Biz seri üretimin peşinde değiliz. Her baskıyı tek tek kontrol eder, her tasarımı katman katman basar ve hiçbir parçayı özenle bakmadan paketlemeyiz. Giydiğin bir tişört ya da masana koyduğun bir vazo tek bir şey için var: Senin hikâyeni anlatmak.'
   const words = text.split(' ')
   return (
     <section className="section story" id="hikaye">
@@ -58,7 +58,7 @@ export function Story() {
         </p>
         <div className="stats">
           {[
-            ['925', 'Ayar gümüş takılar'],
+            ['%100', 'Pamuk tişörtler'],
             ['0,1 mm', 'Baskı hassasiyeti'],
             ['4.9/5', 'Müşteri puanı'],
             ['1–3 gün', 'İçinde kargoda']
@@ -89,7 +89,7 @@ const FEATURES = [
   },
   {
     title: 'Kişiye Özel',
-    text: 'İsim, tarih ya da kendi çizimin. Takını ve 3D baskını sana özel hazırlıyoruz.',
+    text: 'İsim, tarih ya da kendi çizimin. Kıyafetini ve 3D baskını sana özel hazırlıyoruz.',
     icon: <path d="M4 20h4L19 9l-4-4L4 16v4ZM13 7l4 4" />
   },
   {
@@ -208,7 +208,7 @@ export function Footer() {
         <div className="footer__top">
           <div>
             <Logo />
-            <p className="muted">El işçiliği ve 3D baskıyla tasarlandı. İstanbul, Türkiye.</p>
+            <p className="muted">Baskılı giyim ve 3D baskı. Tokat, Türkiye.</p>
           </div>
           <div className="footer__cols">
             <div>

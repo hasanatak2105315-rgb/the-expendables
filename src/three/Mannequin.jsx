@@ -1,13 +1,27 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
-import { AnimationMixer, CatmullRomCurve3, Euler, MathUtils, MeshPhysicalMaterial, Quaternion, Vector3 } from 'three'
-import { Model, Gold, Gem } from './Models'
+import {
+  AnimationMixer,
+  BufferAttribute,
+  BufferGeometry,
+  Color,
+  DoubleSide,
+  Euler,
+  MathUtils,
+  MeshPhysicalMaterial,
+  MeshStandardMaterial,
+  Quaternion,
+  SkinnedMesh,
+  Vector3
+} from 'three'
+import { Model } from './Models'
+import { Print } from './Apparel'
 import { getTryOn } from '../store/tryon'
 
 // Vitrin mankeni: gerçek insan oranlarında hazır model (public/models/mannequin.glb).
 // Kaynak: three.js örneklerindeki "Xbot" (Adobe Mixamo). Yalnızca duruş animasyonu bırakıldı, sıkıştırıldı.
-// Kartın üzerine gelinen ürün mankende belirir: takılar kemiklere bağlıdır (kulak, boyun, parmak, bilek),
+// Kartın üzerine gelinen ürün mankende belirir: giyim ürünleri mankenin üstüne giydirilir,
 // 3D baskı ürünleri avuçta süzülür.
 
 const URL = '/models/mannequin.glb'
@@ -27,26 +41,150 @@ const joints = new MeshPhysicalMaterial({ color: '#0a1a1f', roughness: 0.3, meta
 // Kemiğe bağlı noktalar: [kemik, kemiğe göre kaydırma, dik dursun mu]
 // Kol ve el kemiklerinde -X parmak ucuna, -Y avuç içine bakar
 const ANCHORS = {
-  head: ['mixamorigHead', [0, 0, 0]],
   neck: ['mixamorigNeck', [0, 0, 0]],
-  finger: ['mixamorigRightHandMiddle1', [-0.022, 0, 0]],
-  wrist: ['mixamorigRightHand', [0.02, 0, 0]],
+  chest: ['mixamorigSpine2', [0, 0, 0]],
+  hips: ['mixamorigHips', [0, 0, 0]],
   palm: ['mixamorigRightHand', [-0.07, -0.04, 0], true]
 }
 
 // Her ürün tipi için kameranın baktığı nokta ve kameranın o noktaya göre konumu
+const TOP = { anchor: 'chest', lift: [0, 0.02, 0], cam: [0.7, 0.3, 3.6] }
 const FOCUS = {
-  earrings: { anchor: 'head', lift: [0, 0.06, 0], cam: [0.75, 0.15, 2.0] },
-  pendant: { anchor: 'neck', lift: [0, -0.15, 0.05], cam: [0.35, 0.25, 3.4] },
-  ring: { anchor: 'finger', lift: [0, 0, 0], cam: [-0.45, 0.6, 1.6] },
-  bracelet: { anchor: 'wrist', lift: [0, 0, 0], cam: [-0.6, 0.65, 2.2] },
+  tshirt: TOP,
+  sweatshirt: TOP,
+  hoodie: { ...TOP, lift: [0, 0.08, 0] },
+  joggers: { anchor: 'hips', lift: [0, -0.55, 0], cam: [0.6, 0.25, 4.8] },
+  tracksuit: { anchor: 'hips', lift: [0, 0.3, 0], cam: [0.5, 0.3, 6.2] },
   object: { anchor: 'palm', lift: [0, 0.12, 0], cam: [-0.75, 0.6, 2.9] }
 }
 const OVERVIEW = { target: [0, 0.1, 0], cam: [0, 0.35, 6.8] }
 const OBJECTS = ['vase', 'lamp', 'planter', 'sculpture', 'keychain']
 const focusOf = (model) => (!model ? null : FOCUS[model] ?? FOCUS.object)
 
-// Seçilen ürüne göre büyüyüp küçülerek beliren parça
+// Hangi ürün mankende hangi kıyafet parçalarını giydirir: [parça, ürünün renk alanı]
+const OUTFITS = {
+  tshirt: [['tee', 'color']],
+  sweatshirt: [['sweat', 'color']],
+  hoodie: [['sweat', 'color'], ['hood', 'color']],
+  joggers: [['pants', 'color']],
+  tracksuit: [['sweat', 'color'], ['pants', 'color2']]
+}
+
+/* ---------------- Kıyafet üretimi ---------------- */
+
+const bare = (name) => name.replace('mixamorig', '')
+
+// Kemiklerin mankenin yerel koordinatlarındaki konumları (kıyafet, T duruşundayken üretilir)
+function bonePositions(mesh) {
+  const out = {}
+  mesh.skeleton.bones.forEach((bone) => {
+    out[bare(bone.name)] = mesh.worldToLocal(bone.getWorldPosition(new Vector3()))
+  })
+  return out
+}
+
+// v noktasının A→B kemik doğrusundaki yeri (0 = A, 1 = B)
+const along = (v, a, b) => {
+  const ab = b.clone().sub(a)
+  return v.clone().sub(a).dot(ab) / ab.lengthSq()
+}
+
+// Bölge kuralları: vertex'in en çok bağlı olduğu kemiğe ve konumuna göre kıyafete dahil mi?
+const TORSO = ['Spine', 'Spine1', 'Spine2', 'LeftShoulder', 'RightShoulder']
+const REGIONS = {
+  tee: {
+    inflate: 0.0045,
+    test: (bone, v, B, side) =>
+      TORSO.includes(bone) ||
+      (bone === side + 'Arm' && along(v, B[side + 'Arm'], B[side + 'ForeArm']) < 0.5) ||
+      (bone === 'Hips' && v.y > B.Hips.y + 0.015 * B.height)
+  },
+  sweat: {
+    inflate: 0.006,
+    test: (bone, v, B, side) =>
+      TORSO.includes(bone) ||
+      bone === side + 'Arm' ||
+      (bone === side + 'ForeArm' && along(v, B[side + 'ForeArm'], B[side + 'Hand']) < 0.92) ||
+      (bone === 'Hips' && v.y > B.Hips.y - 0.005 * B.height)
+  },
+  pants: {
+    inflate: 0.005,
+    test: (bone, v, B, side) =>
+      bone === 'Hips' || bone === side + 'UpLeg' || (bone === side + 'Leg' && along(v, B[side + 'Leg'], B[side + 'Foot']) < 0.93)
+  }
+}
+
+// Yüzey sıkıştırılmış (-1…1) olduğu için bölge seçimi iskeletin hesapladığı gerçek konumla yapılır,
+// şişirme ise sıkıştırılmış koordinatta, yüzeyin boyuna oranla uygulanır
+function buildGarment(mesh, region, material) {
+  const g = mesh.geometry
+  const pos = g.attributes.position
+  const nrm = g.attributes.normal
+  const si = g.attributes.skinIndex
+  const sw = g.attributes.skinWeight
+  const names = mesh.skeleton.bones.map((b) => bare(b.name))
+  mesh.skeleton.update()
+  const B = bonePositions(mesh)
+  B.height = (B.HeadTop_End ?? B.Head).y - B.LeftToe_End.y
+  g.computeBoundingBox()
+  const size = g.boundingBox.getSize(new Vector3())
+
+  const n = pos.count
+  const keep = new Uint8Array(n)
+  const out = new Float32Array(n * 3)
+  const outN = new Float32Array(n * 3)
+  const v = new Vector3()
+  // eklem katmanı yüzeyden zaten taşkın olduğu için daha az şişirilir
+  const push = REGIONS[region].inflate * Math.max(size.x, size.y, size.z) * (mesh.name.includes('Joints') ? 0.6 : 1)
+  for (let i = 0; i < n; i++) {
+    let best = 0
+    let w = -1
+    for (let k = 0; k < 4; k++) {
+      const wk = sw.getComponent(i, k)
+      if (wk > w) (w = wk), (best = si.getComponent(i, k))
+    }
+    const bone = names[best]
+    mesh.getVertexPosition(i, v)
+    const side = bone.startsWith('Left') ? 'Left' : 'Right'
+    keep[i] = REGIONS[region].test(bone, v, B, side) ? 1 : 0
+    const nx = nrm.getX(i)
+    const ny = nrm.getY(i)
+    const nz = nrm.getZ(i)
+    out.set([pos.getX(i) + nx * push, pos.getY(i) + ny * push, pos.getZ(i) + nz * push], i * 3)
+    outN.set([nx, ny, nz], i * 3)
+  }
+
+  const idx = g.index
+  const tris = []
+  for (let t = 0; t < idx.count; t += 3) {
+    const a = idx.getX(t)
+    const b = idx.getX(t + 1)
+    const c = idx.getX(t + 2)
+    if (keep[a] && keep[b] && keep[c]) tris.push(a, b, c)
+  }
+
+  const geo = new BufferGeometry()
+  geo.setAttribute('position', new BufferAttribute(out, 3))
+  geo.setAttribute('normal', new BufferAttribute(outN, 3))
+  geo.setAttribute('skinIndex', si)
+  geo.setAttribute('skinWeight', sw)
+  geo.setIndex(tris)
+
+  const garment = new SkinnedMesh(geo, material)
+  garment.bind(mesh.skeleton, mesh.bindMatrix)
+  garment.position.copy(mesh.position)
+  garment.quaternion.copy(mesh.quaternion)
+  garment.scale.copy(mesh.scale)
+  garment.frustumCulled = false
+  return garment
+}
+
+const fabric = () =>
+  new MeshStandardMaterial({ roughness: 0.9, metalness: 0, side: DoubleSide, transparent: true, opacity: 0, depthWrite: false, visible: false })
+
+/* ---------------- Parçalar ---------------- */
+
+// Seçilen ürüne göre büyüyüp küçülerek beliren parça (avuçtaki 3D baskı ürünleri)
 function Piece({ show, children, ...props }) {
   const ref = useRef()
   useFrame((state, dt) => {
@@ -58,93 +196,6 @@ function Piece({ show, children, ...props }) {
   return (
     <group ref={ref} scale={0} {...props}>
       {children}
-    </group>
-  )
-}
-
-function Earring({ side }) {
-  return (
-    <group rotation-y={side * 0.7}>
-      <mesh position-y={-0.004}>
-        <torusGeometry args={[0.008, 0.0025, 8, 16, PI * 1.3]} />
-        <Gold />
-      </mesh>
-      <mesh position-y={-0.05}>
-        <torusGeometry args={[0.04, 0.0045, 12, 48]} />
-        <Gold />
-      </mesh>
-      <mesh position-y={-0.1}>
-        <icosahedronGeometry args={[0.011, 0]} />
-        <Gem />
-      </mesh>
-    </group>
-  )
-}
-
-// Boyna dolanan ince zincir ve önde damla taş (noktalar boyun kemiğine göre)
-const CHAIN = [[0, 0.03, -0.12], [0.1, 0.01, -0.08], [0.15, -0.06, 0.04], [0.12, -0.17, 0.17], [0.045, -0.24, 0.215]]
-const DROP = [0, -0.262, 0.222]
-
-function Necklace() {
-  const curve = useMemo(() => {
-    const pts = [...CHAIN, ...CHAIN.slice(1).reverse().map(([x, y, z]) => [-x, y, z])]
-    return new CatmullRomCurve3(pts.map((p) => new Vector3(...p)), true)
-  }, [])
-  return (
-    <>
-      <mesh>
-        <tubeGeometry args={[curve, 160, 0.0035, 6, true]} />
-        <Gold />
-      </mesh>
-      <group position={DROP}>
-        <mesh>
-          <torusGeometry args={[0.009, 0.0028, 8, 16]} />
-          <Gold />
-        </mesh>
-        <group position={[0, -0.042, 0.004]}>
-          <mesh scale={[0.62, 1, 0.38]}>
-            <octahedronGeometry args={[0.038, 0]} />
-            <Gem />
-          </mesh>
-          <mesh scale={[0.62, 1, 1]}>
-            <torusGeometry args={[0.038, 0.0025, 6, 4]} />
-            <Gold />
-          </mesh>
-        </group>
-      </group>
-    </>
-  )
-}
-
-// Yüzük ve bileklik kemik eksenine (X) dik durur, taş avuç tarafında (yukarıda) görünür
-function FingerRing() {
-  return (
-    <>
-      <mesh rotation-y={PI / 2}>
-        <torusGeometry args={[0.022, 0.0075, 12, 32]} />
-        <Gold />
-      </mesh>
-      <mesh position-y={-0.03} scale={[0.85, 1, 0.85]}>
-        <octahedronGeometry args={[0.016, 0]} />
-        <Gem />
-      </mesh>
-    </>
-  )
-}
-
-function WristBracelet() {
-  const beads = 18
-  return (
-    <group rotation-y={PI / 2}>
-      {Array.from({ length: beads }).map((_, i) => {
-        const a = (i / beads) * PI * 2
-        return (
-          <mesh key={i} position={[Math.cos(a) * 0.056, Math.sin(a) * 0.05, 0]}>
-            {i % 2 ? <sphereGeometry args={[0.011, 12, 8]} /> : <icosahedronGeometry args={[0.013, 0]} />}
-            {i % 2 ? <Gold /> : <Gem color="#059669" />}
-          </mesh>
-        )
-      })}
     </group>
   )
 }
@@ -163,31 +214,75 @@ function Floating({ type }) {
   )
 }
 
+// Göğüsteki baskı: ürünün baskı yazısıyla, kıyafet görünürken belirir
+function ChestPrint() {
+  const ref = useRef()
+  const product = getTryOn()
+  useFrame((state, dt) => {
+    const p = getTryOn()
+    const on = !!p?.print && ['tshirt', 'sweatshirt', 'hoodie', 'tracksuit'].includes(p.model)
+    const s = MathUtils.damp(ref.current.scale.x, on ? 1 : 0, on ? 5 : 12, dt)
+    ref.current.scale.setScalar(s)
+    ref.current.visible = s > 0.01
+  })
+  const light = product?.color && new Color(product.color).getHSL({}).l > 0.55
+  const small = product?.model === 'tracksuit'
+  return (
+    <group ref={ref} scale={0}>
+      {product?.print && (
+        <Print
+          key={product.id}
+          text={product.print}
+          ink={light ? '#0b3b44' : '#ffd7a8'}
+          width={small ? 0.16 : 0.34}
+          position={small ? [-0.1, 0.12, 0.235] : [0, 0.1, 0.24]}
+        />
+      )}
+    </group>
+  )
+}
+
 const tmpV = new Vector3()
 const tmpQ = new Quaternion()
 const tmpE = new Euler()
 
-export function Mannequin() {
+export function Mannequin({ product }) {
   const { scene, animations } = useGLTF(URL)
   const anchors = useRef({})
   const glow = useRef()
   const lamp = useRef()
+  const hood = useRef()
   const target = useRef(new Vector3(...OVERVIEW.target))
   const camPos = useMemo(() => new Vector3(), [])
   const look = useMemo(() => new Vector3(), [])
 
-  const { mixer, bones } = useMemo(() => {
+  const { mixer, bones, outfit } = useMemo(() => {
+    const skins = []
     scene.traverse((o) => {
-      if (o.isSkinnedMesh) {
+      if (o.isSkinnedMesh && !o.userData.garment) {
         o.material = o.name.includes('Joints') ? joints : surface
         o.frustumCulled = false
+        skins.push(o)
       }
     })
+    // Her kıyafet parçası, mankenin yüzey ve eklem katmanlarından ayrı ayrı üretilir (bir kez, T duruşunda)
+    scene.updateMatrixWorld(true)
+    const outfit = scene.userData.outfit ?? {}
+    if (!scene.userData.outfit) for (const region of Object.keys(REGIONS)) {
+      const material = fabric()
+      skins.forEach((mesh) => {
+        const garment = buildGarment(mesh, region, material)
+        garment.userData.garment = true
+        mesh.parent.add(garment)
+      })
+      outfit[region] = material
+    }
+    scene.userData.outfit = outfit
     const mixer = new AnimationMixer(scene)
     const bones = {}
     scene.traverse((o) => o.isBone && (bones[o.name] = o))
-    return { mixer, bones }
-  }, [scene, animations])
+    return { mixer, bones, outfit }
+  }, [scene])
 
   useEffect(() => {
     const idle = animations.find((a) => a.name === 'idle')
@@ -214,9 +309,26 @@ export function Mannequin() {
       if (upright) group.quaternion.identity()
     }
 
+    // kıyafetler: seçili ürünün parçaları rengini alıp belirir, diğerleri kaybolur
+    const p = getTryOn()
+    const parts = OUTFITS[p?.model] ?? []
+    for (const region in outfit) {
+      const m = outfit[region]
+      const part = parts.find(([r]) => r === region)
+      if (part) m.color.set(p[part[1]] ?? p.color)
+      m.opacity = MathUtils.damp(m.opacity, part ? 1 : 0, part ? 5 : 9, dt)
+      m.visible = m.opacity > 0.01
+      m.depthWrite = m.opacity > 0.95
+    }
+    const wantHood = parts.some(([r]) => r === 'hood')
+    const hm = hood.current.material
+    if (wantHood) hm.color.set(p.color).multiplyScalar(0.85)
+    hm.opacity = MathUtils.damp(hm.opacity, wantHood ? 1 : 0, 6, dt)
+    hood.current.visible = hm.opacity > 0.01
+
     // kamera seçilen bölgeye yumuşakça yaklaşır, hafifçe salınır
     const t = state.clock.elapsedTime
-    const f = focusOf(getTryOn()?.model)
+    const f = focusOf(p?.model)
     if (f) {
       look.copy(anchors.current[f.anchor].position).add(tmpV.set(...f.lift))
       camPos.copy(look).add(tmpV.set(...f.cam))
@@ -230,7 +342,7 @@ export function Mannequin() {
     target.current.lerp(look, 1 - Math.exp(-3 * dt))
     state.camera.lookAt(target.current)
 
-    const on = OBJECTS.includes(getTryOn()?.model)
+    const on = OBJECTS.includes(p?.model)
     glow.current.material.opacity = MathUtils.damp(glow.current.material.opacity, on ? 0.9 : 0, 5, dt)
     lamp.current.intensity = MathUtils.damp(lamp.current.intensity, on ? 1.5 : 0, 5, dt)
   })
@@ -240,28 +352,17 @@ export function Mannequin() {
   return (
     <group>
       <primitive object={scene} scale={SCALE} position-y={FLOOR} />
-      <group ref={anchor('head')}>
-        {[-1, 1].map((s) => (
-          <Piece key={s} show="earrings" position={[s * 0.14, 0.09, 0.0]}>
-            <Earring side={s} />
-          </Piece>
-        ))}
-      </group>
       <group ref={anchor('neck')}>
-        <Piece show="pendant">
-          <Necklace />
-        </Piece>
+        {/* kapüşon ensede toplanmış durur */}
+        <mesh ref={hood} position={[0, 0.06, -0.13]} scale={[0.2, 0.15, 0.12]} visible={false}>
+          <sphereGeometry args={[1, 32, 20]} />
+          <meshStandardMaterial roughness={0.9} transparent opacity={0} />
+        </mesh>
       </group>
-      <group ref={anchor('finger')}>
-        <Piece show="ring">
-          <FingerRing />
-        </Piece>
+      <group ref={anchor('chest')}>
+        <ChestPrint key={product?.id ?? 'none'} />
       </group>
-      <group ref={anchor('wrist')}>
-        <Piece show="bracelet">
-          <WristBracelet />
-        </Piece>
-      </group>
+      <group ref={anchor('hips')} />
       <group ref={anchor('palm')}>
         {OBJECTS.map((type) => (
           <Piece key={type} show={type}>

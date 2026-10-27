@@ -4,10 +4,13 @@ import { PRODUCTS } from '../data/products'
 const CartContext = createContext(null)
 const KEY = 'tx-cart'
 
+// Sepet satırı: aynı ürün farklı beden ya da farklı kişiye özel baskıyla ayrı satırda durur
+const lineKey = (id, size, custom) => [id, size ?? '', custom?.text ?? '', custom?.place ?? ''].join('|')
+
 const load = () => {
   try {
     const items = JSON.parse(localStorage.getItem(KEY)) ?? []
-    return items.filter((i) => PRODUCTS.some((p) => p.id === i.id))
+    return items.filter((i) => PRODUCTS.some((p) => p.id === i.id)).map((i) => ({ ...i, key: i.key ?? lineKey(i.id, i.size, i.custom) }))
   } catch {
     return []
   }
@@ -15,6 +18,10 @@ const load = () => {
 
 export const FREE_SHIPPING = 1500
 export const SHIPPING_FEE = 79
+// Kişiye özel baskının ürün başına ek ücreti (0 ise ücretsiz, sitede ek ücret yazmaz)
+export const CUSTOM_PRINT_FEE = 0
+
+export const unitPrice = (product, custom) => product.price + (custom ? CUSTOM_PRINT_FEE : 0)
 
 export function CartProvider({ children }) {
   const [items, setItems] = useState(load)
@@ -35,7 +42,7 @@ export function CartProvider({ children }) {
 
   const value = useMemo(() => {
     const lines = items.map((i) => ({ ...i, product: PRODUCTS.find((p) => p.id === i.id) }))
-    const subtotal = lines.reduce((s, l) => s + l.product.price * l.qty, 0)
+    const subtotal = lines.reduce((s, l) => s + unitPrice(l.product, l.custom) * l.qty, 0)
     const shipping = subtotal === 0 || subtotal >= FREE_SHIPPING ? 0 : SHIPPING_FEE
     return {
       lines,
@@ -46,15 +53,17 @@ export function CartProvider({ children }) {
       shipping,
       total: subtotal + shipping,
       setOpen,
-      add(id, qty = 1) {
+      // opts: { size, custom: { text, place } }
+      add(id, qty = 1, { size, custom } = {}) {
+        const key = lineKey(id, size, custom)
         setItems((prev) => {
-          const found = prev.find((i) => i.id === id)
-          return found ? prev.map((i) => (i.id === id ? { ...i, qty: i.qty + qty } : i)) : [...prev, { id, qty }]
+          const found = prev.find((i) => i.key === key)
+          return found ? prev.map((i) => (i.key === key ? { ...i, qty: i.qty + qty } : i)) : [...prev, { key, id, qty, size, custom }]
         })
         setToast(`${PRODUCTS.find((p) => p.id === id).name} sepete eklendi`)
       },
-      setQty(id, qty) {
-        setItems((prev) => (qty <= 0 ? prev.filter((i) => i.id !== id) : prev.map((i) => (i.id === id ? { ...i, qty } : i))))
+      setQty(key, qty) {
+        setItems((prev) => (qty <= 0 ? prev.filter((i) => i.key !== key) : prev.map((i) => (i.key === key ? { ...i, qty } : i))))
       },
       clear: () => setItems([])
     }

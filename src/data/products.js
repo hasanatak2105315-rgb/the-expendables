@@ -1,53 +1,84 @@
 // Ürün listesi — ad, fiyat, açıklama ve 3D modeli buradan düzenleyin.
 // model: src/three/Models.jsx içindeki modellerden biri
-// (ring, pendant, earrings, bracelet, vase, lamp, planter, sculpture, keychain)
+// (tshirt, sweatshirt, hoodie, joggers, tracksuit, vase, lamp, planter, sculpture, keychain)
+// Giyimde: color = kumaş rengi, color2 = eşofman takımının altı, print = göğüsteki baskı yazısı,
+// sizes = beden seçenekleri (varsa sepete eklemeden önce beden seçilir)
 
-export const CATEGORIES = ['Tümü', 'Takı', '3D Baskı', 'Kişiye Özel']
+export const CATEGORIES = ['Tümü', 'Giyim', '3D Baskı', 'Kişiye Özel']
+
+const SIZES = ['S', 'M', 'L', 'XL', 'XXL']
 
 export const PRODUCTS = [
   {
-    id: 'zumrut-yuzuk',
-    name: 'Zümrüt Yüzük',
-    category: 'Takı',
-    model: 'ring',
-    price: 2490,
-    oldPrice: 2890,
+    id: 'baskili-tisort',
+    name: 'Baskılı Tişört',
+    category: 'Giyim',
+    model: 'tshirt',
+    color: '#f1ece2',
+    print: 'Expendables',
+    sizes: SIZES,
+    price: 449,
+    oldPrice: 549,
     rating: 4.9,
     tag: 'Çok Satan',
-    desc: '925 ayar gümüş üzerine altın kaplama, el işçiliğiyle yerleştirilmiş yeşil zirkon taş. Günlük kullanıma ve özel günlere uygun.',
-    specs: ['925 ayar gümüş', 'Altın kaplama', 'Yeşil zirkon taş', 'Ölçü seçeneği']
+    desc: 'Yumuşak penye kumaş üzerine kendi tasarımımız olan göğüs baskısı. Rahat kesim, günlük kullanım için ideal.',
+    specs: ['%100 pamuk', '180 g/m² penye', 'Solmayan DTF baskı', 'Unisex kesim']
   },
   {
-    id: 'damla-kolye',
-    name: 'Damla Kolye',
-    category: 'Takı',
-    model: 'pendant',
-    price: 1890,
+    id: 'baskili-sweatshirt',
+    name: 'Baskılı Sweatshirt',
+    category: 'Giyim',
+    model: 'sweatshirt',
+    color: '#1d6f7b',
+    print: 'Est. 2026',
+    sizes: SIZES,
+    price: 749,
     rating: 4.8,
     tag: 'Yeni',
-    desc: 'Damla kesim yeşil taş ve ince zincir. Sade ama dikkat çeken bir parça.',
-    specs: ['45 cm zincir', 'Altın kaplama', 'Damla kesim taş', 'Hediye kutusu']
+    desc: 'İçi şardonlu, kalın dokulu sweatshirt. Ribanalı yaka, kol ve etek ucu; göğüste nakış görünümlü baskı.',
+    specs: ['%80 pamuk, %20 polyester', 'İçi şardonlu', 'Ribanalı uçlar', 'Unisex kesim']
   },
   {
-    id: 'halka-kupe',
-    name: 'Halka Küpe',
-    category: 'Takı',
-    model: 'earrings',
-    price: 990,
+    id: 'kapusonlu-sweatshirt',
+    name: 'Kapüşonlu Sweatshirt',
+    category: 'Giyim',
+    model: 'hoodie',
+    color: '#f2a65a',
+    print: 'Tokat',
+    sizes: SIZES,
+    price: 849,
+    oldPrice: 990,
+    rating: 4.9,
+    desc: 'Kanguru cepli, bağcıklı kapüşonlu sweatshirt. Oversize kalıp, sırt ya da göğüs baskısıyla.',
+    specs: ['Kanguru cep', 'Bağcıklı kapüşon', 'İçi şardonlu', 'Oversize kalıp']
+  },
+  {
+    id: 'esofman-alti',
+    name: 'Eşofman Altı',
+    category: 'Giyim',
+    model: 'joggers',
+    color: '#9aa3ab',
+    sizes: SIZES,
+    price: 649,
     rating: 4.7,
-    desc: 'Hafif ve zarif halka küpeler, ucunda küçük yeşil taş. Gün boyu rahat kullanım.',
-    specs: ['925 ayar gümüş', 'Altın kaplama', 'Hipoalerjenik', '3 cm çap']
+    desc: 'Gri melanj, paçası lastikli jogger eşofman altı. Yanda turkuaz şerit, belde bağcık, iki yan cep.',
+    specs: ['Lastikli paça', 'Bağcıklı bel', 'İki yan cep', 'Yan şerit detayı']
   },
   {
-    id: 'boncuk-bileklik',
-    name: 'Boncuk Bileklik',
-    category: 'Takı',
-    model: 'bracelet',
-    price: 690,
-    oldPrice: 850,
+    id: 'esofman-takimi',
+    name: 'Eşofman Takımı',
+    category: 'Giyim',
+    model: 'tracksuit',
+    color: '#2c4a7a',
+    color2: '#2c4a7a',
+    print: 'TX',
+    sizes: SIZES,
+    price: 1290,
+    oldPrice: 1490,
     rating: 4.8,
-    desc: 'Altın kaplama boncuklar ve yeşil taşlar, ucunda isim baş harfi kazınabilen madalyon.',
-    specs: ['Esnek ip', 'Altın kaplama boncuk', 'Harf kazıma', 'Tek beden']
+    tag: 'Takım',
+    desc: 'Sweatshirt ve jogger altından oluşan takım. Kayısı şerit detaylı, göğüste küçük logo baskısı.',
+    specs: ['Üst + alt takım', 'İçi şardonlu', 'Lastikli paça', 'Logo baskı']
   },
   {
     id: 'spiral-vazo',

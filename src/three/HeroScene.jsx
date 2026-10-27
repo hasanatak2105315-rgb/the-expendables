@@ -3,7 +3,8 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Float, Sparkles, MeshReflectorMaterial } from '@react-three/drei'
 import { EffectComposer, Bloom, Noise, Vignette } from '@react-three/postprocessing'
 import { Vector3 } from 'three'
-import { Ring, Pendant, Vase } from './Models'
+import { Vase, Keychain } from './Models'
+import { Tshirt } from './Apparel'
 import { Studio } from './Studio'
 
 const mouse = { x: 0, y: 0 }
@@ -29,7 +30,7 @@ function Hero3D() {
   useFrame((state, dt) => {
     const t = state.clock.elapsedTime
     const scroll = Math.min(window.scrollY / window.innerHeight, 1.2)
-    hero.current.rotation.y = -0.45 + Math.sin(t * 0.35) * 0.55 + scroll * 1.2
+    hero.current.rotation.y = -0.25 + Math.sin(t * 0.35) * 0.45 + scroll * 1.2
     hero.current.rotation.x = 0.05 + scroll * 0.4
     orbit.current.rotation.y -= dt * 0.12
   })
@@ -38,12 +39,12 @@ function Hero3D() {
     <group position={[mobile ? 0.35 : 1.9, mobile ? -1.55 : 0.05, mobile ? -0.5 : 0]} scale={mobile ? 0.5 : 1}>
       <Float speed={1.6} rotationIntensity={0.25} floatIntensity={0.6}>
         <group ref={hero}>
-          <Ring scale={0.78} position-y={-0.3} rotation-x={0.25} />
+          <Tshirt scale={0.95} position-y={-0.15} rotation-x={0.08} />
         </group>
       </Float>
       <group ref={orbit}>
         <Float speed={2.2} floatIntensity={1.2}>
-          <Pendant scale={0.45} position={[-2.1, 0.7, -1.2]} rotation={[0.1, 0.5, 0.15]} />
+          <Keychain scale={0.5} position={[-2.1, 0.7, -1.2]} rotation={[0.1, 0.5, 0.15]} />
         </Float>
         <Float speed={1.8} floatIntensity={1}>
           <Vase scale={0.38} position={[2.1, -0.6, -1]} rotation={[0.2, 0, 0.15]} />

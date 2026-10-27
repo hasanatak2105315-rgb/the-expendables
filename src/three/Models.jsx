@@ -2,6 +2,7 @@ import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { RoundedBox } from '@react-three/drei'
 import { CylinderGeometry, DoubleSide, Vector3 } from 'three'
+import { Tshirt, Sweatshirt, Hoodie, Joggers, Tracksuit } from './Apparel'
 
 // Tüm ürünler kod ile oluşturulmuş 3D modellerdir (dış dosya gerekmez).
 // Gerçek modeller (.glb) geldiğinde useGLTF ile değiştirilebilir.
@@ -9,11 +10,7 @@ import { CylinderGeometry, DoubleSide, Vector3 } from 'three'
 const PI = Math.PI
 
 // Malzemeler
-const Gold = () => <meshStandardMaterial color="#e3c16f" metalness={1} roughness={0.16} />
 const Silver = () => <meshStandardMaterial color="#dfe7e3" metalness={1} roughness={0.12} />
-const Gem = ({ color = '#10b981' }) => (
-  <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.55} metalness={0.2} roughness={0.02} flatShading />
-)
 const Pla = ({ color = '#7de8f2', side }) => (
   <meshStandardMaterial color={color} metalness={0.05} roughness={0.55} flatShading side={side} />
 )
@@ -22,124 +19,6 @@ const Dark = () => <meshStandardMaterial color="#08161a" metalness={0.3} roughne
 const Glow = ({ intensity = 2.5, color = '#2fd8e6' }) => (
   <meshStandardMaterial color={color} emissive={color} emissiveIntensity={intensity} toneMapped={false} />
 )
-
-// Halka şeklinde zincir
-function Chain({ rx = 0.75, ry = 0.55, y = 1.05, links = 34 }) {
-  return Array.from({ length: links }).map((_, i) => {
-    const a = (i / links) * PI * 2
-    return (
-      <mesh key={i} position={[Math.sin(a) * rx, y + Math.cos(a) * ry, 0]} rotation={[0, i % 2 ? PI / 2 : 0, -a]}>
-        <torusGeometry args={[0.035, 0.012, 8, 16]} />
-        <Gold />
-      </mesh>
-    )
-  })
-}
-
-function Ring(props) {
-  return (
-    <group {...props}>
-      <mesh>
-        <torusGeometry args={[0.78, 0.12, 32, 96]} />
-        <Gold />
-      </mesh>
-      <mesh position-y={0.94}>
-        <cylinderGeometry args={[0.24, 0.14, 0.2, 8]} />
-        <Gold />
-      </mesh>
-      {[0, 1, 2, 3].map((i) => {
-        const a = (i / 4) * PI * 2 + PI / 4
-        return (
-          <mesh key={i} position={[Math.cos(a) * 0.22, 1.12, Math.sin(a) * 0.22]} rotation={[Math.sin(a) * 0.4, 0, -Math.cos(a) * 0.4]}>
-            <cylinderGeometry args={[0.025, 0.03, 0.28, 8]} />
-            <Gold />
-          </mesh>
-        )
-      })}
-      <mesh position-y={1.2} scale={[1, 0.85, 1]} rotation-y={PI / 8}>
-        <octahedronGeometry args={[0.3, 0]} />
-        <Gem />
-      </mesh>
-    </group>
-  )
-}
-
-function Pendant(props) {
-  return (
-    <group {...props}>
-      <Chain />
-      <mesh position-y={0.38}>
-        <torusGeometry args={[0.08, 0.025, 12, 24]} />
-        <Gold />
-      </mesh>
-      <group position-y={-0.15}>
-        <mesh scale={[0.62, 1, 0.38]}>
-          <octahedronGeometry args={[0.5, 0]} />
-          <Gem />
-        </mesh>
-        <mesh scale={[0.62, 1, 1]}>
-          <torusGeometry args={[0.5, 0.03, 8, 4]} />
-          <Gold />
-        </mesh>
-      </group>
-    </group>
-  )
-}
-
-function Earrings(props) {
-  return (
-    <group {...props}>
-      {[-1, 1].map((s) => (
-        <group key={s} position-x={s * 0.55} rotation={[0, s * 0.35, s * -0.08]}>
-          <mesh position-y={0.85}>
-            <torusGeometry args={[0.12, 0.022, 12, 32, PI * 1.3]} />
-            <Gold />
-          </mesh>
-          <mesh>
-            <torusGeometry args={[0.45, 0.045, 16, 64]} />
-            <Gold />
-          </mesh>
-          <mesh position-y={-0.55}>
-            <icosahedronGeometry args={[0.11, 0]} />
-            <Gem />
-          </mesh>
-        </group>
-      ))}
-    </group>
-  )
-}
-
-function Bracelet(props) {
-  const beads = 22
-  return (
-    <group {...props}>
-      {Array.from({ length: beads }).map((_, i) => {
-        const a = (i / beads) * PI * 2
-        const gem = i % 2 === 0
-        return (
-          <mesh key={i} position={[Math.cos(a) * 0.85, Math.sin(a) * 0.85, 0]}>
-            {gem ? <icosahedronGeometry args={[0.11, 1]} /> : <sphereGeometry args={[0.09, 24, 16]} />}
-            {gem ? <Gem color="#059669" /> : <Gold />}
-          </mesh>
-        )
-      })}
-      <mesh>
-        <torusGeometry args={[0.85, 0.012, 8, 96]} />
-        <Gold />
-      </mesh>
-      <group position={[0, -1.12, 0]}>
-        <mesh position-y={0.1}>
-          <torusGeometry args={[0.05, 0.015, 8, 16]} />
-          <Gold />
-        </mesh>
-        <mesh rotation-x={PI / 2}>
-          <cylinderGeometry args={[0.16, 0.16, 0.03, 32]} />
-          <Gold />
-        </mesh>
-      </group>
-    </group>
-  )
-}
 
 // 3D baskı kıvrımlı vazo: silindirin köşeleri yükseklikle bükülür
 function Vase(props) {
@@ -275,10 +154,11 @@ function Keychain(props) {
 }
 
 const MODELS = {
-  ring: Ring,
-  pendant: Pendant,
-  earrings: Earrings,
-  bracelet: Bracelet,
+  tshirt: Tshirt,
+  sweatshirt: Sweatshirt,
+  hoodie: Hoodie,
+  joggers: Joggers,
+  tracksuit: Tracksuit,
   vase: Vase,
   lamp: Lamp,
   planter: Planter,
@@ -288,10 +168,11 @@ const MODELS = {
 
 // Her modelin kartta düzgün görünmesi için ölçek / açı ayarı
 const FRAMING = {
-  ring: { scale: 0.85, position: [0, -0.25, 0], rotation: [0.25, 0, 0] },
-  pendant: { scale: 0.95, position: [0, -0.3, 0], rotation: [0, 0.3, 0] },
-  earrings: { scale: 1.05, rotation: [0, 0, 0] },
-  bracelet: { scale: 0.95, rotation: [0.5, 0, 0] },
+  tshirt: { scale: 0.95, rotation: [0.05, 0, 0] },
+  sweatshirt: { scale: 0.92, rotation: [0.05, 0, 0] },
+  hoodie: { scale: 0.88, position: [0, -0.08, 0], rotation: [0.05, 0, 0] },
+  joggers: { scale: 1.05, rotation: [0.05, 0, 0] },
+  tracksuit: { scale: 1.05, rotation: [0.05, 0, 0] },
   vase: { scale: 0.85, rotation: [0.15, 0, 0] },
   lamp: { scale: 0.95, rotation: [0.15, 0, 0] },
   planter: { scale: 1, rotation: [0.3, 0, 0] },
@@ -299,14 +180,16 @@ const FRAMING = {
   keychain: { scale: 1.05, rotation: [0.2, -0.4, 0.1] }
 }
 
-export function Model({ type, ...props }) {
-  const Comp = MODELS[type] ?? Ring
+// Giyimde ürünün rengi ve baskı yazısı da modele geçer (color, color2, print)
+export function Model({ type, color, color2, print, ...props }) {
+  const Comp = MODELS[type] ?? Tshirt
   const frame = FRAMING[type] ?? {}
+  const look = Object.fromEntries(Object.entries({ color, color2, print }).filter(([, v]) => v !== undefined))
   return (
     <group {...props}>
-      <Comp scale={frame.scale} position={frame.position} rotation={frame.rotation} />
+      <Comp scale={frame.scale} position={frame.position} rotation={frame.rotation} {...look} />
     </group>
   )
 }
 
-export { Ring, Pendant, Vase, Gold, Gem }
+export { Vase, Keychain }

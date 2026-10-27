@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { CATEGORIES, PRODUCTS, formatPrice } from '../data/products'
 import { useCart } from '../store/cart'
 import { setTryOn, useTryOn } from '../store/tryon'
+import { PenIcon } from './Overlays'
 
 const CardView = lazy(() => import('../three/ProductViews').then((m) => ({ default: m.CardView })))
 const MannequinView = lazy(() => import('../three/ProductViews').then((m) => ({ default: m.MannequinView })))
@@ -56,7 +57,7 @@ function TryOn() {
   )
 }
 
-function ProductCard({ product, index, onOpen }) {
+function ProductCard({ product, index, onOpen, onCustom }) {
   const { add } = useCart()
   const [hovered, setHovered] = useState(false)
   const ref = useRef()
@@ -99,7 +100,7 @@ function ProductCard({ product, index, onOpen }) {
         <span className="card__index">{String(index + 1).padStart(2, '0')}</span>
         {product.tag && <span className="card__tag">{product.tag}</span>}
         <Suspense fallback={<div className="stage-loader" aria-hidden="true" />}>
-          <CardView className="card__view" model={product.model} hovered={hovered} />
+          <CardView className="card__view" product={product} hovered={hovered} />
         </Suspense>
         <span className="card__look">İncele</span>
       </button>
@@ -111,8 +112,16 @@ function ProductCard({ product, index, onOpen }) {
             {formatPrice(product.price)}
             {product.oldPrice && <s>{formatPrice(product.oldPrice)}</s>}
           </div>
+          <button className="custom-btn" onClick={() => onCustom(product)}>
+            <PenIcon /> Kişiye özel baskı
+          </button>
         </div>
-        <button className="add-btn" onClick={() => add(product.id)} aria-label="Sepete ekle">
+        {/* Giyimde önce beden seçilsin diye ürün detayı açılır */}
+        <button
+          className="add-btn"
+          onClick={() => (product.sizes ? onOpen(product) : add(product.id))}
+          aria-label={product.sizes ? 'Beden seç ve sepete ekle' : 'Sepete ekle'}
+        >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M12 5v14M5 12h14" />
           </svg>
@@ -122,7 +131,7 @@ function ProductCard({ product, index, onOpen }) {
   )
 }
 
-export default function Collection({ onOpen }) {
+export default function Collection({ onOpen, onCustom }) {
   const [cat, setCat] = useState('Tümü')
   const list = cat === 'Tümü' ? PRODUCTS : PRODUCTS.filter((p) => p.category === cat)
   const wide = useWide()
@@ -154,7 +163,7 @@ export default function Collection({ onOpen }) {
           <motion.div layout className="grid">
             <AnimatePresence mode="popLayout">
               {list.map((p, i) => (
-                <ProductCard key={p.id} product={p} index={i} onOpen={onOpen} />
+                <ProductCard key={p.id} product={p} index={i} onOpen={onOpen} onCustom={onCustom} />
               ))}
             </AnimatePresence>
           </motion.div>

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'motion/react'
-import { SITE, owner } from '../data/site'
+import { SITE, owner, whatsappLink } from '../data/site'
+import { WhatsAppIcon } from './Extras'
 import { FREE_SHIPPING, SHIPPING_FEE } from '../store/cart'
 import { formatPrice } from '../data/products'
 import { Link } from '../router'
@@ -40,15 +41,15 @@ function Page({ eyebrow, title, intro, children }) {
 /* ---------------- Hakkımızda ---------------- */
 
 const VALUES = [
-  ['El İşçiliği', 'Takılarımızı tek tek elde şekillendirip cilalıyoruz. Her parçada küçük farklar olması, onun el yapımı olduğunun işareti.'],
+  ['Kendi Tasarımımız', 'Baskılarımızı kendimiz çiziyor, her birini kumaşa basmadan önce renk ve konum provası yapıyoruz. Yıkandıkça solmayan baskı kullanıyoruz.'],
   ['Katman Katman', '3D baskı tasarımlarımızı biyobozunur PLA ile, ince katmanlar hâlinde basıyor ve son işlemlerini elle yapıyoruz.'],
   ['Sana Özel', 'İsim, tarih, logo ya da kendi çizimin. Aklındaki fikri birlikte tasarlayıp gerçeğe dönüştürüyoruz.']
 ]
 
 const STEPS = [
   ['Tasarım', 'Fikir eskizden dijital modele dönüşür.'],
-  ['Üretim', 'Takı atölyede şekillenir, tasarım yazıcıda basılır.'],
-  ['Son Dokunuş', 'Zımpara, cila ve kalite kontrolü elle yapılır.'],
+  ['Üretim', 'Baskı kumaşa aktarılır, 3D tasarım yazıcıda basılır.'],
+  ['Son Dokunuş', 'Ütü, zımpara ve kalite kontrolü elle yapılır.'],
   ['Paketleme', 'Her sipariş hediye kutusunda yola çıkar.']
 ]
 
@@ -57,7 +58,7 @@ export function About() {
     <Page
       eyebrow="Hakkımızda"
       title={<>Küçük bir atölye, <em>büyük bir özen</em></>}
-      intro="The Expendables, el yapımı takılar ile 3D baskı tasarımları aynı çatı altında buluşturan İstanbul merkezli bir atölye. Seri üretim yerine, her parçaya ayrı ayrı zaman ayırmayı seçiyoruz."
+      intro="The Expendables, baskılı giyim ile 3D baskı tasarımları aynı çatı altında buluşturan Tokat merkezli bir atölye. Seri üretim yerine, her parçaya ayrı ayrı zaman ayırmayı seçiyoruz."
     >
       <div className="values">
         {VALUES.map(([t, d], i) => (
@@ -94,7 +95,7 @@ export function About() {
 
 /* ---------------- İletişim ---------------- */
 
-const TOPICS = ['Sipariş ve kargo', 'Kişiye özel tasarım', 'İade ve değişim', 'Diğer']
+const TOPICS = ['Sipariş ve kargo', 'Kişiye özel baskı', 'Beden ve değişim', 'İade', 'Diğer']
 
 function validate(f) {
   const e = {}
@@ -136,7 +137,7 @@ export function Contact() {
     <Page
       eyebrow="İletişim"
       title={<>Bize <em>ulaş</em></>}
-      intro="Siparişin, kişiye özel bir tasarım fikrin ya da aklına takılan bir soru mu var? Yaz, en geç bir iş günü içinde dönelim."
+      intro="Siparişin, kişiye özel bir baskı fikrin ya da aklına takılan bir soru mu var? Yaz, en geç bir iş günü içinde dönelim."
     >
       <div className="contact">
         <Reveal className="contact__info">
@@ -144,6 +145,14 @@ export function Contact() {
             <small>E-posta</small>
             <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
           </div>
+          {whatsappLink() && (
+            <div>
+              <small>WhatsApp destek hattı</small>
+              <a className="wa-inline" href={whatsappLink('Merhaba, destek almak istiyorum.')} target="_blank" rel="noopener">
+                <WhatsAppIcon /> {SITE.whatsapp}
+              </a>
+            </div>
+          )}
           {SITE.phone && (
             <div>
               <small>Telefon</small>
@@ -219,24 +228,24 @@ const FAQ = [
   {
     group: 'Ürünler',
     items: [
-      ['Takılarınız hangi malzemeden yapılıyor?', 'Takılarımızın çoğu 925 ayar gümüş üzerine altın kaplamadır. Her ürünün malzemesi, ürün detayındaki özellikler bölümünde yazar.'],
-      ['Gümüş takılar kararır mı?', 'Gümüş zamanla hava ile temas edip kararabilir. Takını parfüm, deniz ve havuz suyundan uzak tutup kutusunda saklarsan ışıltısı çok daha uzun sürer. Yumuşak bir bezle silmek yeterlidir.'],
+      ['Kıyafetleriniz hangi kumaştan?', 'Tişörtlerimiz %100 pamuk penye, sweatshirt ve eşofmanlarımız içi şardonlu pamuk-polyester karışımıdır. Her ürünün kumaşı, ürün detayındaki özellikler bölümünde yazar.'],
+      ['Baskılar yıkamada solar mı?', 'Hayır. Baskılarımız yıkamaya dayanıklıdır. Ürünü ters çevirip 30°C’de yıkar, baskının üstünü ütülemezsen ilk günkü gibi kalır. Kurutma makinesi kullanmamanı öneririz.'],
       ['3D baskı ürünler dayanıklı mı?', 'Tasarımlarımızı PLA ile basıyoruz. İç mekânda uzun yıllar kullanılabilir. Doğrudan güneş altında ve 50°C üzeri sıcakta bırakılmamalı, bulaşık makinesine konmamalıdır.'],
-      ['Yüzük ölçümü nasıl bilebilirim?', 'Mevcut bir yüzüğünün iç çapını milimetre olarak ölçüp bize yazman yeterli. Emin değilsen iletişim sayfasından ulaş, birlikte doğru ölçüyü bulalım.']
+      ['Hangi bedeni seçmeliyim?', 'Kalıplarımız standarttır, kapüşonlu sweatshirt oversize kesimdir. Sevdiğin bir tişörtünün koltuk altından koltuk altına genişliğini ölçüp bize yazarsan doğru bedeni birlikte bulalım.']
     ]
   },
   {
     group: 'Kişiye özel',
     items: [
-      ['Kişiye özel sipariş nasıl veriyorum?', 'Ürünü sepete ekledikten sonra iletişim sayfasından bize isim, tarih ya da tasarım fikrini yaz. Üretime başlamadan önce sana bir önizleme gönderip onayını alıyoruz.'],
-      ['Kendi tasarımımı bastırabilir miyim?', 'Evet. Çizimini, fotoğrafını ya da 3D modelini (STL) gönderebilirsin. Basılabilirliğini kontrol edip fiyat ve süre bilgisi veriyoruz.']
+      ['Kişiye özel baskı nasıl yaptırırım?', 'Her ürünün altındaki “Kişiye özel baskı” butonuna bas, bedenini ve baskı yerini seç, basılacak yazıyı ya da tasarım fikrini yaz. Üretime başlamadan önce sana bir önizleme gönderip onayını alıyoruz.'],
+      ['Kendi tasarımımı bastırabilir miyim?', 'Evet. Çizimini, logonu, fotoğrafını ya da 3D modelini (STL) WhatsApp ya da e-posta ile gönderebilirsin. Basılabilirliğini kontrol edip süre bilgisi veriyoruz.']
     ]
   },
   {
     group: 'Ödeme ve iade',
     items: [
       ['Ödeme güvenli mi?', 'Ödemeler 256-bit SSL ile şifrelenir ve kart bilgilerin bizim sistemimizde saklanmaz.'],
-      ['İade edebilir miyim?', 'Evet, ürünü teslim aldığın günden itibaren 30 gün içinde iade edebilirsin. Kişiye özel ürünler ve hijyen nedeniyle ambalajı açılmış küpeler iade edilemez.']
+      ['İade edebilir miyim?', 'Evet, ürünü teslim aldığın günden itibaren 30 gün içinde iade edebilirsin. Kişiye özel baskılı ürünler iade edilemez.']
     ]
   }
 ]
@@ -301,13 +310,12 @@ export function Returns() {
         <h2>İade edilemeyen ürünler</h2>
         <ul>
           <li>İsim, tarih, logo ya da sana özel tasarımla üretilen kişiye özel ürünler</li>
-          <li>Hijyen nedeniyle ambalajı açılmış küpeler</li>
           <li>Kullanılmış, zarar görmüş ya da orijinal kutusu olmayan ürünler</li>
         </ul>
 
         <h2>Değişim</h2>
         <p>
-          Yüzük ölçüsü ya da renk değişimi için aynı adımları izleyebilirsin. Değişim talebinde yeni ürünün kargo ücreti bizden. Kişiye özel ürünlerde değişim
+          Beden ya da renk değişimi için aynı adımları izleyebilirsin. Değişim talebinde yeni ürünün kargo ücreti bizden. Kişiye özel ürünlerde değişim
           yapılamaz.
         </p>
 
@@ -439,7 +447,7 @@ export function DistanceSales() {
         <h3>Cayma hakkının kullanılamayacağı durumlar</h3>
         <ul>
           <li>Alıcının istekleri veya kişisel ihtiyaçları doğrultusunda hazırlanan kişiye özel ürünler</li>
-          <li>Teslimden sonra ambalajı açılmış, sağlık ve hijyen açısından iadesi uygun olmayan ürünler (ör. küpeler)</li>
+          <li>Teslimden sonra ambalajı açılmış, sağlık ve hijyen açısından iadesi uygun olmayan ürünler</li>
         </ul>
         <h3>Şikâyet ve itiraz</h3>
         <p>
@@ -506,7 +514,7 @@ export function Terms() {
         </p>
         <h2>Ürün bilgileri ve fiyatlar</h2>
         <p>
-          Ürün bilgilerinin ve fiyatların doğru olması için özen gösteriyoruz. El yapımı ürünlerde renk, ölçü ve dokuda küçük farklar olabilir. Açık bir fiyat
+          Ürün bilgilerinin ve fiyatların doğru olması için özen gösteriyoruz. Baskılı ve 3D baskı ürünlerde renk, ölçü ve dokuda küçük farklar olabilir. Açık bir fiyat
           hatası olması durumunda siparişi iptal edip ödemenin tamamını iade etme hakkımız saklıdır.
         </p>
         <h2>Kişiye özel siparişler</h2>

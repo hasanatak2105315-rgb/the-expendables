@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useCart } from '../store/cart'
 import { formatPrice } from '../data/products'
-import { SITE } from '../data/site'
+import { SITE, whatsappLink } from '../data/site'
 import { Link, goToSection, usePath } from '../router'
 
 const ease = [0.22, 1, 0.36, 1]
@@ -47,6 +47,27 @@ export function MobileCta() {
         </motion.div>
       )}
     </AnimatePresence>
+  )
+}
+
+/* ---------------- WhatsApp destek hattı ---------------- */
+
+export const WhatsAppIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
+    <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1" />
+  </svg>
+)
+
+// Sağ altta sabit duran destek butonu. site.js içinde whatsapp numarası yoksa görünmez
+export function WhatsAppButton() {
+  const href = whatsappLink('Merhaba, The Expendables sitesinden yazıyorum.')
+  if (!href) return null
+  return (
+    <a className="wa-btn" href={href} target="_blank" rel="noopener" aria-label="WhatsApp destek hattı">
+      <WhatsAppIcon />
+      <span>WhatsApp Destek</span>
+    </a>
   )
 }
 
