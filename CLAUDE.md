@@ -19,7 +19,7 @@ Baskılı giyim (tişört, sweatshirt, eşofman) ve 3D baskı ürünleri satan, 
 ## Dosyalar
 
 - `src/data/products.js`: ürünler ve kategoriler (Giyim, 3D Baskı, Kişiye Özel). Giyimde `color`, `color2` (takım altı), `print` (göğüs baskı yazısı) ve `sizes` (beden) alanları var
-- `src/data/site.js`: şirket ve iletişim bilgileri (e-posta hasanatak.2105315@gmail.com, adres Tokat Merkez, `whatsapp` numarası boşsa WhatsApp butonları gizli; `whatsappLink()` wa.me bağlantısı üretir), site adresi (`url`), Google Analytics kimliği (`analyticsId`) ve her sayfanın Google başlığı/açıklaması (`ROUTES`). Boş alanlar sitede gösterilmez
+- `src/data/site.js`: şirket ve iletişim bilgileri (e-posta hasanatak.2105315@gmail.com, adres Tokat Merkez, WhatsApp destek hattı 0532 565 42 88 (`whatsapp` boşsa WhatsApp butonları gizlenir); `whatsappLink()` wa.me bağlantısı üretir), site adresi (`url`), Google Analytics kimliği (`analyticsId`) ve her sayfanın Google başlığı/açıklaması (`ROUTES`). Boş alanlar sitede gösterilmez
 - `src/three/Models.jsx`: ürünlerin kodla çizilmiş 3D modelleri (giyim + vazo, lamba, saksı, heykel, anahtarlık). Giyim modelleri `src/three/Apparel.jsx` içinde: kalıp şekli kalınlaştırılır, göğse canvas dokusuyla baskı yazısı eklenir
 - `src/three/HeroScene.jsx`: giriş sahnesi (baskılı tişört, anahtarlık, vazo, yansıyan zemin, bloom)
 - `src/three/ProductViews.jsx`: ürün kartlarındaki 3D görünümler (tek ortak Canvas + drei `View`), sanal prova mankeninin sahnesi ve ürün detayındaki 3D sahne
@@ -55,7 +55,7 @@ Baskılı giyim (tişört, sweatshirt, eşofman) ve 3D baskı ürünleri satan, 
 
 ## Sıradaki işler
 
-1. Kullanıcıdan alınacak bilgiler: WhatsApp destek numarası, şirket unvanı, vergi bilgisi, telefon, Instagram adresi, gerçek alan adı, (istenirse) Google Analytics kimliği, kişiye özel baskı ek ücreti olacak mı
+1. Kullanıcıdan alınacak bilgiler: şirket unvanı, vergi bilgisi, telefon, Instagram adresi, gerçek alan adı, (istenirse) Google Analytics kimliği, kişiye özel baskı ek ücreti olacak mı
 2. Yayına alma (Vercel veya Netlify)
 
 ## Notlar
