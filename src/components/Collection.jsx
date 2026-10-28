@@ -76,12 +76,12 @@ function BodyForm({ body }) {
 }
 
 // Ürünlerin yanında ekranla birlikte kayan sanal prova alanı
-function TryOn() {
+function TryOn({ hidden }) {
   const product = useTryOn()
   const body = useBody()
   const size = recommendedSize(product, body)
   return (
-    <aside className={`tryon ${body.open ? 'tryon--edit' : ''}`} aria-label="Sanal prova">
+    <aside className={`tryon ${body.open ? 'tryon--edit' : ''}`} aria-label="Sanal prova" hidden={hidden}>
       <div className="tryon__stage" role="img" aria-label={product ? `Mankenin üzerinde ${product.name}` : 'Vitrin mankeni'}>
         <Suspense fallback={<div className="stage-loader" aria-hidden="true" />}>
           <MannequinView className="tryon__view" />
@@ -135,7 +135,7 @@ function TryOn() {
 
 function ProductCard({ product, index, onOpen, onCustom }) {
   const { add } = useCart()
-  const [hovered, setHovered] = useState(false)
+  const hovered = useRef(false)
   const ref = useRef()
 
   // Fareye göre hafif 3D eğim
@@ -149,7 +149,7 @@ function ProductCard({ product, index, onOpen, onCustom }) {
     ref.current.style.setProperty('--my', `${(y + 0.5) * 100}%`)
   }
   const onLeave = () => {
-    setHovered(false)
+    hovered.current = false
     ref.current.style.setProperty('--rx', '0deg')
     ref.current.style.setProperty('--ry', '0deg')
   }
@@ -165,7 +165,7 @@ function ProductCard({ product, index, onOpen, onCustom }) {
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.5, delay: (index % 3) * 0.05, ease: [0.22, 1, 0.36, 1] }}
       onMouseEnter={() => {
-        setHovered(true)
+        hovered.current = true
         if (wearable(product)) setTryOn(product)
       }}
       onFocus={() => wearable(product) && setTryOn(product)}
@@ -210,8 +210,10 @@ function ProductCard({ product, index, onOpen, onCustom }) {
 export default function Collection({ onOpen, onCustom }) {
   const [cat, setCat] = useState('Tümü')
   const list = cat === 'Tümü' ? PRODUCTS : PRODUCTS.filter((p) => p.category === cat)
-  // listede giyim yoksa (3D Baskı, Kişiye Özel) manken alanı gizlenir, ürünler tam genişlikte dizilir
-  const tryOn = useWide() && list.some(wearable)
+  // listede giyim yoksa (3D Baskı, Kişiye Özel) manken alanı gizlenir, ürünler tam genişlikte dizilir.
+  // Manken kaldırılmaz, yalnızca gizlenir: yeniden kurmak kategori değişiminde ekranı takıyordu
+  const wide = useWide()
+  const tryOn = wide && list.some(wearable)
 
   return (
     <section className="section" id="koleksiyon">
@@ -236,7 +238,7 @@ export default function Collection({ onOpen, onCustom }) {
         </div>
 
         <div className={tryOn ? 'collection collection--tryon' : 'collection'}>
-          {tryOn && <TryOn />}
+          {wide && <TryOn hidden={!tryOn} />}
           <motion.div layout className="grid">
             <AnimatePresence mode="popLayout">
               {list.map((p, i) => (

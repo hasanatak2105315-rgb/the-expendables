@@ -47,7 +47,7 @@ const Fabric = ({ color }) => <meshStandardMaterial color={color} roughness={0.9
 
 // Baskı dokusu: italik marka yazısı + küçük logo satırı. Aynı yazı için tek doku üretilir
 const prints = new Map()
-function printTexture(text, ink) {
+export function printTexture(text, ink) {
   const key = text + ink
   if (prints.has(key)) return prints.get(key)
   const canvas = document.createElement('canvas')

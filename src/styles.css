@@ -178,6 +178,7 @@ main, .footer { position: relative; z-index: 1; }
 .collection--tryon { display: grid; grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.6fr); gap: 22px; align-items: start; }
 .collection--tryon .grid { grid-template-columns: repeat(2, 1fr); }
 .tryon { position: sticky; top: 96px; height: min(calc(100vh - 120px), 820px); border-radius: var(--radius); border: 1px solid var(--line); overflow: hidden; background: radial-gradient(circle at 50% 35%, rgba(20, 184, 198, 0.2), transparent 60%), radial-gradient(circle at 50% 110%, rgba(14, 90, 102, 0.5), transparent 60%), linear-gradient(180deg, var(--surface), var(--bg-2)); }
+.tryon[hidden] { display: none; }
 .tryon__stage { position: absolute; inset: 0; transition: bottom 0.35s var(--ease); }
 .tryon--edit .tryon__stage { bottom: 44%; }
 .tryon__view { position: absolute; inset: 0; }

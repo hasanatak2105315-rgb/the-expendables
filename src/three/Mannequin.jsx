@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import {
   BufferAttribute,
@@ -8,14 +8,16 @@ import {
   DoubleSide,
   Euler,
   MathUtils,
+  Mesh,
   MeshPhysicalMaterial,
   MeshStandardMaterial,
+  PlaneGeometry,
   Quaternion,
   SkinnedMesh,
   Vector3
 } from 'three'
 import { Model } from './Models'
-import { Print } from './Apparel'
+import { Print, printTexture } from './Apparel'
 import { getTryOn } from '../store/tryon'
 import { FIELDS, BASES, getBody, useBody } from '../store/body'
 
@@ -385,6 +387,27 @@ export function Mannequin({ product }) {
     scene.userData.pose ??= buildPose(scene, bones)
     return { bones, boneList, outfit, pose: scene.userData.pose }
   }, [scene])
+
+  // Kıyafet, kapüşon ve göğüs baskısının malzemeleri ilk gösterildikleri anda derlenirse ekran
+  // bir an takılır; manken yüklenince hepsi önceden derlenir
+  const { gl, scene: world, camera } = useThree()
+  useEffect(() => {
+    const hidden = Object.values(outfit).filter((m) => !m.visible)
+    hidden.forEach((m) => (m.visible = true))
+    const hoodShown = hood.current.visible
+    hood.current.visible = true
+    const warm = new Mesh(
+      new PlaneGeometry(0.01, 0.01),
+      new MeshStandardMaterial({ map: printTexture('TX', '#ffd7a8'), transparent: true, roughness: 0.8, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 })
+    )
+    world.add(warm)
+    gl.compile(world, camera)
+    world.remove(warm)
+    warm.geometry.dispose()
+    warm.material.dispose()
+    hidden.forEach((m) => (m.visible = false))
+    hood.current.visible = hoodShown
+  }, [gl, world, camera, outfit])
 
   // diğer manken de arka planda insin ki seçim anında beklenmesin
   useEffect(() => {

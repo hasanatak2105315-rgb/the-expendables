@@ -7,12 +7,14 @@ import { Mannequin } from './Mannequin'
 import { useTryOn } from '../store/tryon'
 
 // Ürün kartlarındaki küçük 3D sahne. Hepsi tek bir ortak Canvas üzerinde çizilir (performans için).
+// hovered bir ref'tir: kartın üzerine gelmek React'te yeniden çizim yaptırmaz (takılmayı önler)
 function Spinner({ hovered, children }) {
   const ref = useRef()
   useFrame((_, dt) => {
-    const speed = hovered ? 1.6 : 0.35
+    const on = hovered.current
+    const speed = on ? 1.6 : 0.35
     ref.current.rotation.y += dt * speed
-    const s = hovered ? 1.12 : 1
+    const s = on ? 1.12 : 1
     ref.current.scale.lerp({ x: s, y: s, z: s }, 1 - Math.exp(-8 * dt))
   })
   return <group ref={ref}>{children}</group>
@@ -31,7 +33,8 @@ export function CardView({ product, hovered, className }) {
           <Model {...look(product)} />
         </Spinner>
       </Float>
-      <ContactShadows position={[0, -1.25, 0]} opacity={0.6} scale={5} blur={2.5} far={2} color="#000" />
+      {/* gölge bir kez çizilir; her karede çizmek tüm kartlarda sayfayı yavaşlatıyordu */}
+      <ContactShadows frames={1} position={[0, -1.25, 0]} opacity={0.6} scale={5} blur={2.5} far={2} color="#000" />
     </View>
   )
 }
@@ -48,7 +51,7 @@ export function MannequinView({ className }) {
         <Mannequin product={product} />
       </Suspense>
       <Sparkles count={40} scale={[2.4, 3, 1.6]} position-y={0.4} size={1.6} speed={0.25} opacity={0.5} color="#7de8f2" />
-      <ContactShadows position={[0, -1.44, 0]} opacity={0.6} scale={3} blur={2.5} far={1.5} color="#000" />
+      <ContactShadows position={[0, -1.44, 0]} opacity={0.6} scale={3} blur={2.5} far={1.5} resolution={256} color="#000" />
     </View>
   )
 }
@@ -57,7 +60,7 @@ export function ViewsCanvas() {
   return (
     <Canvas
       className="views-canvas"
-      dpr={[1, 1.75]}
+      dpr={[1, 1.5]}
       gl={{ antialias: true, alpha: true }}
       style={{ position: 'fixed', inset: 0, pointerEvents: 'none' }}
     >
