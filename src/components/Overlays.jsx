@@ -70,7 +70,7 @@ export function ProductModal({ product, onClose, onCustom }) {
             initial={{ y: 60, opacity: 0, scale: 0.97 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 40, opacity: 0 }}
-            transition={{ duration: 0.6, ease }}
+            transition={{ duration: 0.35, ease }}
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -190,7 +190,7 @@ export function CustomPrintModal({ product, onClose }) {
             initial={{ y: 60, opacity: 0, scale: 0.97 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 40, opacity: 0 }}
-            transition={{ duration: 0.6, ease }}
+            transition={{ duration: 0.35, ease }}
             onClick={(e) => e.stopPropagation()}
             onSubmit={submit}
             noValidate
@@ -400,7 +400,7 @@ export function CartDrawer() {
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ duration: 0.7, ease }}
+            transition={{ duration: 0.4, ease }}
             aria-label="Sepet"
           >
             <div className="drawer__head">

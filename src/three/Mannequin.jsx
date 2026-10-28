@@ -448,8 +448,8 @@ export function Mannequin({ product }) {
     }
     camPos.x += Math.sin(t * 0.4) * 0.08
     camPos.y += Math.sin(t * 0.3) * 0.03
-    state.camera.position.lerp(camPos, 1 - Math.exp(-2.5 * dt))
-    target.current.lerp(look, 1 - Math.exp(-3 * dt))
+    state.camera.position.lerp(camPos, 1 - Math.exp(-4.5 * dt))
+    target.current.lerp(look, 1 - Math.exp(-5.5 * dt))
     state.camera.lookAt(target.current)
 
     const on = OBJECTS.includes(p?.model)

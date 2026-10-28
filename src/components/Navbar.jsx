@@ -35,7 +35,7 @@ export function EMark({ className, animated = false }) {
           key={d}
           initial={animated ? { opacity: 0, y: -10 } : false}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 + i * 0.12, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ delay: 0.05 + i * 0.06, duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
         >
           <path d={E} transform={`translate(${d} ${d})`} fill={fill} stroke={d && d < 16 ? '#03171c' : 'none'} strokeWidth="0.7" />
         </motion.g>
@@ -79,7 +79,7 @@ export default function Navbar() {
       className={`nav ${scrolled ? 'nav--solid' : ''} ${menu ? 'nav--open' : ''}`}
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ delay: 0.4, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ delay: 0.15, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className="container nav__inner">
         <a href="/" aria-label="Ana sayfa" onClick={(e) => { e.preventDefault(); setMenu(false); navigate('/') }}>

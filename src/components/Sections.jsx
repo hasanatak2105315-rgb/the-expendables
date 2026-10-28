@@ -69,7 +69,7 @@ export function Story() {
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.9, ease }}
+              transition={{ delay: i * 0.05, duration: 0.5, ease }}
             >
               <strong>{a}</strong>
               <span>{b}</span>
@@ -111,7 +111,7 @@ export function Features() {
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
-              transition={{ delay: i * 0.12, duration: 0.9, ease }}
+              transition={{ delay: i * 0.06, duration: 0.5, ease }}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
                 {f.icon}
@@ -151,7 +151,7 @@ export function Newsletter() {
           initial={{ opacity: 0, y: 60 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 1, ease }}
+          transition={{ duration: 0.55, ease }}
         >
           <p className="eyebrow">
             <span className="dot" /> Bültene Katıl

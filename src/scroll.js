@@ -5,7 +5,7 @@ export let lenis = null
 
 export function startSmoothScroll() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return () => {}
-  lenis = new Lenis({ lerp: 0.09, smoothWheel: true })
+  lenis = new Lenis({ lerp: 0.14, smoothWheel: true })
   let id
   const raf = (t) => {
     lenis.raf(t)
@@ -22,7 +22,7 @@ export function startSmoothScroll() {
 export function scrollToId(id) {
   const el = document.getElementById(id)
   if (!el) return
-  if (lenis) lenis.scrollTo(el, { offset: -70, duration: 1.6 })
+  if (lenis) lenis.scrollTo(el, { offset: -70, duration: 0.9 })
   else el.scrollIntoView({ behavior: 'smooth' })
 }
 

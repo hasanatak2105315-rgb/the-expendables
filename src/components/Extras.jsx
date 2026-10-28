@@ -33,7 +33,7 @@ export function MobileCta() {
           initial={{ y: '120%' }}
           animate={{ y: 0 }}
           exit={{ y: '120%' }}
-          transition={{ duration: 0.5, ease }}
+          transition={{ duration: 0.3, ease }}
         >
           {count > 0 ? (
             <button className="btn btn--primary btn--block" onClick={() => setOpen(true)}>
@@ -144,7 +144,7 @@ export function CookieBanner() {
           initial={{ y: 40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 40, opacity: 0 }}
-          transition={{ duration: 0.6, ease }}
+          transition={{ duration: 0.35, ease }}
         >
           <p>
             Siteyi geliştirmek için, izin verirsen anonim ziyaret istatistikleri topluyoruz. Sepetin gibi zorunlu bilgiler her durumda saklanır.{' '}

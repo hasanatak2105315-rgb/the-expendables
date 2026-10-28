@@ -14,7 +14,7 @@ const Reveal = ({ children, delay = 0, className }) => (
     initial={{ opacity: 0, y: 40 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, margin: '-40px' }}
-    transition={{ delay, duration: 0.9, ease }}
+    transition={{ delay, duration: 0.5, ease }}
   >
     {children}
   </motion.div>
@@ -25,7 +25,7 @@ function Page({ eyebrow, title, intro, children }) {
   return (
     <section className="page">
       <div className="container">
-        <motion.header className="page__head" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease }}>
+        <motion.header className="page__head" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, ease }}>
           <p className="eyebrow">
             <span className="dot" /> {eyebrow}
           </p>
@@ -62,7 +62,7 @@ export function About() {
     >
       <div className="values">
         {VALUES.map(([t, d], i) => (
-          <Reveal key={t} className="feature" delay={i * 0.1}>
+          <Reveal key={t} className="feature" delay={i * 0.05}>
             <span className="values__no">0{i + 1}</span>
             <h3>{t}</h3>
             <p>{d}</p>
@@ -178,7 +178,7 @@ export function Contact() {
           </p>
         </Reveal>
 
-        <Reveal className="contact__form" delay={0.1}>
+        <Reveal className="contact__form" delay={0.05}>
           {sent ? (
             <div className="contact__done">
               <div className="done-mark">✓</div>
