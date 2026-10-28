@@ -9,6 +9,9 @@ import { PenIcon } from './Overlays'
 const CardView = lazy(() => import('../three/ProductViews').then((m) => ({ default: m.CardView })))
 const MannequinView = lazy(() => import('../three/ProductViews').then((m) => ({ default: m.MannequinView })))
 
+// Manken yalnızca giyim ürünlerini gösterir
+const wearable = (p) => p.category === 'Giyim'
+
 // Manken yalnızca fareli, geniş ekranlarda gösterilir (dokunmatikte "üzerine gelme" yok)
 const WIDE = '(min-width: 1025px) and (hover: hover)'
 function useWide() {
@@ -163,9 +166,9 @@ function ProductCard({ product, index, onOpen, onCustom }) {
       transition={{ duration: 0.9, delay: (index % 3) * 0.1, ease: [0.22, 1, 0.36, 1] }}
       onMouseEnter={() => {
         setHovered(true)
-        setTryOn(product)
+        if (wearable(product)) setTryOn(product)
       }}
-      onFocus={() => setTryOn(product)}
+      onFocus={() => wearable(product) && setTryOn(product)}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
     >
@@ -207,7 +210,8 @@ function ProductCard({ product, index, onOpen, onCustom }) {
 export default function Collection({ onOpen, onCustom }) {
   const [cat, setCat] = useState('Tümü')
   const list = cat === 'Tümü' ? PRODUCTS : PRODUCTS.filter((p) => p.category === cat)
-  const wide = useWide()
+  // listede giyim yoksa (3D Baskı, Kişiye Özel) manken alanı gizlenir, ürünler tam genişlikte dizilir
+  const tryOn = useWide() && list.some(wearable)
 
   return (
     <section className="section" id="koleksiyon">
@@ -231,8 +235,8 @@ export default function Collection({ onOpen, onCustom }) {
           </div>
         </div>
 
-        <div className={wide ? 'collection collection--tryon' : 'collection'}>
-          {wide && <TryOn />}
+        <div className={tryOn ? 'collection collection--tryon' : 'collection'}>
+          {tryOn && <TryOn />}
           <motion.div layout className="grid">
             <AnimatePresence mode="popLayout">
               {list.map((p, i) => (
