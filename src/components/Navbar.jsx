@@ -11,14 +11,48 @@ const LINKS = [
   ['/iletisim', 'İletişim']
 ]
 
+// Logo: 3D yazıcıdan çıkmış gibi katman katman üst üste binen E.
+// Arkadaki katman kayısı, öndeki turkuaz. favicon.svg ve paylaşım görseli de aynı çizimi kullanır
+const E = 'M20 16H92V36H44V50H82V68H44V82H92V102H20Z'
+const LAYERS = [
+  [16, '#7a3f12'],
+  [14, '#a8581d'],
+  [12, '#d97f33'],
+  [10, '#ffb86b'],
+  [8, '#c9a77a'],
+  [6, '#5fb7b8'],
+  [4, '#14b8c6'],
+  [2, '#22c9d6'],
+  [0, '#2fd8e6']
+]
+
+// animated: katmanlar alttan üste doğru tek tek "basılır" (açılış ekranı)
+export function EMark({ className, animated = false }) {
+  return (
+    <svg className={className} viewBox="16 12 96 108" aria-hidden="true">
+      {LAYERS.map(([d, fill], i) => (
+        <motion.g
+          key={d}
+          initial={animated ? { opacity: 0, y: -10 } : false}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 + i * 0.12, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <path d={E} transform={`translate(${d} ${d})`} fill={fill} stroke={d && d < 16 ? '#03171c' : 'none'} strokeWidth="0.7" />
+        </motion.g>
+      ))}
+      <path d="M26 22H86" stroke="#ecfdff" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+    </svg>
+  )
+}
+
 export function Logo() {
   return (
     <span className="logo">
-      <svg viewBox="0 0 32 32" aria-hidden="true">
-        <path d="M5 7h22v4.5H18.3V27h-4.6V11.5H5z" fill="currentColor" />
-        <path d="M5 29h22" stroke="var(--accent-2)" strokeWidth="2" />
-      </svg>
-      THE EXPENDABLES
+      <EMark />
+      <span className="logo__text">
+        <small>THE</small>
+        EXPENDABLES
+      </span>
     </span>
   )
 }

@@ -21,6 +21,7 @@
   /* Başlıklar: klasik lüks serif (marka) · Metinler: modern geometrik (3D baskı) */
   --font-display: 'Playfair Display', Georgia, serif;
   --font-body: 'Manrope', system-ui, sans-serif;
+  --font-logo: 'Anton', 'Impact', sans-serif;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -58,7 +59,8 @@ main, .footer { position: relative; z-index: 1; }
 
 /* Yükleme ekranı */
 .loader { position: fixed; inset: 0; z-index: 200; background: var(--bg); display: flex; flex-direction: column; justify-content: center; padding: 0 6vw; gap: 28px; }
-.loader__title { font-family: var(--font-display); font-weight: 500; letter-spacing: 0.04em; font-size: clamp(1.7rem, 7.6vw, 8rem); line-height: 1; overflow: hidden; display: flex; flex-wrap: wrap; color: var(--text); }
+.loader__mark { width: clamp(64px, 9vw, 120px); height: auto; }
+.loader__title { font-family: var(--font-logo); font-weight: 400; letter-spacing: 0.05em; font-size: clamp(1.7rem, 7.6vw, 8rem); line-height: 1; overflow: hidden; display: flex; flex-wrap: wrap; color: var(--text); }
 .loader__title span { display: inline-block; }
 .loader__bar { height: 2px; background: var(--line); overflow: hidden; }
 .loader__bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent-strong), var(--accent-2)); transform-origin: left; box-shadow: 0 0 20px var(--accent); }
@@ -69,8 +71,10 @@ main, .footer { position: relative; z-index: 1; }
 .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; transition: background 0.5s, border-color 0.5s, backdrop-filter 0.5s; border-bottom: 1px solid transparent; }
 .nav--solid { background: rgba(3, 23, 28, 0.86); backdrop-filter: blur(16px); border-color: var(--line); }
 .nav__inner { display: flex; align-items: center; justify-content: space-between; height: 76px; gap: 20px; }
-.logo { display: inline-flex; white-space: nowrap; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 600; font-size: 1.3rem; letter-spacing: 0.16em; color: var(--text); }
-.logo svg { width: 28px; height: 28px; color: var(--accent); filter: drop-shadow(0 0 8px rgba(47, 216, 230, 0.6)); }
+.logo { display: inline-flex; white-space: nowrap; align-items: center; gap: 10px; color: var(--text); }
+.logo svg { width: 32px; height: 36px; filter: drop-shadow(0 0 10px rgba(47, 216, 230, 0.35)); }
+.logo__text { display: flex; flex-direction: column; font-family: var(--font-logo); font-size: 1.45rem; letter-spacing: 0.07em; line-height: 1; }
+.logo__text small { font-family: var(--font-body); font-weight: 600; font-size: 0.5rem; letter-spacing: 0.5em; color: var(--accent-2); margin-bottom: 3px; }
 .nav__links { display: flex; gap: 6px; }
 .nav__links button { padding: 8px 14px; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); position: relative; transition: color 0.3s; }
 .nav__links button::after { content: ''; position: absolute; left: 14px; right: 14px; bottom: 4px; height: 1px; background: var(--accent); transform: scaleX(0); transform-origin: right; transition: transform 0.5s var(--ease); }
@@ -240,7 +244,7 @@ main, .footer { position: relative; z-index: 1; }
 .footer h4 { font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); font-weight: 500; margin-bottom: 14px; }
 .footer__cols a, .footer__cols button { display: block; margin-bottom: 8px; font-size: 0.95rem; transition: color 0.3s; text-align: left; }
 .footer__cols a:hover, .footer__cols button:hover { color: var(--accent); }
-.footer__giant { font-family: var(--font-display); font-weight: 600; letter-spacing: 0.02em; font-size: clamp(3rem, 13vw, 11.5rem); line-height: 0.9; margin-top: 70px; text-align: center; background: linear-gradient(180deg, rgba(47, 216, 230, 0.35), transparent 85%); -webkit-background-clip: text; background-clip: text; color: transparent; user-select: none; }
+.footer__giant { font-family: var(--font-logo); font-weight: 400; letter-spacing: 0.04em; font-size: clamp(3rem, 14.5vw, 13rem); line-height: 0.9; margin-top: 70px; text-align: center; background: linear-gradient(180deg, rgba(47, 216, 230, 0.35), transparent 85%); -webkit-background-clip: text; background-clip: text; color: transparent; user-select: none; }
 .footer__bottom { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 24px 0 30px; border-top: 1px solid var(--line); font-size: 0.8rem; color: var(--muted); }
 
 /* Sepet */
@@ -428,7 +432,8 @@ main, .footer { position: relative; z-index: 1; }
   .burger { display: flex; }
   .cart-btn span { display: none; }
   .cart-btn { padding: 9px 10px 9px 12px; }
-  .logo { font-size: 1rem; letter-spacing: 0.08em; }
+  .logo svg { width: 26px; height: 30px; }
+  .logo__text { font-size: 1.2rem; }
   .hero__shade { background: linear-gradient(180deg, rgba(3, 23, 28, 0.75) 0%, rgba(3, 23, 28, 0.15) 60%, rgba(3, 23, 28, 0.7) 100%); }
   .hero__content { justify-content: flex-start; padding-top: 120px; }
   .hero__title { font-size: clamp(2.9rem, 13.5vw, 4.4rem); }
