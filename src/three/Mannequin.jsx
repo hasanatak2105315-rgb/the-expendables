@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import {
-  AnimationMixer,
   BufferAttribute,
   BufferGeometry,
   Color,
@@ -18,34 +17,51 @@ import {
 import { Model } from './Models'
 import { Print } from './Apparel'
 import { getTryOn } from '../store/tryon'
-import { FIELDS, getBody } from '../store/body'
+import { FIELDS, BASES, getBody, useBody } from '../store/body'
 
-// Vitrin mankeni: gerçek insan oranlarında hazır model (public/models/mannequin.glb).
-// Kaynak: three.js örneklerindeki "Xbot" (Adobe Mixamo). Yalnızca duruş animasyonu bırakıldı, sıkıştırıldı.
+// Vitrin mankeni: kadın ve erkek, gerçek insan oranlarında hazır modeller (public/models/mannequin-*.glb).
+// Kaynak: Sketchfab, DNC44 "Basic Human Female / Male" (CC BY 4.0, Mixamo iskeleti). Modeller T duruşunda
+// geldiği için kollar kodla indirilir, hafif nefes/salınım hareketi de kodla verilir.
 // Kartın üzerine gelinen ürün mankende belirir: giyim ürünleri mankenin üstüne giydirilir,
 // 3D baskı ürünleri avuçta süzülür. Ziyaretçi ölçülerini girerse manken o ölçülere göre şekillenir.
 
-const URL = '/models/mannequin.glb'
+const URLS = { female: '/models/mannequin-female.glb', male: '/models/mannequin-male.glb' }
+// Modellerin dosyadaki boyu (metre) ve sahnede 1 cm'nin karşılığı
+const MODEL_H = { female: 1.72, male: 1.8 }
+const CM = 0.0178
 const PI = Math.PI
-const SCALE = 1.7
 const FLOOR = -1.45
 
-// Duruş animasyonunun üstüne eklenen açı: sağ kol öne kalkar, avuç yukarı bakar
-const POSE = {
-  mixamorigRightForeArm: [0, 1.9, 0],
-  mixamorigRightHand: [-2.0, 0, 0]
-}
+// Duruş: kemikten çocuğuna doğru bakılacak yön (manken +Z'ye bakar, sol tarafı +X).
+// Sol kol yanda, sağ kol öne kalkar; avuçlar: solda bacağa, sağda yukarı
+const POSE = [
+  ['LeftArm', 'LeftForeArm', [0.24, -1, 0.02]],
+  ['LeftForeArm', 'LeftHand', [0.14, -1, 0.14]],
+  ['LeftHand', 'LeftHandMiddle1', [0.1, -1, 0.12], [-1, 0, 0]],
+  ['RightArm', 'RightForeArm', [-0.18, -1, 0.16]],
+  ['RightForeArm', 'RightHand', [-0.08, 0.12, 1]],
+  ['RightHand', 'RightHandMiddle1', [-0.04, 0.08, 1], [0, 1, 0]]
+]
+// Hafif duruş hareketi: [kemik, eksen, genlik, hız, faz]
+const IDLE = [
+  ['Hips', 'z', 0.012, 0.45, 0],
+  ['Spine', 'x', 0.012, 1.5, 0],
+  ['Spine2', 'x', 0.016, 1.5, 0.6],
+  ['Neck', 'y', 0.05, 0.35, 1],
+  ['Head', 'x', 0.02, 0.5, 2],
+  ['LeftArm', 'z', 0.015, 1.5, 0.3]
+]
 
 const surface = new MeshPhysicalMaterial({ color: '#1d3a42', roughness: 0.38, metalness: 0.15, clearcoat: 1, clearcoatRoughness: 0.25 })
 const joints = new MeshPhysicalMaterial({ color: '#0a1a1f', roughness: 0.3, metalness: 0.6, clearcoat: 1, clearcoatRoughness: 0.2 })
 
 // Kemiğe bağlı noktalar: [kemik, kemiğe göre kaydırma, dik dursun mu]
-// Kol ve el kemiklerinde -X parmak ucuna, -Y avuç içine bakar
+// El kemiğinde +Y parmak uçlarına bakar
 const ANCHORS = {
   neck: ['mixamorigNeck', [0, 0, 0]],
   chest: ['mixamorigSpine2', [0, 0, 0]],
   hips: ['mixamorigHips', [0, 0, 0]],
-  palm: ['mixamorigRightHand', [-0.07, -0.04, 0], true]
+  palm: ['mixamorigRightHand', [0, 0.1, 0], true]
 }
 
 // Her ürün tipi için kameranın baktığı nokta ve kameranın o noktaya göre konumu
@@ -189,21 +205,55 @@ function buildGarment(mesh, region, material) {
 const fabric = () =>
   new MeshStandardMaterial({ roughness: 0.9, metalness: 0, side: DoubleSide, transparent: true, opacity: 0, depthWrite: false, visible: false })
 
+/* ---------------- Duruş ---------------- */
+
+const wpos = (b) => b.getWorldPosition(new Vector3())
+
+// Kemiği dünya koordinatındaki q dönüşüyle döndürür
+function turn(bone, q) {
+  const world = bone.getWorldQuaternion(new Quaternion())
+  const parent = bone.parent.getWorldQuaternion(new Quaternion())
+  bone.quaternion.copy(parent.invert().multiply(q.multiply(world)))
+  bone.updateMatrixWorld(true)
+}
+
+// T duruşundan POSE'a geçiş: her kemiğin yerel dönüşü bir kez hesaplanıp saklanır
+function buildPose(scene, bones) {
+  const get = (n) => bones['mixamorig' + n]
+  scene.updateMatrixWorld(true)
+  // T duruşunda avuçlar yere bakar; avuç yönü her elin kendi ekseninde saklanır
+  const palms = {}
+  for (const [name, , , palm] of POSE)
+    if (palm) palms[name] = new Vector3(0, -1, 0).applyQuaternion(get(name).getWorldQuaternion(new Quaternion()).invert())
+  for (const [name, child, dir, palm] of POSE) {
+    const bone = get(name)
+    const from = wpos(get(child)).sub(wpos(bone)).normalize()
+    turn(bone, new Quaternion().setFromUnitVectors(from, new Vector3(...dir).normalize()))
+    if (!palm) continue
+    // eli kendi ekseninde çevirerek avucu istenen yöne döndür
+    const axis = wpos(get(child)).sub(wpos(bone)).normalize()
+    const now = palms[name].clone().applyQuaternion(bone.getWorldQuaternion(new Quaternion())).projectOnPlane(axis).normalize()
+    const want = new Vector3(...palm).projectOnPlane(axis).normalize()
+    turn(bone, new Quaternion().setFromUnitVectors(now, want))
+  }
+  return Object.fromEntries(Object.entries(bones).map(([n, b]) => [n, b.quaternion.clone()]))
+}
+
 /* ---------------- Beden ölçüleri ---------------- */
 
-// Mankenin kendi ölçüleri (store/body.js içindeki varsayılanlar)
-const BASE = Object.fromEntries(FIELDS.map((f) => [f.key, f.base]))
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v))
 
 // Ölçülerden kemiklerin enine (x) ve derinliğine (z) ölçeği. Gövde ve bacak kemikleri
 // T duruşunda aynı doğrultuda olduğu için ölçek çocuk kemiklerde geri alınarak yalnızca o bölge şekillenir
-function shapeOf(b, out) {
-  const c = b.chest / BASE.chest
-  const w = b.waist / BASE.waist
-  const hp = b.hip / BASE.hip
+// (base: seçili mankenin kendi ölçüleri)
+function shapeOf(b, base, out) {
+  const c = b.chest / base.chest
+  const w = b.waist / base.waist
+  const hp = b.hip / base.hip
   const bmi = b.weight / (b.height / 100) ** 2
-  const g = clamp(Math.sqrt(bmi / (BASE.weight / (BASE.height / 100) ** 2)), 0.8, 1.35)
-  out.height = b.height / BASE.height
+  const g = clamp(Math.sqrt(bmi / (base.weight / (base.height / 100) ** 2)), 0.8, 1.35)
+  // boy oranı 170 cm'ye göre (kamera ve baskı boyutu bunu kullanır)
+  out.height = b.height / 170
   out.Hips = hp
   out.Spine = w
   out.Spine1 = (c + w) / 2
@@ -289,7 +339,8 @@ const tmpQ = new Quaternion()
 const tmpE = new Euler()
 
 export function Mannequin({ product }) {
-  const { scene, animations } = useGLTF(URL)
+  const { gender } = useBody()
+  const { scene } = useGLTF(URLS[gender])
   const anchors = useRef({})
   const glow = useRef()
   const lamp = useRef()
@@ -301,7 +352,7 @@ export function Mannequin({ product }) {
   const camPos = useMemo(() => new Vector3(), [])
   const look = useMemo(() => new Vector3(), [])
 
-  const { mixer, bones, boneList, outfit } = useMemo(() => {
+  const { bones, boneList, outfit, pose } = useMemo(() => {
     const skins = []
     scene.traverse((o) => {
       if (o.isSkinnedMesh && !o.userData.garment) {
@@ -323,7 +374,6 @@ export function Mannequin({ product }) {
       outfit[region] = material
     }
     scene.userData.outfit = outfit
-    const mixer = new AnimationMixer(scene)
     const bones = {}
     const boneList = []
     scene.traverse((o) => {
@@ -331,27 +381,29 @@ export function Mannequin({ product }) {
       bones[o.name] = o
       boneList.push([o, bare(o.name), o.parent?.isBone ? bare(o.parent.name) : null])
     })
-    return { mixer, bones, boneList, outfit }
+    // duruş, kıyafetler üretildikten sonra (T duruşu bozulmadan) bir kez hesaplanır
+    scene.userData.pose ??= buildPose(scene, bones)
+    return { bones, boneList, outfit, pose: scene.userData.pose }
   }, [scene])
 
+  // diğer manken de arka planda insin ki seçim anında beklenmesin
   useEffect(() => {
-    const idle = animations.find((a) => a.name === 'idle')
-    if (idle) mixer.clipAction(idle).reset().play()
-    return () => mixer.stopAllAction()
-  }, [mixer, animations])
+    for (const g in URLS) if (g !== gender) useGLTF.preload(URLS[g])
+  }, [gender])
 
   useFrame((state, dt) => {
-    mixer.update(dt)
-    for (const name in POSE) {
-      const bone = bones[name]
-      if (bone) bone.quaternion.multiply(tmpQ.setFromEuler(tmpE.set(...POSE[name])))
+    const t = state.clock.elapsedTime
+    for (const name in pose) bones[name].quaternion.copy(pose[name])
+    for (const [name, axis, amount, speed, phase] of IDLE) {
+      tmpE.set(0, 0, 0)[axis] = Math.sin(t * speed + phase) * amount
+      bones['mixamorig' + name].quaternion.multiply(tmpQ.setFromEuler(tmpE))
     }
     // ölçüler değişince manken yumuşakça yeni şekline geçer
     const goal = getBody()
     for (const { key } of FIELDS) body.current[key] = MathUtils.damp(body.current[key], goal[key], 6, dt)
-    shapeOf(body.current, shape)
+    shapeOf(body.current, BASES[gender], shape)
     applyShape(boneList, shape)
-    model.current.scale.setScalar(SCALE * shape.height)
+    model.current.scale.setScalar((CM * body.current.height) / MODEL_H[gender])
     scene.updateMatrixWorld(true)
 
     for (const key in ANCHORS) {
@@ -386,7 +438,6 @@ export function Mannequin({ product }) {
     hood.current.visible = hm.opacity > 0.01
 
     // kamera seçilen bölgeye yumuşakça yaklaşır, hafifçe salınır
-    const t = state.clock.elapsedTime
     // ölçü paneli açıkken manken tam boy gösterilir
     const f = goal.open ? null : focusOf(p?.model)
     if (f) {
@@ -410,7 +461,7 @@ export function Mannequin({ product }) {
 
   return (
     <group>
-      <primitive ref={model} object={scene} scale={SCALE} position-y={FLOOR} />
+      <primitive ref={model} object={scene} scale={(CM * body.current.height) / MODEL_H[gender]} position-y={FLOOR} />
       <group ref={anchor('neck')}>
         {/* kapüşon ensede toplanmış durur */}
         <mesh ref={hood} position={[0, 0.06, -0.13]} scale={[0.2, 0.15, 0.12]} visible={false}>

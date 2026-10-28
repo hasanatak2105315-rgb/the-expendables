@@ -1,26 +1,40 @@
 import { useSyncExternalStore } from 'react'
 
-// Ziyaretçinin beden ölçüleri: manken bu ölçülere göre şekillenir ve beden önerilir.
-// Ölçüler tarayıcıda saklanır. Varsayılanlar mankenin kendi ölçüleridir.
+// Ziyaretçinin beden ölçüleri ve manken seçimi (kadın/erkek): manken bu ölçülere göre şekillenir
+// ve beden önerilir. Ölçüler tarayıcıda saklanır. Varsayılanlar seçili mankenin kendi ölçüleridir.
 
 const KEY = 'tx-body'
 
-export const FIELDS = [
-  { key: 'height', label: 'Boy', unit: 'cm', min: 150, max: 200, base: 170 },
-  { key: 'weight', label: 'Kilo', unit: 'kg', min: 45, max: 120, base: 68 },
-  { key: 'chest', label: 'Göğüs', unit: 'cm', min: 80, max: 130, base: 92 },
-  { key: 'waist', label: 'Bel', unit: 'cm', min: 60, max: 120, base: 76 },
-  { key: 'hip', label: 'Kalça', unit: 'cm', min: 84, max: 130, base: 96 }
+export const GENDERS = [
+  { key: 'female', label: 'Kadın' },
+  { key: 'male', label: 'Erkek' }
 ]
 
-const DEFAULTS = Object.fromEntries(FIELDS.map((f) => [f.key, f.base]))
+export const FIELDS = [
+  { key: 'height', label: 'Boy', unit: 'cm', min: 150, max: 200 },
+  { key: 'weight', label: 'Kilo', unit: 'kg', min: 45, max: 120 },
+  { key: 'chest', label: 'Göğüs', unit: 'cm', min: 76, max: 130 },
+  { key: 'waist', label: 'Bel', unit: 'cm', min: 58, max: 120 },
+  { key: 'hip', label: 'Kalça', unit: 'cm', min: 84, max: 130 }
+]
+
+// Mankenlerin kendi ölçüleri
+export const BASES = {
+  female: { height: 166, weight: 58, chest: 88, waist: 68, hip: 96 },
+  male: { height: 178, weight: 74, chest: 98, waist: 82, hip: 98 }
+}
+
+const defaults = (gender) => ({ ...BASES[gender], gender, custom: false })
 
 const load = () => {
   try {
     const saved = JSON.parse(localStorage.getItem(KEY))
-    if (saved) return { ...DEFAULTS, ...saved, open: false }
+    if (saved) {
+      const gender = BASES[saved.gender] ? saved.gender : 'female'
+      return { ...defaults(gender), ...saved, gender, open: false }
+    }
   } catch {}
-  return { ...DEFAULTS, custom: false, open: false }
+  return { ...defaults('female'), open: false }
 }
 
 let state = load()
@@ -30,8 +44,8 @@ const emit = () => subs.forEach((fn) => fn())
 const save = () => {
   try {
     const { open, ...rest } = state
-    if (rest.custom) localStorage.setItem(KEY, JSON.stringify(rest))
-    else localStorage.removeItem(KEY)
+    // ölçü girilmediyse yalnızca manken seçimi saklanır
+    localStorage.setItem(KEY, JSON.stringify(rest.custom ? rest : { gender: rest.gender }))
   } catch {}
 }
 
@@ -44,7 +58,14 @@ export function setBody(patch) {
 }
 
 export function resetBody() {
-  state = { ...DEFAULTS, custom: false, open: state.open }
+  state = { ...defaults(state.gender), open: state.open }
+  save()
+  emit()
+}
+
+// Kadın/erkek manken. Ölçü girilmediyse yeni mankenin kendi ölçülerine geçilir
+export function setGender(gender) {
+  state = state.custom ? { ...state, gender } : { ...defaults(gender), open: state.open }
   save()
   emit()
 }
@@ -63,12 +84,23 @@ const subscribe = (fn) => {
 export const useBody = () => useSyncExternalStore(subscribe, getBody)
 
 // Örnek beden tablosu: üstlerde göğüs, altlarda kalça çevresine göre (cm, üst sınırlar)
-const TOPS = [['S', 93], ['M', 100], ['L', 107], ['XL', 114], ['XXL', Infinity]]
-const BOTTOMS = [['S', 95], ['M', 101], ['L', 107], ['XL', 113], ['XXL', Infinity]]
+const TABLES = {
+  female: {
+    tops: [['S', 88], ['M', 94], ['L', 100], ['XL', 106], ['XXL', Infinity]],
+    bottoms: [['S', 96], ['M', 102], ['L', 108], ['XL', 114], ['XXL', Infinity]],
+    waistGap: 26
+  },
+  male: {
+    tops: [['S', 93], ['M', 100], ['L', 107], ['XL', 114], ['XXL', Infinity]],
+    bottoms: [['S', 95], ['M', 101], ['L', 107], ['XL', 113], ['XXL', Infinity]],
+    waistGap: 18
+  }
+}
 const pick = (table, v) => table.find(([, max]) => v <= max)[0]
+const tableOf = (b) => TABLES[b.gender] ?? TABLES.female
 
-export const topSize = (b) => pick(TOPS, b.chest)
-export const bottomSize = (b) => pick(BOTTOMS, Math.max(b.hip, b.waist + 18))
+export const topSize = (b) => pick(tableOf(b).tops, b.chest)
+export const bottomSize = (b) => pick(tableOf(b).bottoms, Math.max(b.hip, b.waist + tableOf(b).waistGap))
 
 // Ürün için önerilen beden (ölçü girilmediyse ya da beden yoksa null)
 export function recommendedSize(product, b = state) {

@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { CATEGORIES, PRODUCTS, formatPrice } from '../data/products'
 import { useCart } from '../store/cart'
 import { setTryOn, useTryOn } from '../store/tryon'
-import { FIELDS, useBody, setBody, resetBody, setBodyOpen, topSize, bottomSize, recommendedSize } from '../store/body'
+import { FIELDS, GENDERS, useBody, setBody, setGender, resetBody, setBodyOpen, topSize, bottomSize, recommendedSize } from '../store/body'
 import { PenIcon } from './Overlays'
 
 const CardView = lazy(() => import('../three/ProductViews').then((m) => ({ default: m.CardView })))
@@ -87,6 +87,14 @@ function TryOn() {
       <p className="eyebrow tryon__label">
         <span className="dot" /> Sanal prova
       </p>
+      <div className="tryon__gender" role="group" aria-label="Manken">
+        {GENDERS.map((g) => (
+          <button key={g.key} className={body.gender === g.key ? 'active' : ''} aria-pressed={body.gender === g.key} onClick={() => setGender(g.key)}>
+            {body.gender === g.key && <motion.span layoutId="gender-pill" className="filter-pill" />}
+            <span>{g.label}</span>
+          </button>
+        ))}
+      </div>
       <button className="tryon__measure" onClick={() => setBodyOpen(!body.open)} aria-expanded={body.open}>
         <RulerIcon /> {body.custom ? 'Ölçülerim' : 'Ölçülerini gir'}
       </button>
@@ -115,6 +123,9 @@ function TryOn() {
           </AnimatePresence>
         </div>
       )}
+      <a className="tryon__credit" href="https://sketchfab.com/DNC44" target="_blank" rel="noopener noreferrer">
+        3D manken: DNC44 · CC BY 4.0
+      </a>
     </aside>
   )
 }
