@@ -15,7 +15,7 @@ export const PRODUCTS = [
     category: 'Giyim',
     model: 'tshirt',
     color: '#f1ece2',
-    print: 'Expendables',
+    print: 'Zela 47',
     sizes: SIZES,
     price: 449,
     oldPrice: 549,

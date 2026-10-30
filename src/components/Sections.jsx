@@ -231,10 +231,10 @@ export function Footer() {
           </div>
         </div>
         <div className="footer__giant" aria-hidden="true">
-          EXPENDABLES
+          ZELA 47
         </div>
         <div className="footer__bottom">
-          <span>© {new Date().getFullYear()} The Expendables. Tüm hakları saklıdır.</span>
+          <span>© {new Date().getFullYear()} ZELA 47. Tüm hakları saklıdır.</span>
           <span>
             <Link to="/kvkk">KVKK</Link> · <Link to="/gizlilik">Gizlilik ve Çerezler</Link> · <Link to="/kullanim-kosullari">Kullanım Koşulları</Link> ·{' '}
             <Link to="/mesafeli-satis">Mesafeli Satış Sözleşmesi</Link>

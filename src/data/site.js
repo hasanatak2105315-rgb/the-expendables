@@ -1,7 +1,7 @@
 // Mağaza ve şirket bilgileri. Boş bırakılan alanlar sitede gösterilmez.
 export const SITE = {
-  name: 'The Expendables',
-  company: '', // Resmî şirket unvanı (ör. "Ad Soyad - The Expendables" veya "X Ltd. Şti.")
+  name: 'ZELA 47',
+  company: '', // Resmî şirket unvanı (ör. "Ad Soyad - ZELA 47" veya "X Ltd. Şti.")
   taxInfo: '', // Vergi dairesi ve numarası
   email: 'hasanatak.2105315@gmail.com',
   phone: '', // ör. '+90 5xx xxx xx xx'
@@ -9,20 +9,20 @@ export const SITE = {
   address: 'Tokat Merkez, Türkiye',
   hours: 'Hafta içi 09:00 – 18:00',
   instagram: '#',
-  url: 'https://theexpendables.com.tr', // Sitenin yayındaki adresi (sitemap ve paylaşım görseli için)
+  url: 'https://zela47.com.tr', // Sitenin yayındaki adresi (sitemap ve paylaşım görseli için). Alan adı henüz alınmadı
   analyticsId: '' // Google Analytics 4 ölçüm kimliği (ör. 'G-XXXXXXX'). Boşsa analytics ve çerez bandı kapalıdır
 }
 
 // Sayfa adresleri, başlıkları ve Google'da görünecek açıklamaları
 export const ROUTES = {
-  '/': ['The Expendables — Baskılı Giyim ve 3D Baskı', 'Kendi tasarımlarımızla baskılı tişört, sweatshirt ve eşofmanlar, kişiye özel baskı ve 3D baskı tasarımlar. 1.500 ₺ üzeri ücretsiz kargo.'],
+  '/': ['ZELA 47 — Baskılı Giyim ve 3D Baskı', 'Kendi tasarımlarımızla baskılı tişört, sweatshirt ve eşofmanlar, kişiye özel baskı ve 3D baskı tasarımlar. 1.500 ₺ üzeri ücretsiz kargo.'],
   '/hakkimizda': ['Hakkımızda', 'Baskılı giyim ile 3D baskı tasarımlarını aynı atölyede buluşturan Tokat merkezli bir marka. Hikâyemiz ve üretim sürecimiz.'],
   '/iletisim': ['İletişim', 'Sipariş, kişiye özel baskı ya da iade için bize ulaş. WhatsApp destek hattı ve e-posta ile en geç bir iş günü içinde dönüyoruz.'],
   '/sss': ['Sıkça Sorulan Sorular', 'Kargo süresi, beden seçimi, kumaş ve yıkama, kişiye özel baskı, ödeme ve iade hakkında sık sorulan sorular.'],
   '/iade': ['İade ve Değişim', '30 gün içinde koşulsuz iade. İade adımları, iade edilemeyen ürünler ve değişim koşulları.'],
   '/kvkk': ['KVKK Aydınlatma Metni', '6698 sayılı KVKK kapsamında kişisel verilerinin nasıl işlendiğine dair aydınlatma metni.'],
   '/gizlilik': ['Gizlilik ve Çerez Politikası', 'Hangi bilgileri topladığımız, çerezleri nasıl kullandığımız ve verilerini nasıl koruduğumuz.'],
-  '/kullanim-kosullari': ['Kullanım Koşulları', 'The Expendables internet sitesinin kullanım koşulları.'],
+  '/kullanim-kosullari': ['Kullanım Koşulları', 'ZELA 47 internet sitesinin kullanım koşulları.'],
   '/mesafeli-satis': ['Mesafeli Satış Sözleşmesi', 'Ön bilgilendirme formu ve mesafeli satış sözleşmesi.']
 }
 

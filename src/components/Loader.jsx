@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
-import { EMark } from './Navbar'
+import { ZMark } from './Navbar'
 
-const TITLE = 'THE EXPENDABLES'
+const TITLE = 'ZELA 47'
 
-// Açılış ekranı: katman katman basılan E, harf harf beliren marka adı ve sayaç; sonra perde gibi yukarı kalkar
+// Açılış ekranı: çelenk ve katman katman basılan Z, harf harf beliren marka adı ve sayaç; sonra perde gibi yukarı kalkar
 export default function Loader({ onDone }) {
   const [n, setN] = useState(0)
 
@@ -28,7 +28,7 @@ export default function Loader({ onDone }) {
       initial={{ y: 0 }}
       exit={{ y: '-100%', transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1] } }}
     >
-      <EMark className="loader__mark" animated />
+      <ZMark className="loader__mark" animated />
       <div className="loader__title" aria-label={TITLE}>
         {TITLE.split('').map((c, i) => (
           <motion.span

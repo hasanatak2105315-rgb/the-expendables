@@ -61,7 +61,7 @@ export const WhatsAppIcon = () => (
 
 // Sağ altta sabit duran destek butonu. site.js içinde whatsapp numarası yoksa görünmez
 export function WhatsAppButton() {
-  const href = whatsappLink('Merhaba, The Expendables sitesinden yazıyorum.')
+  const href = whatsappLink('Merhaba, ZELA 47 sitesinden yazıyorum.')
   if (!href) return null
   return (
     <a className="wa-btn" href={href} target="_blank" rel="noopener" aria-label="WhatsApp destek hattı">

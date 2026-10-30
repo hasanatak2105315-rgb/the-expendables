@@ -58,7 +58,7 @@ export function About() {
     <Page
       eyebrow="Hakkımızda"
       title={<>Küçük bir atölye, <em>büyük bir özen</em></>}
-      intro="The Expendables, baskılı giyim ile 3D baskı tasarımları aynı çatı altında buluşturan Tokat merkezli bir atölye. Seri üretim yerine, her parçaya ayrı ayrı zaman ayırmayı seçiyoruz."
+      intro="ZELA 47, baskılı giyim ile 3D baskı tasarımları aynı çatı altında buluşturan Tokat merkezli bir atölye. Adımızı Jül Sezar'ın M.Ö. 47'de Zela'da, bugünkü Zile'de söylediği “Veni, vidi, vici” (Geldim, gördüm, yendim) sözünden aldık. Seri üretim yerine, her parçaya ayrı ayrı zaman ayırmayı seçiyoruz."
     >
       <div className="values">
         {VALUES.map(([t, d], i) => (

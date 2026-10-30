@@ -1,4 +1,4 @@
-# THE EXPENDABLES
+# ZELA 47
 
 Sinematik 3D e-ticaret sitesi. React, Three.js (React Three Fiber) ve Motion ile yapıldı.
 

@@ -137,12 +137,17 @@ function Keychain(props) {
         <circleGeometry args={[0.09, 24]} />
         <Dark />
       </mesh>
-      <mesh position={[0.18, 0.16, 0.08]}>
-        <boxGeometry args={[0.6, 0.12, 0.04]} />
+      {/* ZELA 47'nin Z harfi */}
+      <mesh position={[0.18, 0.19, 0.08]}>
+        <boxGeometry args={[0.5, 0.1, 0.04]} />
         <Pla color="#0e5a66" />
       </mesh>
-      <mesh position={[0.18, -0.08, 0.08]}>
-        <boxGeometry args={[0.13, 0.4, 0.04]} />
+      <mesh position={[0.18, 0, 0.08]} rotation-z={0.66}>
+        <boxGeometry args={[0.56, 0.1, 0.04]} />
+        <Pla color="#0e5a66" />
+      </mesh>
+      <mesh position={[0.18, -0.19, 0.08]}>
+        <boxGeometry args={[0.5, 0.1, 0.04]} />
         <Pla color="#0e5a66" />
       </mesh>
       <mesh position={[-0.42, 0, 0]} rotation-y={PI / 2}>

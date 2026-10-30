@@ -7,7 +7,7 @@ function seoFiles() {
   return {
     name: 'seo-files',
     // index.html içindeki site adresini site.js'teki adresle eşitle
-    transformIndexHtml: (html) => html.replaceAll('https://theexpendables.com.tr', SITE.url),
+    transformIndexHtml: (html) => html.replaceAll('https://zela47.com.tr', SITE.url),
     generateBundle() {
       const today = new Date().toISOString().slice(0, 10)
       const urls = Object.keys(ROUTES)

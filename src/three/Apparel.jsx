@@ -66,7 +66,7 @@ export function printTexture(text, ink) {
     c.fillRect(392, 320, 240, 5)
     c.font = '700 46px "Manrope", sans-serif'
     if ('letterSpacing' in c) c.letterSpacing = '14px'
-    c.fillText('THE EXPENDABLES', 512, 410, 960)
+    c.fillText('VENI · VIDI · VICI', 512, 410, 960)
     tex.needsUpdate = true
   }
   draw()
@@ -107,7 +107,7 @@ function Collar({ color }) {
   )
 }
 
-export function Tshirt({ color = '#f1ece2', print = 'Expendables', ...props }) {
+export function Tshirt({ color = '#f1ece2', print = 'Zela 47', ...props }) {
   const geo = useMemo(() => extrude(pattern(TEE)), [])
   return (
     <group {...props}>

@@ -1,6 +1,8 @@
-# The Expendables — proje notları
+# ZELA 47 — proje notları
 
-Baskılı giyim (tişört, sweatshirt, eşofman) ve 3D baskı ürünleri satan, sinematik 3D bir e-ticaret sitesi. Şimdilik sadece web sitesi var, yönetim paneli yok.
+Baskılı giyim (tişört, sweatshirt, eşofman) ve 3D baskı ürünleri satan, sinematik 3D bir e-ticaret sitesi.
+
+Marka adı **ZELA 47** (kullanıcı seçti; eski adı "The Expendables", film adı olduğu için değiştirildi). Hikâye: Jül Sezar "Veni, vidi, vici" (Geldim, gördüm, yendim) sözünü M.Ö. 47'de Zela'da, bugünkü Tokat Zile'de söyledi. Baskı dokularındaki alt satır "VENI · VIDI · VICI". Klasör adı (`the-expendables`) ve GitHub deposu eski adla kalabilir; depo adı kullanıcı tarafından GitHub'da değiştirilecek Şimdilik sadece web sitesi var, yönetim paneli yok.
 
 ## Çalışma şekli (önemli)
 
@@ -15,12 +17,14 @@ Baskılı giyim (tişört, sweatshirt, eşofman) ve 3D baskı ürünleri satan, 
 - Komutlar: `npm install`, `npm run dev`, `npm run build`
 - Renk paleti "Okyanus ve kayısı": derin petrol zemin, turkuaz ana vurgu (`--accent`), kayısı ikinci vurgu (`--accent-2`), `src/styles.css` içindeki `:root`. 3D sahnelerdeki ışık ve model renkleri JSX dosyalarında ayrıca yazılı. Önceki palet koyu yeşil + nane/limon yeşiliydi
 - Yazı tipleri (Google Fonts, `index.html`): başlıklarda **Playfair Display** (klasik serif, marka hissi; vurgulu kelimeler `<em>` ile italik ve nane yeşili), metin ve butonlarda **Manrope** (modern, 3D baskı hissi). Büyük başlıklar büyük harfe çevrilmez; küçük etiketler (eyebrow, buton) büyük harf kalır. Logo ve büyük marka yazıları **Anton** (`--font-logo`). `--font-display`, `--font-body` ve `--font-logo` değişkenleri `:root` içinde
-- Logo "Katmanlı E" (kullanıcı seçti): 3D yazıcıdan çıkmış gibi katman katman üst üste binen E, arkadan öne kayısıdan turkuaza. Bileşenler `src/components/Navbar.jsx` içinde `EMark` (`animated` ile açılış ekranında katmanlar sırayla basılır) ve `Logo` (E + küçük "THE" + Anton "EXPENDABLES"). Menü, alt kısım ve açılış ekranında kullanılır
+- Logo (ZELA 47): kayısı rengi Roma zafer çelengi (defne dalı, yapraklar çift çift) içinde katman katman basılmış turkuaz Z, altta "47". `src/components/Navbar.jsx` içinde `ZMark` (`animated` ile açılış ekranında yapraklar ve Z katmanları sırayla belirir) ve `Logo`. Kullanıcı isteği: menüde ve alt kısımda logonun yanında yazı yok, logo büyük (56 px, mobilde 46 px). Açılış ekranında ve alt kısımdaki dev yazıda "ZELA 47" (Anton) var. Önceki logolar: tek T, sonra "Katmanlı E"
+- Logo çizimi `favicon.svg` ve paylaşım görseli için proje dışındaki bir betikle (`zmark.mjs`, geçici klasörde) aynı ölçülerle SVG'ye yazılıp `@resvg/resvg-js` ile PNG'ye çevrildi. Logo değişirse ikonlar ve paylaşım görseli yeniden üretilmeli
+- Hero'daki anahtarlığın üzerinde Z harfi var (`Models.jsx`, `Keychain`)
 
 ## Dosyalar
 
 - `src/data/products.js`: ürünler ve kategoriler (Giyim, 3D Baskı, Kişiye Özel). Giyimde `color`, `color2` (takım altı), `print` (göğüs baskı yazısı) ve `sizes` (beden) alanları var
-- `src/data/site.js`: şirket ve iletişim bilgileri (e-posta hasanatak.2105315@gmail.com, adres Tokat Merkez, WhatsApp destek hattı 0532 565 42 88 (`whatsapp` boşsa WhatsApp butonları gizlenir); `whatsappLink()` wa.me bağlantısı üretir), site adresi (`url`), Google Analytics kimliği (`analyticsId`) ve her sayfanın Google başlığı/açıklaması (`ROUTES`). Boş alanlar sitede gösterilmez
+- `src/data/site.js`: şirket ve iletişim bilgileri (e-posta hasanatak.2105315@gmail.com, adres Tokat Merkez, WhatsApp destek hattı 0532 565 42 88 (`whatsapp` boşsa WhatsApp butonları gizlenir); `whatsappLink()` wa.me bağlantısı üretir), site adresi (`url`, şimdilik `https://zela47.com.tr`; alan adı henüz alınmadı), Google Analytics kimliği (`analyticsId`) ve her sayfanın Google başlığı/açıklaması (`ROUTES`). Boş alanlar sitede gösterilmez
 - `src/three/Models.jsx`: ürünlerin kodla çizilmiş 3D modelleri (giyim + vazo, lamba, saksı, heykel, anahtarlık). Giyim modelleri `src/three/Apparel.jsx` içinde: kalıp şekli kalınlaştırılır, göğse canvas dokusuyla baskı yazısı eklenir
 - `src/three/HeroScene.jsx`: giriş sahnesi (baskılı tişört, anahtarlık, vazo, yansıyan zemin, bloom)
 - `src/three/ProductViews.jsx`: ürün kartlarındaki 3D görünümler (tek ortak Canvas + drei `View`), sanal prova mankeninin sahnesi ve ürün detayındaki 3D sahne
@@ -65,8 +69,8 @@ Baskılı giyim (tişört, sweatshirt, eşofman) ve 3D baskı ürünleri satan, 
 
 - Ödeme formu demodur, gerçek ödeme almaz. Gerçek ödeme için iyzico / PayTR gibi bir sağlayıcı ve sunucu gerekir.
 - KVKK, iade, mesafeli satış, kullanım koşulları ve gizlilik metinleri genel taslaktır. Yayından önce bir hukukçuya kontrol ettirilmeli.
-- Paylaşım görseli ve ikonlar Okyanus paletine göre yeniden üretildi. `icon-512.png` ve `apple-touch-icon.png` doğrudan `public/favicon.svg`'den (koyu kare içinde 5 katmanlı E) çizilir. Paylaşım görseli (`public/og-image.png`, 1200×630) SVG'den `@resvg/resvg-js` ile üretildi (proje dışında, geçici klasörde). Sitedeki yazı tipleri kullanıldı: başlık Playfair Display 500 + italik, logo Anton, metin Manrope (Google Fonts'tan TTF). İçerik: Katmanlı E logosu (Anton yazıyla), "Tarzın bir detay değil, *bir imza.*" (vurgu turkuaz), alt yazı, turkuazdan kayısıya geçen "Koleksiyonu Keşfet" butonu, `theexpendables.com.tr`, sağda turkuaz hale içinde "Expendables" baskılı krem tişört. Zemin petrol (#03171c → #0b4450). Alan adı değişirse yeniden üretilmeli.
+- Paylaşım görseli ve ikonlar Okyanus paletine göre yeniden üretildi. `icon-512.png` ve `apple-touch-icon.png` doğrudan `public/favicon.svg`'den (koyu kare içinde çelenkli Z ve 47) çizilir. Paylaşım görseli (`public/og-image.png`, 1200×630) SVG'den `@resvg/resvg-js` ile üretildi (proje dışında, geçici klasörde). Sitedeki yazı tipleri kullanıldı: başlık Playfair Display 500 + italik, logo Anton, metin Manrope (Google Fonts'tan TTF). İçerik: ZELA 47 çelenk logosu, Anton "ZELA 47" ve altında kayısı "VENI · VIDI · VICI", "Tarzın bir detay değil, *bir imza.*" (vurgu turkuaz), alt yazı, turkuazdan kayısıya geçen "Koleksiyonu Keşfet" butonu, `zela47.com.tr`, sağda turkuaz hale içinde "Zela 47" baskılı krem tişört. Zemin petrol (#03171c → #0b4450). Alan adı değişirse yeniden üretilmeli.
 - Kullanıcının önceliği yayına almak değil, siteyi geliştirmek.
 - Yazı tipi kesinleşti: Playfair Display + Manrope (kullanıcı onayladı). Önce Cormorant Garamond denendi, beğenilmedi.
 - Manken modelleri CC BY 4.0: ticari kullanım serbest, tek şart yazara (DNC44) atıf. Önce three.js'in "Xbot" modeli kullanılmıştı, kullanıcı beğenmedi. Ready Player Me 31 Ocak 2026'da kapandı. Başka bir model istenirse aynı kemik adlarına (Mixamo iskeleti) sahip bir .glb ile değiştirmek en kolayı
-- "The Expendables" bilinen bir film serisinin adı. Kullanıcıya marka tescilini kontrol ettirmesi önerildi.
+- Marka adı önce "The Expendables" idi (bilinen film serisi, tescil riski). Ad arayışında önerilip beğenilmeyenler: KATKAT, Basmahane, Kalemkâr, Katmanist, Dazimon, PRINTHOOD. "ZELA 47" için TÜRKPATENT'te resmî marka araştırması ve alan adı kontrolü kullanıcıya önerildi

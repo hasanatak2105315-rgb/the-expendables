@@ -11,48 +11,83 @@ const LINKS = [
   ['/iletisim', 'İletişim']
 ]
 
-// Logo: 3D yazıcıdan çıkmış gibi katman katman üst üste binen E.
-// Arkadaki katman kayısı, öndeki turkuaz. favicon.svg ve paylaşım görseli de aynı çizimi kullanır
-const E = 'M20 16H92V36H44V50H82V68H44V82H92V102H20Z'
+// Logo (ZELA 47): Roma zafer çelengi içinde 3D yazıcıdan çıkmış gibi katman katman basılmış Z, altta 47.
+// Hikâye: Sezar "Veni, vidi, vici" sözünü M.Ö. 47'de Zela'da (bugünkü Zile, Tokat) söyledi.
+// favicon.svg ve paylaşım görseli de aynı çizimi kullanır
+const Z = 'M36 32H84V45L56 75H84V88H36V75L64 45H36Z'
 const LAYERS = [
-  [16, '#7a3f12'],
-  [14, '#a8581d'],
-  [12, '#d97f33'],
-  [10, '#ffb86b'],
-  [8, '#c9a77a'],
-  [6, '#5fb7b8'],
-  [4, '#14b8c6'],
-  [2, '#22c9d6'],
+  [6, '#c46f22'],
+  [4, '#ffb86b'],
+  [2, '#14b8c6'],
   [0, '#2fd8e6']
 ]
+// Çelenk: merkez (60,60), yarıçap 50; sol dal aşağıdan yukarı, sağ dal aynası
+const R = 50
+const at = (deg, r = R) => [60 + r * Math.cos((deg * Math.PI) / 180), 60 + r * Math.sin((deg * Math.PI) / 180)]
+// [açı, dala uzaklık (+ dış / - iç), eğim]: yapraklar çift çift, dalın büyüdüğü yöne doğru; sonda uç yaprağı
+const LEAVES = [
+  [128, 5, -32], [136, -5, 32], [150, 5, -32], [158, -5, 32], [172, 5, -32], [180, -5, 32],
+  [194, 5, -32], [202, -5, 32], [216, 5, -32], [224, -5, 32], [238, 4, -25], [246, -4, 25], [256, 0, 0]
+]
+const [sx, sy] = at(118)
+const [ex, ey] = at(250)
+const STEM = `M${sx} ${sy}A${R} ${R} 0 0 1 ${ex} ${ey}`
 
-// animated: katmanlar alttan üste doğru tek tek "basılır" (açılış ekranı)
-export function EMark({ className, animated = false }) {
+function Branch({ animated, mirror }) {
   return (
-    <svg className={className} viewBox="16 12 96 108" aria-hidden="true">
+    <g transform={mirror ? 'translate(120 0) scale(-1 1)' : undefined}>
+      <path d={STEM} fill="none" stroke="#ffb86b" strokeWidth="2" strokeLinecap="round" />
+      {LEAVES.map(([deg, off, tilt], i) => {
+        const [x, y] = at(deg, R + off)
+        return (
+          <motion.ellipse
+            key={deg}
+            cx={x}
+            cy={y}
+            rx="7"
+            ry="2.9"
+            fill={off > 0 ? '#ffb86b' : '#e08a3c'}
+            transform={`rotate(${deg + 90 + tilt} ${x} ${y})`}
+            initial={animated ? { opacity: 0 } : false}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.05 + i * 0.03, duration: 0.25 }}
+          />
+        )
+      })}
+    </g>
+  )
+}
+
+// animated: çelenk yaprakları sırayla belirir, Z'nin katmanları tek tek "basılır" (açılış ekranı)
+export function ZMark({ className, animated = false }) {
+  return (
+    <svg className={className} viewBox="0 0 120 120" aria-hidden="true">
+      <Branch animated={animated} />
+      <Branch animated={animated} mirror />
       {LAYERS.map(([d, fill], i) => (
         <motion.g
           key={d}
-          initial={animated ? { opacity: 0, y: -10 } : false}
+          initial={animated ? { opacity: 0, y: -8 } : false}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.05 + i * 0.06, duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ delay: 0.3 + i * 0.07, duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
         >
-          <path d={E} transform={`translate(${d} ${d})`} fill={fill} stroke={d && d < 16 ? '#03171c' : 'none'} strokeWidth="0.7" />
+          <path d={Z} transform={`translate(${d} ${d})`} fill={fill} stroke={d ? '#03171c' : 'none'} strokeWidth="0.7" />
         </motion.g>
       ))}
-      <path d="M26 22H86" stroke="#ecfdff" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+      <path d="M41 37H79" stroke="#ecfdff" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+      <text x="60" y="115" textAnchor="middle" fontFamily="Anton, Impact, sans-serif" fontSize="15" letterSpacing="1" fill="#ecfdff">
+        47
+      </text>
     </svg>
   )
 }
 
+// Menüde ve alt kısımda yalnızca işaret durur (yanında yazı yok)
 export function Logo() {
   return (
-    <span className="logo">
-      <EMark />
-      <span className="logo__text">
-        <small>THE</small>
-        EXPENDABLES
-      </span>
+    <span className="logo" title="ZELA 47">
+      <ZMark />
+      <span className="sr-only">ZELA 47</span>
     </span>
   )
 }
