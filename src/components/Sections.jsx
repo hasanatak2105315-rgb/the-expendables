@@ -113,7 +113,7 @@ export function Features() {
               viewport={{ once: true, margin: '-80px' }}
               transition={{ delay: i * 0.06, duration: 0.5, ease }}
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" aria-hidden="true">
                 {f.icon}
               </svg>
               <h3>{f.title}</h3>
@@ -195,6 +195,36 @@ export function Newsletter() {
               </p>
             </>
           )}
+        </motion.div>
+      </div>
+    </section>
+  )
+}
+
+// Ana sayfanın kapanışı: ziyaretçiyi yeniden alışverişe döndürür
+export function Closing() {
+  return (
+    <section className="section closing" id="kapanis">
+      <div className="container">
+        <motion.div
+          className="page__cta"
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55, ease }}
+        >
+          <h2 className="display">
+            Sıradaki imza <em>senin.</em>
+          </h2>
+          <p className="muted">Koleksiyondan seç ya da aklındaki tasarımı birlikte basalım.</p>
+          <div className="hero__cta">
+            <button className="btn btn--primary" onClick={() => goToSection('koleksiyon')}>
+              Koleksiyonu Keşfet
+            </button>
+            <Link className="btn btn--ghost" to="/iletisim">
+              Kişiye Özel Baskı
+            </Link>
+          </div>
         </motion.div>
       </div>
     </section>

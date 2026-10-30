@@ -4,7 +4,7 @@ import Loader from './components/Loader'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Collection from './components/Collection'
-import { Marquee, Story, Features, BigBanner, Newsletter, Footer } from './components/Sections'
+import { Marquee, Story, Features, BigBanner, Newsletter, Closing, Footer } from './components/Sections'
 import { ProductModal, CustomPrintModal, CartDrawer, Toast } from './components/Overlays'
 import { About, Contact, Faq, Returns, Kvkk, Privacy, Terms, DistanceSales, ThankYou, NotFound } from './components/Pages'
 import { MobileCta, CookieBanner, WhatsAppButton } from './components/Extras'
@@ -67,6 +67,7 @@ export default function App() {
             <Story />
             <Features />
             <Newsletter />
+            <Closing />
           </>
         )}
       </main>
