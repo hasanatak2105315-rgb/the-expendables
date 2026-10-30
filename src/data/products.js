@@ -29,7 +29,7 @@ export const PRODUCTS = [
     name: 'Baskılı Sweatshirt',
     category: 'Giyim',
     model: 'sweatshirt',
-    color: '#1d6f7b',
+    color: '#7a2420',
     print: 'Est. 2026',
     sizes: SIZES,
     price: 749,
@@ -61,7 +61,7 @@ export const PRODUCTS = [
     sizes: SIZES,
     price: 649,
     rating: 4.7,
-    desc: 'Gri melanj, paçası lastikli jogger eşofman altı. Yanda turkuaz şerit, belde bağcık, iki yan cep.',
+    desc: 'Gri melanj, paçası lastikli jogger eşofman altı. Yanda altın sarısı şerit, belde bağcık, iki yan cep.',
     specs: ['Lastikli paça', 'Bağcıklı bel', 'İki yan cep', 'Yan şerit detayı']
   },
   {

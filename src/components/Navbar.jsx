@@ -16,10 +16,10 @@ const LINKS = [
 // favicon.svg ve paylaşım görseli de aynı çizimi kullanır
 const Z = 'M36 32H84V45L56 75H84V88H36V75L64 45H36Z'
 const LAYERS = [
-  [6, '#c46f22'],
-  [4, '#ffb86b'],
-  [2, '#14b8c6'],
-  [0, '#2fd8e6']
+  [6, '#6e1a15'],
+  [4, '#d4a23a'],
+  [2, '#8f241d'],
+  [0, '#c8382e']
 ]
 // Çelenk: merkez (60,60), yarıçap 50; sol dal aşağıdan yukarı, sağ dal aynası
 const R = 50
@@ -36,7 +36,7 @@ const STEM = `M${sx} ${sy}A${R} ${R} 0 0 1 ${ex} ${ey}`
 function Branch({ animated, mirror }) {
   return (
     <g transform={mirror ? 'translate(120 0) scale(-1 1)' : undefined}>
-      <path d={STEM} fill="none" stroke="#ffb86b" strokeWidth="2" strokeLinecap="round" />
+      <path d={STEM} fill="none" stroke="#d4a23a" strokeWidth="2" strokeLinecap="round" />
       {LEAVES.map(([deg, off, tilt], i) => {
         const [x, y] = at(deg, R + off)
         return (
@@ -46,7 +46,7 @@ function Branch({ animated, mirror }) {
             cy={y}
             rx="7"
             ry="2.9"
-            fill={off > 0 ? '#ffb86b' : '#e08a3c'}
+            fill={off > 0 ? '#d4a23a' : '#a87a1c'}
             transform={`rotate(${deg + 90 + tilt} ${x} ${y})`}
             initial={animated ? { opacity: 0 } : false}
             animate={{ opacity: 1 }}
@@ -71,11 +71,11 @@ export function ZMark({ className, animated = false }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 + i * 0.07, duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
         >
-          <path d={Z} transform={`translate(${d} ${d})`} fill={fill} stroke={d ? '#03171c' : 'none'} strokeWidth="0.7" />
+          <path d={Z} transform={`translate(${d} ${d})`} fill={fill} stroke={d ? '#f7f0e3' : 'none'} strokeWidth="0.7" />
         </motion.g>
       ))}
-      <path d="M41 37H79" stroke="#ecfdff" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
-      <text x="60" y="115" textAnchor="middle" fontFamily="Anton, Impact, sans-serif" fontSize="15" letterSpacing="1" fill="#ecfdff">
+      <path d="M41 37H79" stroke="#fff3e0" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+      <text x="60" y="115" textAnchor="middle" fontFamily="Anton, Impact, sans-serif" fontSize="15" letterSpacing="1" fill="#2b1b14">
         47
       </text>
     </svg>

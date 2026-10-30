@@ -54,8 +54,8 @@ const IDLE = [
   ['LeftArm', 'z', 0.015, 1.5, 0.3]
 ]
 
-const surface = new MeshPhysicalMaterial({ color: '#1d3a42', roughness: 0.38, metalness: 0.15, clearcoat: 1, clearcoatRoughness: 0.25 })
-const joints = new MeshPhysicalMaterial({ color: '#0a1a1f', roughness: 0.3, metalness: 0.6, clearcoat: 1, clearcoatRoughness: 0.2 })
+const surface = new MeshPhysicalMaterial({ color: '#8a5a35', roughness: 0.35, metalness: 0.55, clearcoat: 0.5, clearcoatRoughness: 0.3 })
+const joints = new MeshPhysicalMaterial({ color: '#4a2c18', roughness: 0.3, metalness: 0.7, clearcoat: 1, clearcoatRoughness: 0.2 })
 
 // Kemiğe bağlı noktalar: [kemik, kemiğe göre kaydırma, dik dursun mu]
 // El kemiğinde +Y parmak uçlarına bakar
@@ -327,7 +327,7 @@ function ChestPrint() {
         <Print
           key={product.id}
           text={product.print}
-          ink={light ? '#0b3b44' : '#ffd7a8'}
+          ink={light ? '#6e1a15' : '#f7e3b0'}
           width={small ? 0.16 : 0.34}
           position={small ? [-0.1, 0.12, 0.235] : [0, 0.1, 0.24]}
         />
@@ -398,7 +398,7 @@ export function Mannequin({ product }) {
     hood.current.visible = true
     const warm = new Mesh(
       new PlaneGeometry(0.01, 0.01),
-      new MeshStandardMaterial({ map: printTexture('TX', '#ffd7a8'), transparent: true, roughness: 0.8, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 })
+      new MeshStandardMaterial({ map: printTexture('TX', '#f7e3b0'), transparent: true, roughness: 0.8, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 })
     )
     world.add(warm)
     gl.compile(world, camera)
@@ -504,9 +504,9 @@ export function Mannequin({ product }) {
         ))}
         <mesh ref={glow} position-y={0.03} rotation-x={-PI / 2}>
           <ringGeometry args={[0.07, 0.085, 48]} />
-          <meshBasicMaterial color="#7de8f2" transparent opacity={0} toneMapped={false} />
+          <meshBasicMaterial color="#d4a23a" transparent opacity={0} toneMapped={false} />
         </mesh>
-        <pointLight ref={lamp} position={[-0.15, 0.4, 0.35]} intensity={0} distance={1.5} color="#ecfdff" />
+        <pointLight ref={lamp} position={[-0.15, 0.4, 0.35]} intensity={0} distance={1.5} color="#fff4e0" />
       </group>
     </group>
   )

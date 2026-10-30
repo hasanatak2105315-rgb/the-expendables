@@ -39,7 +39,8 @@ function Hero3D() {
     <group position={[mobile ? 0.35 : 1.9, mobile ? -1.55 : 0.05, mobile ? -0.5 : 0]} scale={mobile ? 0.5 : 1}>
       <Float speed={1.6} rotationIntensity={0.25} floatIntensity={0.6}>
         <group ref={hero}>
-          <Tshirt scale={0.95} position-y={-0.15} rotation-x={0.08} />
+          {/* Zafer Alayı: giriş tişörtü Pompeii kırmızısı, krem zeminde öne çıksın */}
+          <Tshirt color="#b8322a" scale={0.95} position-y={-0.15} rotation-x={0.08} />
         </group>
       </Float>
       <group ref={orbit}>
@@ -66,32 +67,32 @@ export default function HeroScene() {
 
   return (
     <Canvas dpr={[1, 1.75]} camera={{ position: [0, 0.4, 6.2], fov: 35 }} gl={{ antialias: false }}>
-      <color attach="background" args={['#03171c']} />
-      <fog attach="fog" args={['#03171c', 7, 17]} />
+      <color attach="background" args={['#f7f0e3']} />
+      <fog attach="fog" args={['#f7f0e3', 7, 17]} />
       <Studio />
-      <spotLight position={[0, 6, 2]} angle={0.35} penumbra={1} intensity={90} color="#dffbff" />
+      <spotLight position={[0, 6, 2]} angle={0.35} penumbra={1} intensity={55} color="#fff4e0" />
       <Rig />
       <Hero3D />
-      <Sparkles count={140} scale={[14, 7, 8]} size={2.2} speed={0.25} opacity={0.6} color="#7de8f2" />
+      <Sparkles count={140} scale={[14, 7, 8]} size={2.2} speed={0.25} opacity={0.8} color="#d4a23a" />
       <mesh rotation-x={-Math.PI / 2} position-y={-1.9}>
         <planeGeometry args={[60, 60]} />
         <MeshReflectorMaterial
           blur={[300, 80]}
           resolution={768}
           mixBlur={1}
-          mixStrength={25}
+          mixStrength={3}
           roughness={1}
           depthScale={1.1}
           minDepthThreshold={0.4}
           maxDepthThreshold={1.4}
-          color="#041b21"
-          metalness={0.6}
+          color="#dccaa9"
+          metalness={0.3}
         />
       </mesh>
       <EffectComposer multisampling={0}>
-        <Bloom mipmapBlur luminanceThreshold={1} intensity={1.1} />
+        <Bloom mipmapBlur luminanceThreshold={1.1} intensity={0.4} />
         <Noise opacity={0.04} />
-        <Vignette offset={0.2} darkness={0.85} />
+        <Vignette offset={0.2} darkness={0.3} />
       </EffectComposer>
     </Canvas>
   )

@@ -86,7 +86,7 @@ export function Print({ text, ink, width = 0.74, ...props }) {
   )
 }
 
-const inkFor = (color) => (isLight(color) ? '#0b3b44' : '#ffd7a8')
+const inkFor = (color) => (isLight(color) ? '#6e1a15' : '#f7e3b0')
 
 // Yaka, kol ve etek ucundaki ribana
 function Rib({ color, ...props }) {
@@ -151,7 +151,7 @@ function SweatBody({ color, print, printY = 0.36, zip, stripe }) {
   )
 }
 
-export function Sweatshirt({ color = '#1d6f7b', print = 'Est. 2026', ...props }) {
+export function Sweatshirt({ color = '#7a2420', print = 'Est. 2026', ...props }) {
   return (
     <group {...props}>
       <SweatBody color={color} print={print} />
@@ -188,7 +188,7 @@ export function Hoodie({ color = '#f2a65a', print = 'Tokat', ...props }) {
   )
 }
 
-export function Joggers({ color = '#26323d', stripe = '#2fd8e6', ...props }) {
+export function Joggers({ color = '#26323d', stripe = '#d4a23a', ...props }) {
   const geo = useMemo(() => {
     const s = new Shape()
     s.moveTo(-0.56, 1.0)
@@ -234,10 +234,10 @@ export function Tracksuit({ color = '#1c2b4a', color2, print = 'TX', ...props })
   return (
     <group {...props}>
       <group position={[0.42, -0.12, -0.25]} rotation-y={-0.25} scale={0.82}>
-        <Joggers color={color2 ?? color} stripe="#ffb86b" />
+        <Joggers color={color2 ?? color} stripe="#d4a23a" />
       </group>
       <group position={[-0.32, 0.12, 0.2]} rotation-y={0.18} scale={0.72}>
-        <SweatBody color={color} print={print} zip stripe="#ffb86b" />
+        <SweatBody color={color} print={print} zip stripe="#d4a23a" />
       </group>
     </group>
   )

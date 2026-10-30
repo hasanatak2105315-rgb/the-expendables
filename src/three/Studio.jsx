@@ -8,9 +8,9 @@ import { Color, DoubleSide, Mesh, MeshBasicMaterial, PlaneGeometry, PMREMGenerat
 // kendi ortam haritasını üretiyordu; kategori değişince kartlar aynı anda üretince ekran takılıyordu.
 const PANELS = [
   ['rect', 3, [0, 4, 3], [8, 2], '#ffffff'],
-  ['rect', 4, [-5, 0, 0], [6, 2], '#2fd8e6'],
-  ['rect', 2, [5, 1, -1], [6, 2], '#ffb86b'],
-  ['ring', 2, [0, 0, -6], [4, 4], '#0e5a66']
+  ['rect', 4, [-5, 0, 0], [6, 2], '#ffd9a0'],
+  ['rect', 2, [5, 1, -1], [6, 2], '#e8705f'],
+  ['ring', 2, [0, 0, -6], [4, 4], '#d4a23a']
 ]
 const envs = new WeakMap()
 
@@ -34,16 +34,16 @@ function studioEnv(gl) {
   return texture
 }
 
-// Ortak sinematik ışık kurulumu: soğuk beyaz ana ışık + turkuaz kontur ışığı
+// Ortak sinematik ışık kurulumu: sıcak beyaz ana ışık + altın kontur ışığı (Zafer Alayı)
 export function Studio({ intensity = 1 }) {
   const gl = useThree((s) => s.gl)
   const env = useMemo(() => studioEnv(gl), [gl])
   return (
     <>
       <ambientLight intensity={0.25 * intensity} />
-      <directionalLight position={[3, 4, 5]} intensity={2.2 * intensity} color="#ecfdff" />
-      <spotLight position={[-4, 2, -3]} angle={0.6} penumbra={1} intensity={40 * intensity} color="#14b8c6" />
-      <pointLight position={[2, -2, 2]} intensity={3 * intensity} color="#2fd8e6" />
+      <directionalLight position={[3, 4, 5]} intensity={2.2 * intensity} color="#fff4e0" />
+      <spotLight position={[-4, 2, -3]} angle={0.6} penumbra={1} intensity={40 * intensity} color="#e0a84a" />
+      <pointLight position={[2, -2, 2]} intensity={3 * intensity} color="#ff9b7a" />
       <Environment map={env} />
     </>
   )

@@ -11,12 +11,12 @@ const PI = Math.PI
 
 // Malzemeler
 const Silver = () => <meshStandardMaterial color="#dfe7e3" metalness={1} roughness={0.12} />
-const Pla = ({ color = '#7de8f2', side }) => (
+const Pla = ({ color = '#e8c58a', side }) => (
   <meshStandardMaterial color={color} metalness={0.05} roughness={0.55} flatShading side={side} />
 )
-const Silk = ({ color = '#2fd8e6' }) => <meshStandardMaterial color={color} metalness={0.55} roughness={0.28} />
-const Dark = () => <meshStandardMaterial color="#08161a" metalness={0.3} roughness={0.6} />
-const Glow = ({ intensity = 2.5, color = '#2fd8e6' }) => (
+const Silk = ({ color = '#b8322a' }) => <meshStandardMaterial color={color} metalness={0.55} roughness={0.28} />
+const Dark = () => <meshStandardMaterial color="#2b1b14" metalness={0.3} roughness={0.6} />
+const Glow = ({ intensity = 2.5, color = '#e0a84a' }) => (
   <meshStandardMaterial color={color} emissive={color} emissiveIntensity={intensity} toneMapped={false} />
 )
 
@@ -59,11 +59,11 @@ function Lamp(props) {
       <group ref={shell} position-y={0.2}>
         <mesh>
           <icosahedronGeometry args={[0.92, 1]} />
-          <meshStandardMaterial color="#cffafe" roughness={0.5} flatShading transparent opacity={0.35} />
+          <meshStandardMaterial color="#fff1d6" roughness={0.5} flatShading transparent opacity={0.35} />
         </mesh>
         <mesh>
           <icosahedronGeometry args={[0.93, 1]} />
-          <meshBasicMaterial color="#2fd8e6" wireframe toneMapped={false} />
+          <meshBasicMaterial color="#b8322a" wireframe toneMapped={false} />
         </mesh>
       </group>
       <mesh position-y={0.2}>
@@ -72,7 +72,7 @@ function Lamp(props) {
       </mesh>
       <mesh position-y={-0.85}>
         <cylinderGeometry args={[0.35, 0.5, 0.3, 6]} />
-        <Pla color="#0e5a66" />
+        <Pla color="#8f241d" />
       </mesh>
     </group>
   )
@@ -131,7 +131,7 @@ function Keychain(props) {
   return (
     <group {...props}>
       <RoundedBox args={[1.3, 0.75, 0.14]} radius={0.12} smoothness={5}>
-        <Pla color="#ffb86b" />
+        <Pla color="#d4a23a" />
       </RoundedBox>
       <mesh position={[-0.42, 0, 0.075]}>
         <circleGeometry args={[0.09, 24]} />
@@ -140,15 +140,15 @@ function Keychain(props) {
       {/* ZELA 47'nin Z harfi */}
       <mesh position={[0.18, 0.19, 0.08]}>
         <boxGeometry args={[0.5, 0.1, 0.04]} />
-        <Pla color="#0e5a66" />
+        <Pla color="#8f241d" />
       </mesh>
       <mesh position={[0.18, 0, 0.08]} rotation-z={0.66}>
         <boxGeometry args={[0.56, 0.1, 0.04]} />
-        <Pla color="#0e5a66" />
+        <Pla color="#8f241d" />
       </mesh>
       <mesh position={[0.18, -0.19, 0.08]}>
         <boxGeometry args={[0.5, 0.1, 0.04]} />
-        <Pla color="#0e5a66" />
+        <Pla color="#8f241d" />
       </mesh>
       <mesh position={[-0.42, 0, 0]} rotation-y={PI / 2}>
         <torusGeometry args={[0.32, 0.03, 12, 48]} />
