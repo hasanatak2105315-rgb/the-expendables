@@ -2,7 +2,7 @@
 
 Baskılı giyim (tişört, sweatshirt, eşofman) ve 3D baskı ürünleri satan, sinematik 3D bir e-ticaret sitesi.
 
-Marka adı **ZELA 47** (kullanıcı seçti; eski adı "The Expendables", film adı olduğu için değiştirildi). Hikâye: Jül Sezar "Veni, vidi, vici" (Geldim, gördüm, yendim) sözünü M.Ö. 47'de Zela'da, bugünkü Tokat Zile'de söyledi. Baskı dokularındaki alt satır "VENI · VIDI · VICI". Klasör adı (`the-expendables`) ve GitHub deposu eski adla kalabilir; depo adı kullanıcı tarafından GitHub'da değiştirilecek Şimdilik sadece web sitesi var, yönetim paneli yok.
+Marka adı **ZELA 47** (kullanıcı seçti; eski adı "The Expendables", film adı olduğu için değiştirildi). Hikâye: Jül Sezar "Veni, vidi, vici" (Geldim, gördüm, yendim) sözünü M.Ö. 47'de Zela'da, bugünkü Tokat Zile'de söyledi. Baskı dokularındaki alt satır "VENI · VIDI · VICI". GitHub deposu `hasanatak2105315-rgb/zela-47` (eski adı the-expendables, GitHub eski adresi yönlendirir). Bilgisayardaki klasör adı hâlâ `the-expendables` Şimdilik sadece web sitesi var, yönetim paneli yok.
 
 ## Çalışma şekli (önemli)
 
