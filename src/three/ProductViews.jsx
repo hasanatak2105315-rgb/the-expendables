@@ -23,9 +23,10 @@ function Spinner({ hovered, children }) {
 // product: ürün kaydı (model tipi, giyimde renk ve baskı yazısı)
 const look = (p) => ({ type: p.model, color: p.color, color2: p.color2, print: p.print })
 
-export function CardView({ product, hovered, className }) {
+// visible: kategori dışında kalan kart gizlenir ama silinmez; gizliyken çizilmez
+export function CardView({ product, hovered, className, visible = true }) {
   return (
-    <View className={className}>
+    <View className={className} visible={visible}>
       <PerspectiveCamera makeDefault position={[0, 0.2, 5]} fov={32} />
       <Studio intensity={0.9} />
       <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
@@ -40,10 +41,10 @@ export function CardView({ product, hovered, className }) {
 }
 
 // Koleksiyonun yanındaki sanal prova sahnesi (manken)
-export function MannequinView({ className }) {
+export function MannequinView({ className, visible = true }) {
   const product = useTryOn()
   return (
-    <View className={className}>
+    <View className={className} visible={visible}>
       <PerspectiveCamera makeDefault position={[0, 0.55, 6.6]} fov={30} />
       <Studio intensity={0.8} />
       <spotLight position={[0.5, 3.5, 2]} angle={0.5} penumbra={1} intensity={30} color="#ecfdff" />

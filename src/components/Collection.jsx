@@ -84,7 +84,7 @@ function TryOn({ hidden }) {
     <aside className={`tryon ${body.open ? 'tryon--edit' : ''}`} aria-label="Sanal prova" hidden={hidden}>
       <div className="tryon__stage" role="img" aria-label={product ? `Mankenin üzerinde ${product.name}` : 'Vitrin mankeni'}>
         <Suspense fallback={<div className="stage-loader" aria-hidden="true" />}>
-          <MannequinView className="tryon__view" />
+          <MannequinView className="tryon__view" visible={!hidden} />
         </Suspense>
       </div>
       <p className="eyebrow tryon__label">
@@ -133,7 +133,7 @@ function TryOn({ hidden }) {
   )
 }
 
-function ProductCard({ product, index, onOpen, onCustom }) {
+function ProductCard({ product, index, shown, onOpen, onCustom }) {
   const { add } = useCart()
   const hovered = useRef(false)
   const ref = useRef()
@@ -156,12 +156,11 @@ function ProductCard({ product, index, onOpen, onCustom }) {
 
   return (
     <motion.article
-      layout
       ref={ref}
       className="card"
+      hidden={!shown}
       initial={{ opacity: 0, y: 60 }}
       whileInView={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.5, delay: (index % 3) * 0.05, ease: [0.22, 1, 0.36, 1] }}
       onMouseEnter={() => {
@@ -176,7 +175,7 @@ function ProductCard({ product, index, onOpen, onCustom }) {
         <span className="card__index">{String(index + 1).padStart(2, '0')}</span>
         {product.tag && <span className="card__tag">{product.tag}</span>}
         <Suspense fallback={<div className="stage-loader" aria-hidden="true" />}>
-          <CardView className="card__view" product={product} hovered={hovered} />
+          <CardView className="card__view" product={product} hovered={hovered} visible={shown} />
         </Suspense>
         <span className="card__look">İncele</span>
       </button>
@@ -209,6 +208,8 @@ function ProductCard({ product, index, onOpen, onCustom }) {
 
 export default function Collection({ onOpen, onCustom }) {
   const [cat, setCat] = useState('Tümü')
+  // ilk kategori değişiminden sonra yeniden görünen kartlar CSS ile hafifçe belirir
+  const [switched, setSwitched] = useState(false)
   const list = cat === 'Tümü' ? PRODUCTS : PRODUCTS.filter((p) => p.category === cat)
   // listede giyim yoksa (3D Baskı, Kişiye Özel) manken alanı gizlenir, ürünler tam genişlikte dizilir.
   // Manken kaldırılmaz, yalnızca gizlenir: yeniden kurmak kategori değişiminde ekranı takıyordu
@@ -229,7 +230,11 @@ export default function Collection({ onOpen, onCustom }) {
           </div>
           <div className="filters">
             {CATEGORIES.map((c) => (
-              <button key={c} className={c === cat ? 'active' : ''} onClick={() => setCat(c)}>
+              <button key={c} className={c === cat ? 'active' : ''} onClick={() => {
+                  setCat(c)
+                  setSwitched(true)
+                }}
+              >
                 {c === cat && <motion.span layoutId="filter-pill" className="filter-pill" />}
                 <span>{c}</span>
               </button>
@@ -239,13 +244,13 @@ export default function Collection({ onOpen, onCustom }) {
 
         <div className={tryOn ? 'collection collection--tryon' : 'collection'}>
           {wide && <TryOn hidden={!tryOn} />}
-          <motion.div layout className="grid">
-            <AnimatePresence mode="popLayout">
-              {list.map((p, i) => (
-                <ProductCard key={p.id} product={p} index={i} onOpen={onOpen} onCustom={onCustom} />
-              ))}
-            </AnimatePresence>
-          </motion.div>
+          {/* Tüm kartlar bir kez kurulur, kategori değişince yalnızca gizlenir/gösterilir.
+              Her geçişte kartları ve 3D modellerini baştan kurmak ekranı ~0,15 sn donduruyordu */}
+          <div className={switched ? 'grid grid--switched' : 'grid'}>
+            {PRODUCTS.map((p) => (
+              <ProductCard key={p.id} product={p} index={list.indexOf(p)} shown={list.includes(p)} onOpen={onOpen} onCustom={onCustom} />
+            ))}
+          </div>
         </div>
       </div>
     </section>

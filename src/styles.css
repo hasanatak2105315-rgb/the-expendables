@@ -151,6 +151,8 @@ main, .footer { position: relative; z-index: 1; }
 .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
 .card { --rx: 0deg; --ry: 0deg; --mx: 50%; --my: 50%; position: relative; border-radius: var(--radius); border: 1px solid var(--line); background: linear-gradient(180deg, var(--surface), var(--bg-2)); overflow: hidden; transform: perspective(1000px) rotateX(var(--rx)) rotateY(var(--ry)); transition: transform 0.35s var(--ease), border-color 0.4s; }
 .card:hover { border-color: var(--line-strong); }
+.grid--switched .card:not([hidden]) { animation: card-in 0.4s var(--ease) both; }
+@keyframes card-in { from { opacity: 0; transform: translateY(16px); } }
 .card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(500px circle at var(--mx) var(--my), color-mix(in srgb, var(--accent) 12%, transparent), transparent 45%); opacity: 0; transition: opacity 0.4s; pointer-events: none; }
 .card:hover::before { opacity: 1; }
 .card__stage { position: relative; display: block; width: 100%; aspect-ratio: 1 / 0.95; background: radial-gradient(circle at 50% 60%, color-mix(in srgb, var(--accent-strong) 18%, transparent), transparent 60%), radial-gradient(circle at 50% 100%, color-mix(in srgb, var(--accent-deep) 40%, transparent), transparent 60%); }
