@@ -1,6 +1,4 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
-import { AnimatePresence } from 'motion/react'
-import Loader from './components/Loader'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Collection from './components/Collection'
@@ -11,7 +9,7 @@ import { MobileCta, CookieBanner, WhatsAppButton } from './components/Extras'
 import { usePath } from './router'
 import { applyMeta } from './meta'
 import { CartProvider } from './store/cart'
-import { startSmoothScroll, lockScroll } from './scroll'
+import { startSmoothScroll } from './scroll'
 
 // 3D kodu ana dosyadan ayrı, sonradan yüklenir
 const ViewsCanvas = lazy(() => import('./three/ProductViews').then((m) => ({ default: m.ViewsCanvas })))
@@ -31,18 +29,12 @@ const PAGES = {
 export default function App() {
   const path = usePath()
   const Page = path === '/' ? null : PAGES[path] ?? NotFound
-  const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState(null)
   const [customFor, setCustomFor] = useState(null)
 
   useEffect(() => startSmoothScroll(), [])
-  useEffect(() => {
-    lockScroll(loading)
-    if (loading) window.scrollTo(0, 0)
-  }, [loading])
   useEffect(() => applyMeta(path), [path])
 
-  const done = useCallback(() => setLoading(false), [])
   const closeModal = useCallback(() => setSelected(null), [])
   const closeCustom = useCallback(() => setCustomFor(null), [])
   const openCustom = useCallback((product) => {
@@ -52,7 +44,6 @@ export default function App() {
 
   return (
     <CartProvider>
-      <AnimatePresence>{loading && <Loader onDone={done} />}</AnimatePresence>
       <div className="grain" aria-hidden="true" />
       <Navbar />
       <main>
@@ -60,7 +51,7 @@ export default function App() {
           <Page />
         ) : (
           <>
-            <Hero ready={!loading} />
+            <Hero ready />
             <Marquee />
             <Collection onOpen={setSelected} onCustom={openCustom} />
             <BigBanner />

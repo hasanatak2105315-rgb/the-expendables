@@ -68,15 +68,6 @@ main, .footer { position: relative; z-index: 1; }
 }
 @keyframes grain { 25% { transform: translate(-4%, 3%); } 50% { transform: translate(3%, -5%); } 75% { transform: translate(-2%, -3%); } }
 
-/* Yükleme ekranı */
-.loader { position: fixed; inset: 0; z-index: 200; background: var(--bg); display: flex; flex-direction: column; justify-content: center; padding: 0 6vw; gap: 28px; }
-.loader__mark { width: clamp(64px, 9vw, 120px); height: auto; }
-.loader__title { font-family: var(--font-logo); font-weight: 400; letter-spacing: 0.05em; font-size: clamp(1.7rem, 7.6vw, 8rem); line-height: 1; overflow: hidden; display: flex; flex-wrap: wrap; color: var(--text); }
-.loader__title span { display: inline-block; }
-.loader__bar { height: 2px; background: var(--line); overflow: hidden; }
-.loader__bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent-strong), var(--accent-2)); transform-origin: left; box-shadow: 0 0 20px var(--accent); }
-.loader__meta { display: flex; justify-content: space-between; font-size: 0.78rem; letter-spacing: 0.25em; color: var(--muted); }
-.loader__count { font-family: var(--font-body); font-weight: 300; font-variant-numeric: tabular-nums; font-size: 2rem; letter-spacing: 0.05em; color: var(--accent); line-height: 1; }
 
 /* Menü */
 .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; transition: background 0.5s, border-color 0.5s, backdrop-filter 0.5s; border-bottom: 1px solid transparent; }
